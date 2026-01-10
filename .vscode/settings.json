@@ -57,5 +57,14 @@
     "edu.wpi.first.math.**.proto.*",
     "edu.wpi.first.math.**.struct.*",
   ],
-  "java.dependency.enableDependencyCheckup": false
+  "java.dependency.enableDependencyCheckup": false,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "java.saveActions.organizeImports": true,
+  "editor.rulers": [120],
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000
 }
