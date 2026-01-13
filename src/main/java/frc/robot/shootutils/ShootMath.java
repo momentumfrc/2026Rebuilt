@@ -2,6 +2,8 @@ package frc.robot.shootutils;
 
 public class ShootMath {
 
+    //TODO: put actual values for exit velocity and shooter height
+
     //The exit velocity of the ball from the hood, in meters per second
     public static final double EXIT_VELOCITY = 5;
     public static final double G = 9.81;
