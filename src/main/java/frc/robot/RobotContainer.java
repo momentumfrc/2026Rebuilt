@@ -33,15 +33,15 @@ public class RobotContainer {
         setDefaultCommands();
     }
 
-    public void setDefaultCommands(){
+    public void setDefaultCommands() {
         driveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
     }
 
     private void configureBindings() {
-        //Drive Triggers
+        // Drive Triggers
         resetFieldOrientedFwd = new Trigger(() -> driveController.getBackButton());
 
-        //Drive Trigger Bindings
+        // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
     }
 
