@@ -15,11 +15,20 @@ public class HoodSerializedInformationHolder {
 
     private final HashMap<Double, Double> angles;
 
-    public HoodSerializedInformationHolder(Map<Double, Double> entries) {
+    private static HoodSerializedInformationHolder instance = null;
+
+    private HoodSerializedInformationHolder(Map<Double, Double> entries) {
         angles = new HashMap<>(entries);
     }
 
-    public static HoodSerializedInformationHolder fromFile() {
+    public static HoodSerializedInformationHolder create() {
+        if (instance == null) {
+            instance = fromFile();
+        }
+        return instance;
+    }
+
+    private static HoodSerializedInformationHolder fromFile() {
         Gson gson = new Gson();
         try (InputStream stream =
                 HoodSerializedInformationHolder.class.getResourceAsStream("/shootutils/hood_angles.json")) {
