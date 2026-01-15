@@ -56,4 +56,17 @@ public class ShootMath {
         return Math.atan((Math.pow(EXIT_VELOCITY, 2) + Math.pow(Math.pow(EXIT_VELOCITY, 4) - G * (G * Math.pow(d, 2) + 2 * mappedY * Math.pow(EXIT_VELOCITY, 2)), 0.5)) / (G * d));
     }
 
+    /**
+     * Calculates the needed hood angle to make it into the hub. This uses an empirical calculation.
+     * @param x the current x position of the robot
+     * @param y the current y position of the robot
+     * @param targetPosX the x position of the target (hub) in the same coordinate system as the robot position
+     * @param targetPosY the y position of the target (hub) in the same coordinate system as the robot position
+     * @return the needed hood angle to make it into the hub
+     */
+    public static double hoodAngle(double x, double y, double targetPosX, double targetPosY) {
+        HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.fromFile();
+        return holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5));
+    }
+
 }

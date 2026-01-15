@@ -13,6 +13,9 @@ import java.util.Scanner;
 
 import com.google.gson.Gson;
 
+/**
+ * A holder for the hood angles for each distance.
+ */
 public class HoodSerializedInformationHolder {
 
     private final HashMap<Double, Double> angles;
