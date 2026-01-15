@@ -2,12 +2,12 @@ package frc.robot.shootutils;
 
 public class ShootMath {
 
-    //TODO: put actual values for exit velocity and shooter height
+    // TODO: put actual values for exit velocity and shooter height
 
-    //The exit velocity of the ball from the hood, in meters per second
+    // The exit velocity of the ball from the hood, in meters per second
     public static final double EXIT_VELOCITY = 5;
     public static final double G = 9.81;
-    //The height of the shooter off of the ground, in meters
+    // The height of the shooter off of the ground, in meters
     public static final double SHOOTER_HEIGHT = 2;
 
     /**
@@ -32,10 +32,12 @@ public class ShootMath {
      * @param yVelocity the signed y velocity
      * @return the rate of rotation of the hood to stay aimed at the target
      */
-    public static double hoodSwivelSpeed(double x, double y, double targetPosX, double targetPosY, double xVelocity, double yVelocity) {
+    public static double hoodSwivelSpeed(
+            double x, double y, double targetPosX, double targetPosY, double xVelocity, double yVelocity) {
         double mappedX = x - targetPosX;
         double mappedY = y - targetPosY;
-        return (1 / ((Math.pow(mappedX, 2) / Math.pow(mappedY, 2)) + 1)) * ((xVelocity * y - yVelocity * x) / Math.pow(mappedY, 2));
+        return (1 / ((Math.pow(mappedX, 2) / Math.pow(mappedY, 2)) + 1))
+                * ((xVelocity * y - yVelocity * x) / Math.pow(mappedY, 2));
     }
 
     /**
@@ -53,7 +55,12 @@ public class ShootMath {
         if (Math.pow(EXIT_VELOCITY, 4) < G * (G * Math.pow(d, 2) + 2 * mappedY * Math.pow(EXIT_VELOCITY, 2))) {
             throw new IllegalArgumentException("Not possible to make launch.");
         }
-        return Math.atan((Math.pow(EXIT_VELOCITY, 2) + Math.pow(Math.pow(EXIT_VELOCITY, 4) - G * (G * Math.pow(d, 2) + 2 * mappedY * Math.pow(EXIT_VELOCITY, 2)), 0.5)) / (G * d));
+        return Math.atan((Math.pow(EXIT_VELOCITY, 2)
+                        + Math.pow(
+                                Math.pow(EXIT_VELOCITY, 4)
+                                        - G * (G * Math.pow(d, 2) + 2 * mappedY * Math.pow(EXIT_VELOCITY, 2)),
+                                0.5))
+                / (G * d));
     }
 
     /**
@@ -68,5 +75,4 @@ public class ShootMath {
         HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.fromFile();
         return holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5));
     }
-
 }
