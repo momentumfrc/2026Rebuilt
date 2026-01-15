@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import java.util.Map;
+
+import com.google.gson.Gson;
+
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.shootutils.HoodSerializedInformationHolder;
 
 public final class Main {
     private Main() {}
