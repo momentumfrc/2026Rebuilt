@@ -50,4 +50,27 @@ public class ShootMath {
     public static double hoodAngle(Translation2d robot, Translation2d target) {
         return hoodAngle(robot.getX(), robot.getY(), target.getX(), target.getY());
     }
+
+    /**
+     * Calculates the needed flywheel speed to make it into the hub. This uses an empirical calculation.
+     * @param x the current x position of the robot
+     * @param y the current y position of the robot
+     * @param targetPosX the x position of the target (hub) in the same coordinate system as the robot position
+     * @param targetPosY the y position of the target (hub) in the same coordinate system as the robot position
+     * @return the needed flywheel speed to make it into the hub
+     */
+    public static double flywheelSpeed(double x, double y, double targetPosX, double targetPosY) {
+        HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.create();
+        return holder.getFlywheelSpeed(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5));
+    }
+
+    /**
+     * Calculates the needed flywheel speed to make it into the hub. This uses an empirical calculation.
+     * @param robot a {@link Translation2d} representing the position of the robot
+     * @param target a {@link Translation2d} representing the position of the robot
+     * @return the needed flywheel speed to make it into the hub
+     */
+    public static double flywheelSpeed(Translation2d robot, Translation2d target) {
+        return flywheelSpeed(robot.getX(), robot.getY(), target.getX(), target.getY());
+    }
 }
