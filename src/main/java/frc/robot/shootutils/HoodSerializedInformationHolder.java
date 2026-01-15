@@ -1,6 +1,8 @@
 package frc.robot.shootutils;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -29,10 +31,10 @@ public class HoodSerializedInformationHolder {
     }
 
     private static HoodSerializedInformationHolder fromFile() {
-        Gson gson = new Gson();
+        ObjectMapper mapper = new ObjectMapper();
         try (InputStream stream =
                 HoodSerializedInformationHolder.class.getResourceAsStream("/shootutils/hood_angles.json")) {
-            return gson.fromJson(new InputStreamReader(stream), HoodSerializedInformationHolder.class);
+            return mapper.readValue(new InputStreamReader(stream), HoodSerializedInformationHolder.class);
         } catch (Exception e) {
             throw new RuntimeException("Could not find the shootutils/hood_angles.json file: " + e.getStackTrace());
         }
