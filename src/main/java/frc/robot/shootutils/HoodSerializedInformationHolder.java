@@ -18,7 +18,7 @@ public class HoodSerializedInformationHolder {
 
     private static HoodSerializedInformationHolder instance = null;
 
-    private HoodSerializedInformationHolder(Map<Double, Double> angleEntries, Map<Double, Double> flywheelEntries) {
+    public HoodSerializedInformationHolder(Map<Double, Double> angleEntries, Map<Double, Double> flywheelEntries) {
         angles = new HashMap<>(angleEntries);
         flywheelSpeeds = new HashMap<>(flywheelEntries);
     }
