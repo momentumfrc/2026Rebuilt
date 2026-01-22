@@ -13,14 +13,12 @@ import java.util.Map;
  */
 public class HoodSerializedInformationHolder {
 
-    private final HashMap<Double, Double> angles;
-    private final HashMap<Double, Double> flywheelSpeeds;
+    private final ArrayList<Entry> entries;
 
     private static HoodSerializedInformationHolder instance = null;
 
-    public HoodSerializedInformationHolder(Map<Double, Double> angleEntries, Map<Double, Double> flywheelEntries) {
-        angles = new HashMap<>(angleEntries);
-        flywheelSpeeds = new HashMap<>(flywheelEntries);
+    public HoodSerializedInformationHolder(List<Entry> entries) {
+        this.entries = new ArrayList<>(entries);
     }
 
     public static HoodSerializedInformationHolder create() {
@@ -41,52 +39,80 @@ public class HoodSerializedInformationHolder {
     }
 
     public double getAngle(double distance) {
-        List<Double> distances = new ArrayList<>(angles.keySet());
+        List<Double> distances = new ArrayList<>(entries.stream().map((entry) -> {return entry.getDistance();}).toList());
+        List<Double> angles = new ArrayList<>(entries.stream().map((entry) -> {return entry.getHoodAngle();}).toList());
         distances.sort((d1, d2) -> {
             return (int) Math.round(d1 - d2);
         });
-        double lowerBound = distances.get(0);
-        double upperBound = distances.get(distances.size() - 1);
-        if (distance < lowerBound) {
-            upperBound = distances.get(1);
-        } else if (distance > upperBound) {
-            lowerBound = distances.get(distances.size() - 2);
+        int lowerBound = 0;
+        int upperBound = distances.size() - 1;
+        if (distance < distances.get(lowerBound)) {
+            upperBound = 1;
+        } else if (distance > distances.get(upperBound)) {
+            lowerBound = distances.size() - 2;
         } else {
             int i = 0;
             for (double d : distances) {
                 if (distance > d) {
-                    lowerBound = d;
-                    upperBound = distances.get(i + 1);
+                    lowerBound = i;
+                    upperBound = i + 1;
                 }
                 i++;
             }
         }
-        double m = (angles.get(upperBound) - angles.get(lowerBound)) / (upperBound - lowerBound);
-        return angles.get(lowerBound) + (m * (distance - lowerBound));
+        double m = (angles.get(upperBound) - angles.get(lowerBound)) / (distances.get(upperBound) - distances.get(lowerBound));
+        return angles.get(lowerBound) + (m * (distance - distances.get(lowerBound)));
     }
 
     public double getFlywheelSpeed(double distance) {
-        List<Double> distances = new ArrayList<>(flywheelSpeeds.keySet());
+        List<Double> distances = new ArrayList<>(entries.stream().map((entry) -> {return entry.getDistance();}).toList());
+        List<Double> speeds = new ArrayList<>(entries.stream().map((entry) -> {return entry.getFlywheelSpeed();}).toList());
         distances.sort((d1, d2) -> {
             return (int) Math.round(d1 - d2);
         });
-        double lowerBound = distances.get(0);
-        double upperBound = distances.get(distances.size() - 1);
-        if (distance < lowerBound) {
-            upperBound = distances.get(1);
-        } else if (distance > upperBound) {
-            lowerBound = distances.get(distances.size() - 2);
+        int lowerBound = 0;
+        int upperBound = distances.size() - 1;
+        if (distance < distances.get(lowerBound)) {
+            upperBound = 1;
+        } else if (distance > distances.get(upperBound)) {
+            lowerBound = distances.size() - 2;
         } else {
             int i = 0;
             for (double d : distances) {
                 if (distance > d) {
-                    lowerBound = d;
-                    upperBound = distances.get(i + 1);
+                    lowerBound = i;
+                    upperBound = i + 1;
                 }
                 i++;
             }
         }
-        double m = (flywheelSpeeds.get(upperBound) - flywheelSpeeds.get(lowerBound)) / (upperBound - lowerBound);
-        return flywheelSpeeds.get(lowerBound) + (m * (distance - lowerBound));
+        double m = (speeds.get(upperBound) - speeds.get(lowerBound)) / (distances.get(upperBound) - distances.get(lowerBound));
+        return speeds.get(lowerBound) + (m * (distance - distances.get(lowerBound)));
+    }
+
+    public class Entry {
+
+        private double distance;
+        private double flywheelSpeed;
+        private double hoodAngle;
+
+        public Entry(double distance, double flywheelSpeed, double hoodAngle) {
+            this.distance = distance;
+            this.flywheelSpeed = flywheelSpeed;
+            this.hoodAngle = hoodAngle;
+        }
+
+        public double getFlywheelSpeed() {
+            return flywheelSpeed;
+        }
+
+        public double getDistance() {
+            return distance;
+        }
+
+        public double getHoodAngle() {
+            return hoodAngle;
+        }
+
     }
 }
