@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.MoPrefs;
+import frc.robot.molib.prefs.MoPrefsUtils;
 import java.io.File;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
@@ -28,16 +29,18 @@ public class DriveSubsystem extends SubsystemBase {
             throw new RuntimeException(e);
         }
 
-        MoPrefs.swerveMaxPossibleSpeed.subscribe(speed -> swerveDrive.setMaximumAttainableSpeeds(
-                speed.in(Units.MetersPerSecond),
-                MoPrefs.swerveMaxPossibleSpin.get().in(Units.RadiansPerSecond)));
-        MoPrefs.swerveMaxPossibleSpin.subscribe(spin -> swerveDrive.setMaximumAttainableSpeeds(
-                MoPrefs.swerveMaxPossibleSpeed.get().in(Units.MetersPerSecond), spin.in(Units.RadiansPerSecond)));
-        MoPrefs.swerveMaxAllowedSpeed.subscribe(speed -> swerveDrive.setMaximumAllowableSpeeds(
-                speed.in(Units.MetersPerSecond),
-                MoPrefs.swerveMaxAllowedSpin.get().in(Units.RadiansPerSecond)));
-        MoPrefs.swerveMaxAllowedSpin.subscribe(spin -> swerveDrive.setMaximumAllowableSpeeds(
-                MoPrefs.swerveMaxAllowedSpeed.get().in(Units.MetersPerSecond), spin.in(Units.RadiansPerSecond)));
+        MoPrefsUtils.multiSubscribe(
+                MoPrefs.swerveMaxPossibleSpeed,
+                MoPrefs.swerveMaxPossibleSpin,
+                (speed, spin) -> swerveDrive.setMaximumAttainableSpeeds(
+                        speed.in(Units.MetersPerSecond), spin.in(Units.RadiansPerSecond)),
+                true);
+        MoPrefsUtils.multiSubscribe(
+                MoPrefs.swerveMaxAllowedSpeed,
+                MoPrefs.swerveMaxAllowedSpin,
+                (speed, spin) -> swerveDrive.setMaximumAllowableSpeeds(
+                        speed.in(Units.MetersPerSecond), spin.in(Units.RadiansPerSecond)),
+                true);
     }
 
     public void driveFieldOriented(ChassisSpeeds velocity) {
