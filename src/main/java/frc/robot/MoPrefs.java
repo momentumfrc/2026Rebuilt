@@ -5,6 +5,7 @@ import frc.robot.molib.prefs.AngularVelocityUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
 import frc.robot.molib.prefs.MoPrefsBase;
 import frc.robot.molib.prefs.Pref;
+import frc.robot.molib.prefs.TimeUnitPref;
 
 public class MoPrefs extends MoPrefsBase {
     public static final LinearVelocityUnitPref swerveMaxAllowedSpeed =
@@ -15,6 +16,9 @@ public class MoPrefs extends MoPrefsBase {
             rotationsPerSecPref("Swerve Max Allowed Spin", Units.RotationsPerSecond.of(1));
     public static final AngularVelocityUnitPref swerveMaxPossibleSpin =
             rotationsPerSecPref("Swerve Max Possible Spin", Units.RotationsPerSecond.of(2));
+
+    public static final TimeUnitPref limelightPoseRefreshDelay =
+            secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 }
