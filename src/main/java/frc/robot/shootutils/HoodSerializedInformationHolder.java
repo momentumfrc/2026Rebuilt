@@ -90,7 +90,7 @@ public class HoodSerializedInformationHolder {
         return speeds.get(lowerBound) + (m * (distance - distances.get(lowerBound)));
     }
 
-    public class Entry {
+    public static class Entry {
 
         private double distance;
         private double flywheelSpeed;

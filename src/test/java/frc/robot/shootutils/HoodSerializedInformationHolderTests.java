@@ -3,6 +3,7 @@ package frc.robot.shootutils;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ public class HoodSerializedInformationHolderTests {
     @Test
     public void testAngleInterpolation() {
         HoodSerializedInformationHolder holder =
-                new HoodSerializedInformationHolder(Map.of(1.0, 5.0, 2.0, 6.0), Collections.emptyMap());
+                new HoodSerializedInformationHolder(List.of(new HoodSerializedInformationHolder.Entry(1f, 1500f, 5f), new HoodSerializedInformationHolder.Entry(2f, 1600f, 6f)));
 
         assertEquals(5.0, holder.getAngle(1.0), TOLERANCE);
         assertEquals(6.0, holder.getAngle(2.0), TOLERANCE);
@@ -30,7 +31,7 @@ public class HoodSerializedInformationHolderTests {
     @Test
     public void testFlywheelSpeedInterpolation() {
         HoodSerializedInformationHolder holder =
-                new HoodSerializedInformationHolder(Collections.emptyMap(), Map.of(5.0, 1500.0, 10.0, 1600.0));
+                new HoodSerializedInformationHolder(List.of(new HoodSerializedInformationHolder.Entry(5f, 1500f, 5f), new HoodSerializedInformationHolder.Entry(10f, 1600f, 6f)));
 
         assertEquals(1500.0, holder.getFlywheelSpeed(5.0), TOLERANCE);
         assertEquals(1600.0, holder.getFlywheelSpeed(10.0), TOLERANCE);
@@ -45,7 +46,7 @@ public class HoodSerializedInformationHolderTests {
     @Test
     public void testAngleInterpolationNonLinear() {
         HoodSerializedInformationHolder holder =
-                new HoodSerializedInformationHolder(Map.of(1.0, 5.0, 2.0, 6.0, 3.5, 9.0), Collections.emptyMap());
+                new HoodSerializedInformationHolder(List.of(new HoodSerializedInformationHolder.Entry(1f, 1500f, 5f), new HoodSerializedInformationHolder.Entry(2f, 1600f, 6f), new HoodSerializedInformationHolder.Entry(3.5f, 1700f, 9f)));
 
         assertEquals(4.5, holder.getAngle(0.5), TOLERANCE);
         assertEquals(5.5, holder.getAngle(1.5), TOLERANCE);
@@ -55,8 +56,8 @@ public class HoodSerializedInformationHolderTests {
 
     @Test
     public void testFlywheelSpeedInterpolationNonLinear() {
-        HoodSerializedInformationHolder holder = new HoodSerializedInformationHolder(
-                Collections.emptyMap(), Map.of(5.0, 1500.0, 10.0, 1600.0, 20.0, 1700.0));
+        HoodSerializedInformationHolder holder =
+                new HoodSerializedInformationHolder(List.of(new HoodSerializedInformationHolder.Entry(5f, 1500f, 5f), new HoodSerializedInformationHolder.Entry(10f, 1600f, 6f), new HoodSerializedInformationHolder.Entry(20f, 1700f, 7f)));
 
         assertEquals(1480.0, holder.getFlywheelSpeed(4.0), TOLERANCE);
         assertEquals(1550.0, holder.getFlywheelSpeed(7.5), TOLERANCE);
