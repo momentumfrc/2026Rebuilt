@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A holder for the hood angles for each distance.
@@ -39,8 +37,16 @@ public class HoodSerializedInformationHolder {
     }
 
     public double getAngle(double distance) {
-        List<Double> distances = new ArrayList<>(entries.stream().map((entry) -> {return entry.getDistance();}).toList());
-        List<Double> angles = new ArrayList<>(entries.stream().map((entry) -> {return entry.getHoodAngle();}).toList());
+        List<Double> distances = new ArrayList<>(entries.stream()
+                .map((entry) -> {
+                    return entry.getDistance();
+                })
+                .toList());
+        List<Double> angles = new ArrayList<>(entries.stream()
+                .map((entry) -> {
+                    return entry.getHoodAngle();
+                })
+                .toList());
         distances.sort((d1, d2) -> {
             return (int) Math.round(d1 - d2);
         });
@@ -60,13 +66,22 @@ public class HoodSerializedInformationHolder {
                 i++;
             }
         }
-        double m = (angles.get(upperBound) - angles.get(lowerBound)) / (distances.get(upperBound) - distances.get(lowerBound));
+        double m = (angles.get(upperBound) - angles.get(lowerBound))
+                / (distances.get(upperBound) - distances.get(lowerBound));
         return angles.get(lowerBound) + (m * (distance - distances.get(lowerBound)));
     }
 
     public double getFlywheelSpeed(double distance) {
-        List<Double> distances = new ArrayList<>(entries.stream().map((entry) -> {return entry.getDistance();}).toList());
-        List<Double> speeds = new ArrayList<>(entries.stream().map((entry) -> {return entry.getFlywheelSpeed();}).toList());
+        List<Double> distances = new ArrayList<>(entries.stream()
+                .map((entry) -> {
+                    return entry.getDistance();
+                })
+                .toList());
+        List<Double> speeds = new ArrayList<>(entries.stream()
+                .map((entry) -> {
+                    return entry.getFlywheelSpeed();
+                })
+                .toList());
         distances.sort((d1, d2) -> {
             return (int) Math.round(d1 - d2);
         });
@@ -86,7 +101,8 @@ public class HoodSerializedInformationHolder {
                 i++;
             }
         }
-        double m = (speeds.get(upperBound) - speeds.get(lowerBound)) / (distances.get(upperBound) - distances.get(lowerBound));
+        double m = (speeds.get(upperBound) - speeds.get(lowerBound))
+                / (distances.get(upperBound) - distances.get(lowerBound));
         return speeds.get(lowerBound) + (m * (distance - distances.get(lowerBound)));
     }
 
@@ -113,6 +129,5 @@ public class HoodSerializedInformationHolder {
         public double getHoodAngle() {
             return hoodAngle;
         }
-
     }
 }
