@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +30,8 @@ public class HoodSerializedInformationHolder {
 
     private static HoodSerializedInformationHolder fromFile() {
         ObjectMapper mapper = new ObjectMapper();
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("shootutils/hood_angles.json");
+        InputStream stream =
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("shootutils/hood_angles.json");
 
         if (stream == null) {
             throw new IllegalStateException("Could not find shootutils/hood_angles.json");
@@ -121,7 +121,10 @@ public class HoodSerializedInformationHolder {
         private double hoodAngle;
 
         @JsonCreator
-        public Entry(@JsonProperty("distance") double distance, @JsonProperty("flywheelSpeed") double flywheelSpeed, @JsonProperty("hoodAngle") double hoodAngle) {
+        public Entry(
+                @JsonProperty("distance") double distance,
+                @JsonProperty("flywheelSpeed") double flywheelSpeed,
+                @JsonProperty("hoodAngle") double hoodAngle) {
             this.distance = distance;
             this.flywheelSpeed = flywheelSpeed;
             this.hoodAngle = hoodAngle;
