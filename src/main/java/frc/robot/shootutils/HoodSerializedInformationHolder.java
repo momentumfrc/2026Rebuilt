@@ -1,5 +1,7 @@
 package frc.robot.shootutils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,7 +17,8 @@ public class HoodSerializedInformationHolder {
 
     private static HoodSerializedInformationHolder instance = null;
 
-    public HoodSerializedInformationHolder(List<Entry> entries) {
+    @JsonCreator
+    public HoodSerializedInformationHolder(@JsonProperty("entries") List<Entry> entries) {
         this.entries = new ArrayList<>(entries);
     }
 
@@ -28,11 +31,16 @@ public class HoodSerializedInformationHolder {
 
     private static HoodSerializedInformationHolder fromFile() {
         ObjectMapper mapper = new ObjectMapper();
-        try (InputStream stream =
-                HoodSerializedInformationHolder.class.getResourceAsStream("/shootutils/hood_angles.json")) {
-            return mapper.readValue(new InputStreamReader(stream), HoodSerializedInformationHolder.class);
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("shootutils/hood_angles.json");
+
+        if (stream == null) {
+            throw new IllegalStateException("Could not find shootutils/hood_angles.json");
+        }
+
+        try {
+            return mapper.readValue(stream, HoodSerializedInformationHolder.class);
         } catch (Exception e) {
-            throw new RuntimeException("Could not find the shootutils/hood_angles.json file: " + e.getStackTrace());
+            throw new RuntimeException("Could not parse the shootutils/hood_angles.json file", e);
         }
     }
 
@@ -112,7 +120,8 @@ public class HoodSerializedInformationHolder {
         private double flywheelSpeed;
         private double hoodAngle;
 
-        public Entry(double distance, double flywheelSpeed, double hoodAngle) {
+        @JsonCreator
+        public Entry(@JsonProperty("distance") double distance, @JsonProperty("flywheelSpeed") double flywheelSpeed, @JsonProperty("hoodAngle") double hoodAngle) {
             this.distance = distance;
             this.flywheelSpeed = flywheelSpeed;
             this.hoodAngle = hoodAngle;

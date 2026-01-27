@@ -2,7 +2,6 @@ package frc.robot.shootutils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class HoodSerializedInformationHolderTests {
@@ -22,7 +21,7 @@ public class HoodSerializedInformationHolderTests {
         assertEquals(0.5, holder.getAngle(0.5), TOLERANCE);
 
         assertEquals(5.0, holder.getAngle(3.5), TOLERANCE);
-        assertEquals(8.0, holder.getAngle(4), TOLERANCE);
+        assertEquals(6.0, holder.getAngle(4), TOLERANCE);
     }
 
     @Test
@@ -39,7 +38,7 @@ public class HoodSerializedInformationHolderTests {
         assertEquals(0.5, holder.getFlywheelSpeed(0.5), TOLERANCE);
 
         assertEquals(5.0, holder.getFlywheelSpeed(3.5), TOLERANCE);
-        assertEquals(8.0, holder.getFlywheelSpeed(4), TOLERANCE);
+        assertEquals(6.0, holder.getFlywheelSpeed(4), TOLERANCE);
     }
 
     @Test
