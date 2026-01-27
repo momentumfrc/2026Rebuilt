@@ -1,0 +1,19 @@
+{
+    "entries": [
+        {
+            "distance": 1.0,
+            "hoodAngle": 1.0,
+            "flywheelSpeed": 1.0
+        },
+        {
+            "distance": 2.0,
+            "hoodAngle": 2.0,
+            "flywheelSpeed": 2.0
+        },
+        {
+            "distance": 3.0,
+            "hoodAngle": 4.0,
+            "flywheelSpeed": 4.0
+        }
+    ]
+}
