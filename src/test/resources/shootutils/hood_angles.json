@@ -11,9 +11,9 @@
             "flywheelSpeed": 2.0
         },
         {
-            "distance": 3.0,
-            "hoodAngle": 4.0,
-            "flywheelSpeed": 4.0
+            "distance": 3.5,
+            "hoodAngle": 5.0,
+            "flywheelSpeed": 5.0
         }
     ]
 }
