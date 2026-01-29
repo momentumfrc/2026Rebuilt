@@ -10,7 +10,8 @@ public class HoodSerializedInformationHolderTests {
     @Test
     public void testAngleInterpolation() {
 
-        HoodSerializedInformationHolder holder = assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
+        HoodSerializedInformationHolder holder =
+                assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
 
         assertEquals(1.0, holder.getAngle(1.0), TOLERANCE);
         assertEquals(2.0, holder.getAngle(2.0), TOLERANCE);
@@ -27,7 +28,8 @@ public class HoodSerializedInformationHolderTests {
 
     @Test
     public void testFlywheelSpeedInterpolation() {
-        HoodSerializedInformationHolder holder = assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
+        HoodSerializedInformationHolder holder =
+                assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
 
         assertEquals(1.0, holder.getFlywheelSpeed(1.0), TOLERANCE);
         assertEquals(2.0, holder.getFlywheelSpeed(2.0), TOLERANCE);
@@ -44,7 +46,8 @@ public class HoodSerializedInformationHolderTests {
 
     @Test
     public void testAngleInterpolationNonLinear() {
-        HoodSerializedInformationHolder holder = assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
+        HoodSerializedInformationHolder holder =
+                assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
 
         assertEquals(0.5, holder.getAngle(0.5), TOLERANCE);
         assertEquals(1.5, holder.getAngle(1.5), TOLERANCE);
@@ -54,7 +57,8 @@ public class HoodSerializedInformationHolderTests {
 
     @Test
     public void testFlywheelSpeedInterpolationNonLinear() {
-        HoodSerializedInformationHolder holder = assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
+        HoodSerializedInformationHolder holder =
+                assertDoesNotThrow(() -> HoodSerializedInformationHolder.create(), "Holder failed to create.");
 
         assertEquals(0.5, holder.getFlywheelSpeed(0.5), TOLERANCE);
         assertEquals(1.5, holder.getFlywheelSpeed(1.5), TOLERANCE);

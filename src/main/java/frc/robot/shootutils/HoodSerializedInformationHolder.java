@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -19,7 +18,9 @@ public class HoodSerializedInformationHolder {
 
     @JsonCreator
     private HoodSerializedInformationHolder(@JsonProperty("entries") List<Entry> entries) {
-        this.entries = entries.stream().sorted(Comparator.comparingDouble((entry) -> entry.distance())).toList();
+        this.entries = entries.stream()
+                .sorted(Comparator.comparingDouble((entry) -> entry.distance()))
+                .toList();
     }
 
     public static HoodSerializedInformationHolder create() {
@@ -71,7 +72,8 @@ public class HoodSerializedInformationHolder {
 
     public double getFlywheelSpeed(double distance) {
         List<Double> distances = entries.stream().map(entry -> entry.distance()).toList();
-        List<Double> speeds = entries.stream().map(entry -> entry.flywheelSpeed()).toList();
+        List<Double> speeds =
+                entries.stream().map(entry -> entry.flywheelSpeed()).toList();
         int lowerBound = 0;
         int upperBound = distances.size() - 1;
         if (distance < distances.get(lowerBound)) {
