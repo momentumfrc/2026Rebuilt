@@ -18,7 +18,7 @@ public class HoodSerializedInformationHolder {
     private static HoodSerializedInformationHolder instance = null;
 
     @JsonCreator
-    public HoodSerializedInformationHolder(@JsonProperty("entries") List<Entry> entries) {
+    private HoodSerializedInformationHolder(@JsonProperty("entries") List<Entry> entries) {
         this.entries = entries.stream().sorted(Comparator.comparingDouble((entry) -> entry.distance())).toList();
     }
 
