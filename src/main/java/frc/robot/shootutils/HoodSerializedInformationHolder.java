@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -12,13 +13,13 @@ import java.util.List;
  */
 public class HoodSerializedInformationHolder {
 
-    private final ArrayList<Entry> entries;
+    private final List<Entry> entries;
 
     private static HoodSerializedInformationHolder instance = null;
 
     @JsonCreator
     public HoodSerializedInformationHolder(@JsonProperty("entries") List<Entry> entries) {
-        this.entries = new ArrayList<>(entries);
+        this.entries = entries.stream().sorted(Comparator.comparingDouble((entry) -> entry.distance())).toList();
     }
 
     public static HoodSerializedInformationHolder create() {
@@ -45,19 +46,8 @@ public class HoodSerializedInformationHolder {
     }
 
     public double getAngle(double distance) {
-        List<Double> distances = new ArrayList<>(entries.stream()
-                .map((entry) -> {
-                    return entry.getDistance();
-                })
-                .toList());
-        List<Double> angles = new ArrayList<>(entries.stream()
-                .map((entry) -> {
-                    return entry.getHoodAngle();
-                })
-                .toList());
-        distances.sort((d1, d2) -> {
-            return (int) Math.round(d1 - d2);
-        });
+        List<Double> distances = entries.stream().map(entry -> entry.distance()).toList();
+        List<Double> angles = entries.stream().map(entry -> entry.hoodAngle()).toList();
         int lowerBound = 0;
         int upperBound = distances.size() - 1;
         if (distance < distances.get(lowerBound)) {
@@ -80,19 +70,8 @@ public class HoodSerializedInformationHolder {
     }
 
     public double getFlywheelSpeed(double distance) {
-        List<Double> distances = new ArrayList<>(entries.stream()
-                .map((entry) -> {
-                    return entry.getDistance();
-                })
-                .toList());
-        List<Double> speeds = new ArrayList<>(entries.stream()
-                .map((entry) -> {
-                    return entry.getFlywheelSpeed();
-                })
-                .toList());
-        distances.sort((d1, d2) -> {
-            return (int) Math.round(d1 - d2);
-        });
+        List<Double> distances = entries.stream().map(entry -> entry.distance()).toList();
+        List<Double> speeds = entries.stream().map(entry -> entry.flywheelSpeed()).toList();
         int lowerBound = 0;
         int upperBound = distances.size() - 1;
         if (distance < distances.get(lowerBound)) {
@@ -114,11 +93,7 @@ public class HoodSerializedInformationHolder {
         return speeds.get(lowerBound) + (m * (distance - distances.get(lowerBound)));
     }
 
-    public static class Entry {
-
-        private double distance;
-        private double flywheelSpeed;
-        private double hoodAngle;
+    public static record Entry(double distance, double flywheelSpeed, double hoodAngle) {
 
         @JsonCreator
         public Entry(
@@ -128,18 +103,6 @@ public class HoodSerializedInformationHolder {
             this.distance = distance;
             this.flywheelSpeed = flywheelSpeed;
             this.hoodAngle = hoodAngle;
-        }
-
-        public double getFlywheelSpeed() {
-            return flywheelSpeed;
-        }
-
-        public double getDistance() {
-            return distance;
-        }
-
-        public double getHoodAngle() {
-            return hoodAngle;
         }
     }
 }
