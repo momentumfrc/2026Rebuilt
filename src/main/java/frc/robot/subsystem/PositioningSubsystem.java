@@ -27,12 +27,14 @@ public class PositioningSubsystem extends SubsystemBase {
 
     private final BooleanEntry turretPoseIsUpToDate;
 
+    private final Timer turretUpdateTimer;
     private Pose3d lastTurretPose = null;
-    private Timer turretUpdateTimer;
 
     public PositioningSubsystem(SwerveDrive swerveDrive, Supplier<Pose3d> turretLimelightPoseSupplier) {
         this.swerveDrive = swerveDrive;
         this.turretLimelightPoseSupplier = turretLimelightPoseSupplier;
+
+        this.turretUpdateTimer = new Timer();
 
         var table = NTHelpers.getTable("odometry");
         useMT2 = NTHelpers.getBooleanEntry(table, "Use MT2", true);
