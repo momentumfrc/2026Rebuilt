@@ -71,6 +71,10 @@ public class PositioningSubsystem extends SubsystemBase {
     // Logic adapted from https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
     private LimelightHelpers.PoseEstimate getPoseEstimateMT1(String limelightName) {
         var mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+        if (mt1 == null) {
+            return null;
+        }
+
         if (mt1.tagCount == 0) {
             return null;
         }
@@ -93,6 +97,9 @@ public class PositioningSubsystem extends SubsystemBase {
 
         LimelightHelpers.SetRobotOrientation(limelightName, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
         var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        if (mt2 == null) {
+            return null;
+        }
 
         if (Math.abs(gyroRateDegreesPerSecond) > 720) {
             return null;
@@ -116,12 +123,16 @@ public class PositioningSubsystem extends SubsystemBase {
 
         if (useMT2.get()) {
             var estimate = getPoseEstimateMT2(Constants.TURRET_LIMELIGHT_NAME);
-            swerveDrive.addVisionMeasurement(
-                    estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.5, 0.5, 9999999));
+            if (estimate != null) {
+                swerveDrive.addVisionMeasurement(
+                        estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.5, 0.5, 9999999));
+            }
         } else {
             var estimate = getPoseEstimateMT1(Constants.TURRET_LIMELIGHT_NAME);
-            swerveDrive.addVisionMeasurement(
-                    estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.7, 0.7, 9999999));
+            if (estimate != null) {
+                swerveDrive.addVisionMeasurement(
+                        estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.7, 0.7, 9999999));
+            }
         }
     }
 
@@ -140,12 +151,16 @@ public class PositioningSubsystem extends SubsystemBase {
 
         if (useMT2.get()) {
             var estimate = getPoseEstimateMT2(Constants.STATIONARY_LIMELIGHT_NAME);
-            swerveDrive.addVisionMeasurement(
-                    estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.5, 0.5, 9999999));
+            if (estimate != null) {
+                swerveDrive.addVisionMeasurement(
+                        estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.5, 0.5, 9999999));
+            }
         } else {
             var estimate = getPoseEstimateMT1(Constants.STATIONARY_LIMELIGHT_NAME);
-            swerveDrive.addVisionMeasurement(
-                    estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.7, 0.7, 9999999));
+            if (estimate != null) {
+                swerveDrive.addVisionMeasurement(
+                        estimate.pose, estimate.timestampSeconds, VecBuilder.fill(0.7, 0.7, 9999999));
+            }
         }
     }
 
