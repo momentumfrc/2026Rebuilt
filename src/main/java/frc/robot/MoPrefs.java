@@ -1,10 +1,12 @@
 package frc.robot;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VoltageUnit;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
 import frc.robot.molib.prefs.MoPrefsBase;
 import frc.robot.molib.prefs.Pref;
+import frc.robot.molib.prefs.UnitPref;
 
 public class MoPrefs extends MoPrefsBase {
     public static final LinearVelocityUnitPref swerveMaxAllowedSpeed =
@@ -15,6 +17,13 @@ public class MoPrefs extends MoPrefsBase {
             rotationsPerSecPref("Swerve Max Allowed Spin", Units.RotationsPerSecond.of(1));
     public static final AngularVelocityUnitPref swerveMaxPossibleSpin =
             rotationsPerSecPref("Swerve Max Possible Spin", Units.RotationsPerSecond.of(2));
+
+    // Intake prefereces
+    public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));
+
+    public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
+    public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
+            voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 }
