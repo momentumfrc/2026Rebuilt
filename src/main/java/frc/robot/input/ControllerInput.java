@@ -25,4 +25,9 @@ public class ControllerInput implements MoInput {
     public boolean getReZeroGyro() {
         return driveController.getBackButton();
     }
+
+    @Override
+    public boolean getShootRequest() {
+        return driveController.getAButton();
+    }
 }
