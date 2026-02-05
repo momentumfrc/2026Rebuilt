@@ -2,7 +2,6 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class KickerSubsystem extends SubsystemBase {
@@ -13,12 +12,11 @@ public class KickerSubsystem extends SubsystemBase {
 
     public KickerSubsystem() {
 
-        //TODO: device ID
+        // TODO: device ID
         motor = new TalonFX(0);
 
-        //to make things easier...
+        // to make things easier...
         motor.setNeutralMode(NeutralModeValue.Coast);
-
     }
 
     /**
@@ -36,5 +34,4 @@ public class KickerSubsystem extends SubsystemBase {
     public void stop() {
         run(0);
     }
-
 }

@@ -20,7 +20,6 @@ public class ShootCommand extends Command {
         this.input = input;
 
         addRequirements(this.kicker, this.indexer);
-
     }
 
     public void doShoot(boolean run) {
@@ -37,5 +36,4 @@ public class ShootCommand extends Command {
     public void execute() {
         doShoot(input.getShootRequest());
     }
-
 }
