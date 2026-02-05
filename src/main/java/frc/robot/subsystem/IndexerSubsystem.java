@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class IndexerSubsystem extends SubsystemBase {
 
@@ -12,7 +13,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     public IndexerSubsystem() {
         // TODO: device ID
-        motor = new TalonFX(0);
+        motor = new TalonFX(Constants.INDEXER_PORT.address());
 
         // to make our lives easier
         motor.setNeutralMode(NeutralModeValue.Coast);
