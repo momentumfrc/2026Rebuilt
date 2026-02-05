@@ -32,6 +32,6 @@ public class KickerSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        run(0);
+        motor.stopMotor();
     }
 }
