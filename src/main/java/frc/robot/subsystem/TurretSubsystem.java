@@ -1,5 +1,7 @@
 package frc.robot.subsystem;
 
+import static edu.wpi.first.math.util.Units.degreesToRadians;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -12,12 +14,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class TurretSubsystem extends SubsystemBase {
 
     // TODO: fill this out once the robot is designed
-    private static final Translation3d turretPositionInRobotCoordinates = new Translation3d();
-    private static final Transform3d limelightPositionRelativeToTurret = new Transform3d();
+    private static final Translation3d turretPositionInRobotCoordinates =
+            new Translation3d(-0.154305, -0.031750, 0.381);
+    private static final Transform3d limelightPositionRelativeToTurret =
+            new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
 
     private MutAngle mutTurretPosition = Units.Rotations.mutable(0);
-    private Pose3d turretPose = new Pose3d();
-
     /**
      * Get the current angular position of the turret about its axis of rotation.
      */
