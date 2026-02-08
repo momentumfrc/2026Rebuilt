@@ -10,10 +10,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
 import frc.robot.subsystem.DriveSubsystem;
+import frc.robot.subsystem.PositioningSubsystem;
+import frc.robot.subsystem.TurretSubsystem;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final TurretSubsystem turretSubsystem = new TurretSubsystem();
+    private final PositioningSubsystem visionSubsystem =
+            new PositioningSubsystem(driveSubsystem.getSwerveDrive(), turretSubsystem::getTurretLimelightPose);
 
     private Trigger resetFieldOrientedFwd;
 
