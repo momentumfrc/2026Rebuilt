@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -37,6 +38,7 @@ public class TurretSubsystem extends SubsystemBase {
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
 
     private TalonFX turretMotor;
+    private TalonFXConfiguration turretMotorConfig;
     private MoRotationEncoder turretEncoder;
 
     private MoAbsoluteEncoder absEncoder1;
@@ -52,11 +54,24 @@ public class TurretSubsystem extends SubsystemBase {
 
     public TurretSubsystem() {
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
-        var talonFxConfig = new TalonFXConfiguration()
+        this.turretMotorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
-                        .withInverted(InvertedValue.CounterClockwise_Positive));
-        turretMotor.getConfigurator().apply(talonFxConfig);
+                        .withInverted(InvertedValue.CounterClockwise_Positive))
+                .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                        .withReverseSoftLimitThreshold(MoPrefs.turretMinSoftLimit.get())
+                        .withReverseSoftLimitEnable(true)
+                        .withForwardSoftLimitThreshold(MoPrefs.turretMaxSoftLimit.get())
+                        .withForwardSoftLimitEnable(true));
+        turretMotor.getConfigurator().apply(turretMotorConfig);
+
+        MoPrefsUtils.multiSubscribe(MoPrefs.turretMinSoftLimit, MoPrefs.turretMaxSoftLimit, (min, max) -> {
+            turretMotorConfig
+                    .SoftwareLimitSwitch
+                    .withReverseSoftLimitThreshold((Angle) min)
+                    .withForwardSoftLimitThreshold((Angle) max);
+            turretMotor.getConfigurator().apply(turretMotorConfig);
+        });
 
         this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Radians);
         MoPrefs.turretRelativeEncoderScale.subscribe(turretEncoder::setConversionFactor, true);

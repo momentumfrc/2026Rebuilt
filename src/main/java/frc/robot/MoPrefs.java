@@ -31,6 +31,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> turretRelativeEncoderScale =
             encoderTicksPerRotationPref(
                     "Turret Relative Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(255.0 / 8.0));
+    public static final AngleUnitPref turretMinSoftLimit = degreesPref("Turret Min Soft Limit", Units.Degrees.of(5));
+    public static final AngleUnitPref turretMaxSoftLimit = degreesPref("Turret Max Soft Limit", Units.Degrees.of(355));
 
     public static final AngleUnitPref turretEncoder1Zero =
             rotationsPref("Turret Encoder 1 Zero", Units.Rotations.zero());
