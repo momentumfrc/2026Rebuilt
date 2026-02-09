@@ -8,6 +8,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -23,8 +25,11 @@ import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.encoder.absolute.MoAbsoluteEncoder;
 import frc.robot.molib.encoder.absolute.VernierEncoder;
+import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.prefs.MoPrefsUtils;
+import frc.robot.util.LimelightHelpers;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.NTHelpers.BooleanChangeSubscriber;
 
@@ -47,6 +52,7 @@ public class TurretSubsystem extends SubsystemBase {
     private VernierEncoder vernierEncoder;
 
     private MoTalonFxPID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
+    private PIDController turretRelativePid;
 
     private DoublePublisher relativeEncoderPublisher;
     private DoublePublisher absEncoder1Publisher;
@@ -98,6 +104,16 @@ public class TurretSubsystem extends SubsystemBase {
 
         this.turretAbsolutePid = new MoTalonFxPID<AngleUnit, AngularVelocityUnit>(
                 MoTalonFxPID.Type.POSITION, turretMotor, turretEncoder.getInternalEncoderUnits());
+        TunerUtils.forMoTalonFx(turretAbsolutePid, "Turret Absolute Position");
+
+        this.turretRelativePid = new PIDController(0, 0, 0);
+        MoTuner.builder("Turret Relative Alignment")
+                .p(turretRelativePid::setP)
+                .i(turretRelativePid::setI)
+                .d(turretRelativePid::setD)
+                .iZone(turretRelativePid::setIZone)
+                .measurement(() -> LimelightHelpers.getTX(Constants.TURRET_LIMELIGHT_NAME))
+                .safeBuild();
 
         var table = NTHelpers.getTable("turret");
         relativeEncoderPublisher = table.getDoubleTopic("Relative Encoder").publish();
