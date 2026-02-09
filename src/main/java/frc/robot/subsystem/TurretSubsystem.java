@@ -8,17 +8,19 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
@@ -29,7 +31,7 @@ import frc.robot.molib.motune.MoTuner;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.prefs.MoPrefsUtils;
-import frc.robot.util.LimelightHelpers;
+import frc.robot.util.LimelightTargetingHelper;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.NTHelpers.BooleanChangeSubscriber;
 
@@ -54,10 +56,13 @@ public class TurretSubsystem extends SubsystemBase {
     private MoTalonFxPID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private PIDController turretRelativePid;
 
+    private LimelightTargetingHelper targetingHelper;
+
     private DoublePublisher relativeEncoderPublisher;
     private DoublePublisher absEncoder1Publisher;
     private DoublePublisher absEncoder2Publisher;
     private DoublePublisher vernierEncoderPublisher;
+    private IntegerPublisher targetTagPublisher;
 
     private BooleanChangeSubscriber coastMotorSubscriber;
 
@@ -106,13 +111,16 @@ public class TurretSubsystem extends SubsystemBase {
                 MoTalonFxPID.Type.POSITION, turretMotor, turretEncoder.getInternalEncoderUnits());
         TunerUtils.forMoTalonFx(turretAbsolutePid, "Turret Absolute Position");
 
+        this.targetingHelper = new LimelightTargetingHelper(Constants.TURRET_LIMELIGHT_NAME);
+
         this.turretRelativePid = new PIDController(0, 0, 0);
         MoTuner.builder("Turret Relative Alignment")
                 .p(turretRelativePid::setP)
                 .i(turretRelativePid::setI)
                 .d(turretRelativePid::setD)
                 .iZone(turretRelativePid::setIZone)
-                .measurement(() -> LimelightHelpers.getTX(Constants.TURRET_LIMELIGHT_NAME))
+                .parameter("tolerance", turretRelativePid::setTolerance)
+                .measurement(targetingHelper::getTx)
                 .safeBuild();
 
         var table = NTHelpers.getTable("turret");
@@ -120,6 +128,7 @@ public class TurretSubsystem extends SubsystemBase {
         absEncoder1Publisher = table.getDoubleTopic("Abs Encoder 1").publish();
         absEncoder2Publisher = table.getDoubleTopic("Abs Encoder 2").publish();
         vernierEncoderPublisher = table.getDoubleTopic("Vernier Encoder").publish();
+        targetTagPublisher = table.getIntegerTopic("Target Tag ID").publish();
 
         coastMotorSubscriber = NTHelpers.getBooleanChangeSubscriber(table, "Coast Motor", false);
     }
@@ -147,11 +156,28 @@ public class TurretSubsystem extends SubsystemBase {
         return getTurretPose().plus(limelightPositionRelativeToTurret);
     }
 
+    public void alignAbsolute(Angle angle) {
+        turretAbsolutePid.setPositionReference(angle);
+    }
+
+    public void alignRelative() {
+        targetingHelper.targetNearestTag(DriverStation.getAlliance().orElse(Alliance.Red));
+        if (targetingHelper.targetIsVisible() == false) {
+            // No target visible
+            turretMotor.stopMotor();
+            return;
+        }
+
+        double result = turretRelativePid.calculate(targetingHelper.getTx(), 0);
+        turretMotor.set(result);
+    }
+
     @Override
     public void periodic() {
         relativeEncoderPublisher.set(turretEncoder.getPosition().in(Units.Rotations));
         absEncoder1Publisher.set(absEncoder1.getPosition().in(Units.Rotations));
         absEncoder2Publisher.set(absEncoder2.getPosition().in(Units.Rotations));
+        targetTagPublisher.set(targetingHelper.getTargetId());
 
         // The vernier encoder calculation is iterative, so it might be too expensive to calculate it on every loop.
         // But it's also incredibly useful information for debugging, so let's keep this line for now and remove it
