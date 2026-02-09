@@ -26,6 +26,7 @@ import frc.robot.molib.encoder.absolute.VernierEncoder;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.util.NTHelpers;
+import frc.robot.util.NTHelpers.BooleanChangeSubscriber;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
@@ -51,6 +52,8 @@ public class TurretSubsystem extends SubsystemBase {
     private DoublePublisher absEncoder1Publisher;
     private DoublePublisher absEncoder2Publisher;
     private DoublePublisher vernierEncoderPublisher;
+
+    private BooleanChangeSubscriber coastMotorSubscriber;
 
     public TurretSubsystem() {
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
@@ -101,6 +104,8 @@ public class TurretSubsystem extends SubsystemBase {
         absEncoder1Publisher = table.getDoubleTopic("Abs Encoder 1").publish();
         absEncoder2Publisher = table.getDoubleTopic("Abs Encoder 2").publish();
         vernierEncoderPublisher = table.getDoubleTopic("Vernier Encoder").publish();
+
+        coastMotorSubscriber = NTHelpers.getBooleanChangeSubscriber(table, "Coast Motor", false);
     }
 
     /**
@@ -136,5 +141,13 @@ public class TurretSubsystem extends SubsystemBase {
         // But it's also incredibly useful information for debugging, so let's keep this line for now and remove it
         // if it becomes a problem.
         vernierEncoderPublisher.set(vernierEncoder.getPosition().in(Units.Rotations));
+
+        var coastMotor = coastMotorSubscriber.get();
+        if (coastMotor != BooleanChangeSubscriber.Value.NO_CHANGE) {
+            turretMotorConfig.MotorOutput.NeutralMode = (coastMotor == BooleanChangeSubscriber.Value.TRUE)
+                    ? NeutralModeValue.Coast
+                    : NeutralModeValue.Brake;
+            turretMotor.getConfigurator().apply(turretMotorConfig);
+        }
     }
 }
