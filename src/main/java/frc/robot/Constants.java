@@ -6,9 +6,15 @@ public class Constants {
 
     public static final HIDPort DRIVE_CONTORLLER_PORT = new HIDPort(0);
 
+    public static final CANAddress TURRET_MOTOR = new CANAddress(0);
+    public static final DIOPort TURRET_ABSOLUTE_ENCODER_1 = new DIOPort(0);
+    public static final DIOPort TURRET_ABSOLUTE_ENCODER_2 = new DIOPort(1);
+
     public static record CANAddress(int address) {}
 
     public static record HIDPort(int hidport) {}
+
+    public static record DIOPort(int dioPort) {}
 
     public static record PWMPort(int port) {}
 }

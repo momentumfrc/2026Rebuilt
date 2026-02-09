@@ -2,30 +2,97 @@ package frc.robot.subsystem;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.MoPrefs;
+import frc.robot.molib.encoder.MoRotationEncoder;
+import frc.robot.molib.encoder.absolute.MoAbsoluteEncoder;
+import frc.robot.molib.encoder.absolute.VernierEncoder;
+import frc.robot.molib.pid.MoTalonFxPID;
+import frc.robot.molib.prefs.MoPrefsUtils;
+import frc.robot.util.NTHelpers;
 
 public class TurretSubsystem extends SubsystemBase {
+    private static final int MAIN_GEAR_TOOTH_COUNT = 85;
+    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 15;
+    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 16;
 
-    // TODO: fill this out once the robot is designed
     private static final Translation3d turretPositionInRobotCoordinates =
             new Translation3d(-0.154305, -0.031750, 0.381);
     private static final Transform3d limelightPositionRelativeToTurret =
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
 
-    private MutAngle mutTurretPosition = Units.Rotations.mutable(0);
+    private TalonFX turretMotor;
+    private MoRotationEncoder turretEncoder;
+
+    private MoAbsoluteEncoder absEncoder1;
+    private MoAbsoluteEncoder absEncoder2;
+    private VernierEncoder vernierEncoder;
+
+    private MoTalonFxPID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
+
+    private DoublePublisher relativeEncoderPublisher;
+    private DoublePublisher absEncoder1Publisher;
+    private DoublePublisher absEncoder2Publisher;
+    private DoublePublisher vernierEncoderPublisher;
+
+    public TurretSubsystem() {
+        this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
+        var talonFxConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(InvertedValue.CounterClockwise_Positive));
+        turretMotor.getConfigurator().apply(talonFxConfig);
+
+        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Radians);
+        MoPrefs.turretRelativeEncoderScale.subscribe(turretEncoder::setConversionFactor, true);
+
+        this.absEncoder1 = MoAbsoluteEncoder.forDio(Constants.TURRET_ABSOLUTE_ENCODER_1.dioPort());
+        this.absEncoder2 = MoAbsoluteEncoder.forDio(Constants.TURRET_ABSOLUTE_ENCODER_2.dioPort());
+        this.vernierEncoder = new VernierEncoder(
+                absEncoder1,
+                absEncoder2,
+                new VernierEncoder.GearRatios(
+                        MAIN_GEAR_TOOTH_COUNT, ENCODER_1_GEAR_TOOTH_COUNT, ENCODER_2_GEAR_TOOTH_COUNT));
+        MoPrefsUtils.multiSubscribe(
+                MoPrefs.turretEncoder1Zero,
+                MoPrefs.turretEncoder2Zero,
+                (zero1, zero2) -> {
+                    absEncoder1.setEncoderZero((Angle) zero1);
+                    absEncoder2.setEncoderZero((Angle) zero2);
+                    turretEncoder.setPosition(vernierEncoder.getPosition());
+                },
+                true);
+
+        this.turretAbsolutePid = new MoTalonFxPID<AngleUnit, AngularVelocityUnit>(
+                MoTalonFxPID.Type.POSITION, turretMotor, turretEncoder.getInternalEncoderUnits());
+
+        var table = NTHelpers.getTable("turret");
+        relativeEncoderPublisher = table.getDoubleTopic("Relative Encoder").publish();
+        absEncoder1Publisher = table.getDoubleTopic("Abs Encoder 1").publish();
+        absEncoder2Publisher = table.getDoubleTopic("Abs Encoder 2").publish();
+        vernierEncoderPublisher = table.getDoubleTopic("Vernier Encoder").publish();
+    }
+
     /**
      * Get the current angular position of the turret about its axis of rotation.
      */
     public Angle getTurretYaw() {
-        // TODO: update the mutable measure with the actual position
-        return mutTurretPosition;
+        return turretEncoder.getPosition();
     }
 
     /**
@@ -42,5 +109,17 @@ public class TurretSubsystem extends SubsystemBase {
      */
     public Pose3d getTurretLimelightPose() {
         return getTurretPose().plus(limelightPositionRelativeToTurret);
+    }
+
+    @Override
+    public void periodic() {
+        relativeEncoderPublisher.set(turretEncoder.getPosition().in(Units.Rotations));
+        absEncoder1Publisher.set(absEncoder1.getPosition().in(Units.Rotations));
+        absEncoder2Publisher.set(absEncoder2.getPosition().in(Units.Rotations));
+
+        // The vernier encoder calculation is iterative, so it might be too expensive to calculate it on every loop.
+        // But it's also incredibly useful information for debugging, so let's keep this line for now and remove it
+        // if it becomes a problem.
+        vernierEncoderPublisher.set(vernierEncoder.getPosition().in(Units.Rotations));
     }
 }
