@@ -26,7 +26,7 @@ public class ControllerInput implements MoInput {
     public boolean getReZeroGyro() {
         return driveController.getBackButton();
     }
-    
+
     @Override
     public boolean getRunIntake() {
         return operatorController.getYButton();

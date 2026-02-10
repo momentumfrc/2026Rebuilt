@@ -18,11 +18,13 @@ public class WristCommands {
     }
 
     public static Command deployIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return Commands.deadline(new MoveIntakeWristCommand(wrist, Direction.OUT).andThen(holdIntakeWristCommand(wrist, Direction.OUT)));
+        return Commands.deadline(
+                new MoveIntakeWristCommand(wrist, Direction.OUT).andThen(holdIntakeWristCommand(wrist, Direction.OUT)));
     }
 
     public static Command retractIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return Commands.deadline(new MoveIntakeWristCommand(wrist, Direction.IN).andThen(holdIntakeWristCommand(wrist, Direction.IN)));
+        return Commands.deadline(
+                new MoveIntakeWristCommand(wrist, Direction.IN).andThen(holdIntakeWristCommand(wrist, Direction.IN)));
     }
 
     public static Command intakeWristDefaultCommand(IntakeWristSubsystem wrist) {

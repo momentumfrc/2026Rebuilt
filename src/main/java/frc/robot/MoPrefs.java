@@ -30,7 +30,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
             ampsPref("Intake Wrist Smart Current Limit", Units.Amps.of(20));
 
-    public static final TimeUnitPref intakeCurrentWristTime = secondsPref("Intake Current Wrist Time", Units.Seconds.one());
+    public static final TimeUnitPref intakeCurrentWristTime =
+            secondsPref("Intake Current Wrist Time", Units.Seconds.one());
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 }

@@ -13,7 +13,7 @@ public class RollerCommands {
         return idleIntakeRollerCommand(roller);
     }
 
-    public static Command runIntakeRollerCommand (IntakeRollerSubsystem roller) {
+    public static Command runIntakeRollerCommand(IntakeRollerSubsystem roller) {
         return Commands.run(roller::rollerIntake, roller);
     }
 }

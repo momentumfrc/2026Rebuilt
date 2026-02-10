@@ -14,5 +14,4 @@ public interface MoInput {
     public abstract boolean getExtendIntake();
 
     public abstract boolean getRetractIntake();
-
 }

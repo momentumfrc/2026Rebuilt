@@ -9,7 +9,7 @@ import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
 
-public class IntakeRollerSubsystem extends SubsystemBase{
+public class IntakeRollerSubsystem extends SubsystemBase {
     private final SparkFlex intakeRoller;
 
     private final MoSparkConfigurator intakeRollerConfig;

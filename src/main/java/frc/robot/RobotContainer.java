@@ -17,7 +17,7 @@ import frc.robot.subsystem.IntakeWristSubsystem;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
-    //Drive
+    // Drive
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
 
     private Trigger resetFieldOrientedFwd;
@@ -26,7 +26,7 @@ public class RobotContainer {
 
     private final Command driveFieldOrientedAngularVelocity;
 
-    //Intake
+    // Intake
     private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
     private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
 
@@ -70,7 +70,7 @@ public class RobotContainer {
         // Drive Triggers
         resetFieldOrientedFwd = new Trigger(() -> input.getReZeroGyro());
 
-        //Intake Triggers
+        // Intake Triggers
         runIntakeTrigger = new Trigger(() -> input.getRunIntake());
         extendIntakeTrigger = new Trigger(() -> input.getExtendIntake());
         retractIntakeTrigger = new Trigger(() -> input.getRetractIntake());
@@ -78,7 +78,7 @@ public class RobotContainer {
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
-        //Intake Trigger Bindings
+        // Intake Trigger Bindings
         runIntakeTrigger.onTrue(runRollerCommand);
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
