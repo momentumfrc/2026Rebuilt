@@ -6,6 +6,8 @@ public class Constants {
 
     public static final HIDPort DRIVE_CONTORLLER_PORT = new HIDPort(0);
 
+    public static final CANAddress HOOD_PORT = new CANAddress(0);
+
     public static record CANAddress(int address) {}
 
     public static record HIDPort(int hidport) {}
