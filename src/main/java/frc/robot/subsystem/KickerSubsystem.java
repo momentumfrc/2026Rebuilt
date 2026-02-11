@@ -4,10 +4,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.MoPrefs;
 
 public class KickerSubsystem extends SubsystemBase {
-
-    private final double DEFAULT_RUN_SPEED = 0.6;
 
     private final TalonFX motor;
 
@@ -29,7 +28,7 @@ public class KickerSubsystem extends SubsystemBase {
     }
 
     public void run() {
-        run(DEFAULT_RUN_SPEED);
+        run(MoPrefs.kickerRunPercentage.get().baseUnitMagnitude());
     }
 
     public void stop() {
