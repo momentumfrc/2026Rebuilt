@@ -17,9 +17,9 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngularVelocityUnitPref swerveMaxPossibleSpin =
             rotationsPerSecPref("Swerve Max Possible Spin", Units.RotationsPerSecond.of(2));
     public static final DimensionlessUnitPref kickerRunPercentage =
-            percentPref("Kicker Run Percentage", Units.Percent.of(0.6));
+            percentPref("Kicker Run Percentage", Units.Percent.of(60));
     public static final DimensionlessUnitPref indexerRunPercentage =
-            percentPref("Indexer Run Percentage", Units.Percent.of(0.6));
+            percentPref("Indexer Run Percentage", Units.Percent.of(60));
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 }
