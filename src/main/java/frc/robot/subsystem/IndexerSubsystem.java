@@ -26,7 +26,7 @@ public class IndexerSubsystem extends SubsystemBase {
     }
 
     public void run() {
-        run(MoPrefs.indexerRunPercentage.get().baseUnitMagnitude());
+        run(MoPrefs.indexerRunPercentage.get().in(Units.Value));
     }
 
     public void stop() {
