@@ -3,9 +3,11 @@ package frc.robot.subsystem;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.molib.motune.MoTuner;
+import frc.robot.shootutils.ShootMath;
 
 public class HoodSubsystem extends SubsystemBase {
 
@@ -24,6 +26,15 @@ public class HoodSubsystem extends SubsystemBase {
 
         MoTuner.builder("Hood PID").d(pid::setD).i(pid::setI).p(pid::setP).iZone(pid::setIZone).measurement(motor.getPosition()::getValueAsDouble).parameter("tolerance", pid::setTolerance).safeBuild();
 
+    }
+
+    /**
+     * Sets the hood position calculated by {@link ShootMath}.
+     * @param robot the position of the robot relative to the field
+     * @param target the position of the target relative to the field
+     */
+    public void setCalculatedPosition(Translation2d robot, Translation2d target) {
+        setPosition(ShootMath.hoodAimAngle(robot, target));
     }
 
     /**
