@@ -10,6 +10,8 @@ public class Constants {
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_1 = new DIOPort(0);
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_2 = new DIOPort(1);
 
+    public static final CANAddress SHOOTER_ADDRESS = new CANAddress(0);
+
     public static record CANAddress(int address) {}
 
     public static record HIDPort(int hidport) {}
