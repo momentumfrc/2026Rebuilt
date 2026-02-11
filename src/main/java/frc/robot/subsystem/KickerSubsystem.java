@@ -27,7 +27,7 @@ public class KickerSubsystem extends SubsystemBase {
     }
 
     public void run() {
-        run(MoPrefs.kickerRunPercentage.get().baseUnitMagnitude());
+        run(MoPrefs.kickerRunPercentage.get().in(Units.Value));
     }
 
     public void stop() {
