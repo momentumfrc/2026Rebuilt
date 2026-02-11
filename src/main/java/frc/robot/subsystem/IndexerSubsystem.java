@@ -11,7 +11,6 @@ public class IndexerSubsystem extends SubsystemBase {
     private final TalonFX motor;
 
     public IndexerSubsystem() {
-        // TODO: device ID
         motor = new TalonFX(Constants.INDEXER_PORT.address());
 
         // to make our lives easier

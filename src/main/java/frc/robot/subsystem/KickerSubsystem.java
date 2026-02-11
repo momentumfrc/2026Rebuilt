@@ -12,7 +12,6 @@ public class KickerSubsystem extends SubsystemBase {
 
     public KickerSubsystem() {
 
-        // TODO: device ID
         motor = new TalonFX(Constants.KICKER_PORT.address());
 
         // to make things easier...
