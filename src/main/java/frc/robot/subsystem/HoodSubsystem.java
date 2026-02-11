@@ -1,7 +1,6 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,8 +23,14 @@ public class HoodSubsystem extends SubsystemBase {
 
         pid = new PIDController(0, 0, 0);
 
-        MoTuner.builder("Hood PID").d(pid::setD).i(pid::setI).p(pid::setP).iZone(pid::setIZone).measurement(motor.getPosition()::getValueAsDouble).parameter("tolerance", pid::setTolerance).safeBuild();
-
+        MoTuner.builder("Hood PID")
+                .d(pid::setD)
+                .i(pid::setI)
+                .p(pid::setP)
+                .iZone(pid::setIZone)
+                .measurement(motor.getPosition()::getValueAsDouble)
+                .parameter("tolerance", pid::setTolerance)
+                .safeBuild();
     }
 
     /**
@@ -51,5 +56,4 @@ public class HoodSubsystem extends SubsystemBase {
     public void moveToPosition() {
         motor.set(pid.calculate(motor.getPosition().getValueAsDouble(), position));
     }
-
 }
