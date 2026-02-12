@@ -7,9 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ShootCommand;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
 import frc.robot.subsystem.DriveSubsystem;
+import frc.robot.subsystem.HoodSubsystem;
+import frc.robot.subsystem.IndexerSubsystem;
+import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.PositioningSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import swervelib.SwerveInputStream;
@@ -19,6 +23,9 @@ public class RobotContainer {
     private final TurretSubsystem turretSubsystem = new TurretSubsystem();
     private final PositioningSubsystem visionSubsystem =
             new PositioningSubsystem(driveSubsystem.getSwerveDrive(), turretSubsystem::getTurretLimelightPose);
+    private final IndexerSubsystem indexer = new IndexerSubsystem();
+    private final KickerSubsystem kicker = new KickerSubsystem();
+    private final HoodSubsystem hood = new HoodSubsystem();
 
     private Trigger resetFieldOrientedFwd;
 
@@ -27,6 +34,7 @@ public class RobotContainer {
     private final SwerveInputStream driveAngularVelocity;
 
     private final Command driveFieldOrientedAngularVelocity;
+    private final ShootCommand shootCommand;
 
     public RobotContainer() {
         driveAngularVelocity = SwerveInputStream.of(
@@ -40,12 +48,17 @@ public class RobotContainer {
 
         driveFieldOrientedAngularVelocity = driveSubsystem.driveFieldOriented(driveAngularVelocity);
 
+        shootCommand = new ShootCommand(driveSubsystem, kicker, indexer, hood, input);
+
         configureBindings();
         setDefaultCommands();
     }
 
     public void setDefaultCommands() {
         driveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        hood.setDefaultCommand(shootCommand);
+        indexer.setDefaultCommand(shootCommand);
+        kicker.setDefaultCommand(shootCommand);
     }
 
     private void configureBindings() {

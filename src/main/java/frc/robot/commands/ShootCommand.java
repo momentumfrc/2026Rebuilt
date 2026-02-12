@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.input.ControllerInput;
+import frc.robot.input.MoInput;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
@@ -15,12 +15,13 @@ public class ShootCommand extends Command {
     private HoodSubsystem hood;
     private DriveSubsystem drive;
 
-    private ControllerInput input;
+    private MoInput input;
 
-    //TODO: put actual coords
+    // TODO: put actual coords
     public static final Translation2d TARGET_POSITION = new Translation2d(2, 2);
 
-    public ShootCommand(DriveSubsystem drive, KickerSubsystem kicker, IndexerSubsystem indexer, HoodSubsystem hood, ControllerInput input) {
+    public ShootCommand(
+            DriveSubsystem drive, KickerSubsystem kicker, IndexerSubsystem indexer, HoodSubsystem hood, MoInput input) {
 
         this.kicker = kicker;
         this.indexer = indexer;
