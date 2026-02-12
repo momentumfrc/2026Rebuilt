@@ -47,6 +47,5 @@ public class KickerSubsystem extends SubsystemBase {
 
     public void stop() {
         pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
-        ;
     }
 }
