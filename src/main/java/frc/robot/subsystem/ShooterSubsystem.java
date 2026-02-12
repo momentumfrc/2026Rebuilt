@@ -1,30 +1,37 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.MoPrefs;
+import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.pid.MoTalonFxPID;
+import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.ShootMath;
 
 public class ShooterSubsystem extends SubsystemBase {
 
     private final TalonFX motor;
-    private PIDController pid;
+    private MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
+    private MoRotationEncoder encoder;
 
     public ShooterSubsystem() {
 
         motor = new TalonFX(Constants.SHOOTER_ADDRESS.address());
 
-        pid = new PIDController(0, 0, 0);
+        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
 
         MoTuner.builder("Shooter PID")
                 .p(pid::setP)
                 .d(pid::setD)
                 .i(pid::setI)
                 .iZone(pid::setIZone)
-                .parameter("tolerance", pid::setTolerance)
                 .measurement(this::getMotorVelocity)
                 .safeBuild();
     }
@@ -43,14 +50,14 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param speed the speed in rotations per second to run the motor.
      */
     public void runAtSpeed(double rotationsPerSecond) {
-        motor.set(pid.calculate(getMotorVelocity(), rotationsPerSecond));
+        pid.setVelocityReference(Units.RevolutionsPerSecond.of(rotationsPerSecond));
     }
 
     public boolean isUpToSpeed() {
-        return pid.atSetpoint();
+        return Math.abs(getMotorVelocity() - pid.getSetpoint()) < MoPrefs.flywheelSpeedTolerance.get().baseUnitMagnitude();
     }
 
     public double getMotorVelocity() {
-        return motor.getVelocity().getValueAsDouble();
+        return encoder.getVelocityInEncoderUnits();
     }
 }
