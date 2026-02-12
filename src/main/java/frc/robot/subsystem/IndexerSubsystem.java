@@ -47,6 +47,5 @@ public class IndexerSubsystem extends SubsystemBase {
 
     public void stop() {
         pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
-        ;
     }
 }
