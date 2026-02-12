@@ -1,7 +1,6 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,8 +19,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
         pid = new PIDController(0, 0, 0);
 
-        MoTuner.builder("Shooter PID").p(pid::setP).d(pid::setD).i(pid::setI).iZone(pid::setIZone).parameter("tolerance", pid::setTolerance).measurement(this::getMotorVelocity).safeBuild();
-
+        MoTuner.builder("Shooter PID")
+                .p(pid::setP)
+                .d(pid::setD)
+                .i(pid::setI)
+                .iZone(pid::setIZone)
+                .parameter("tolerance", pid::setTolerance)
+                .measurement(this::getMotorVelocity)
+                .safeBuild();
     }
 
     /**
@@ -48,5 +53,4 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getMotorVelocity() {
         return motor.getVelocity().getValueAsDouble();
     }
-
 }
