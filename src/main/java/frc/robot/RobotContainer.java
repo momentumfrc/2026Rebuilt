@@ -14,11 +14,16 @@ import frc.robot.input.MoInput;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.IntakeRollerSubsystem;
 import frc.robot.subsystem.IntakeWristSubsystem;
+import frc.robot.subsystem.PositioningSubsystem;
+import frc.robot.subsystem.TurretSubsystem;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
     // Drive
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final TurretSubsystem turretSubsystem = new TurretSubsystem();
+    private final PositioningSubsystem visionSubsystem =
+            new PositioningSubsystem(driveSubsystem.getSwerveDrive(), turretSubsystem::getTurretLimelightPose);
 
     private Trigger resetFieldOrientedFwd;
 
