@@ -8,4 +8,6 @@ public interface MoInput {
     public abstract double getDriveTurnRequest();
 
     public abstract boolean getReZeroGyro();
+
+    public abstract boolean getShootRequest();
 }
