@@ -2,36 +2,51 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.encoder.MoRotationEncoder;
+import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.pid.MoTalonFxPID;
+import frc.robot.molib.pid.MoTalonFxPID.Type;
 
 public class KickerSubsystem extends SubsystemBase {
 
     private final TalonFX motor;
 
+    private final MoRotationEncoder encoder;
+
+    private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
+
     public KickerSubsystem() {
 
         motor = new TalonFX(Constants.KICKER_PORT.address());
+
+        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+
+        pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
+
+        MoTuner.builder("Kicker PID")
+                .d(pid::setD)
+                .i(pid::setI)
+                .p(pid::setP)
+                .iZone(pid::setIZone)
+                .measurement(encoder::getPositionInEncoderUnits)
+                .safeBuild();
 
         // to make things easier...
         motor.setNeutralMode(NeutralModeValue.Coast);
     }
 
-    /**
-     * Runs the motor at the given speed.
-     * @param speed speed to run motor at, from [-1.0, 1.0]
-     */
-    public void run(double speed) {
-        motor.set(speed);
-    }
-
     public void run() {
-        run(MoPrefs.kickerRunPercentage.get().in(Units.Value));
+        pid.setVelocityReference(MoPrefs.kickerRunSpeed.get());
     }
 
     public void stop() {
-        motor.stopMotor();
+        pid.setVelocityReference(Units.RevolutionsPerSecond.of(0));
+        ;
     }
 }
