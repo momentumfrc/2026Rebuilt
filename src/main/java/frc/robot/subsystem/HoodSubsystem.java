@@ -1,9 +1,6 @@
 package frc.robot.subsystem;
 
-import static edu.wpi.first.units.Units.Revolutions;
-
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
@@ -57,5 +54,4 @@ public class HoodSubsystem extends SubsystemBase {
     public void setPosition(double position) {
         pid.setPositionReference(Units.Revolutions.of(position));
     }
-
 }
