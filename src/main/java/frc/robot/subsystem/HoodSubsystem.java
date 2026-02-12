@@ -1,35 +1,43 @@
 package frc.robot.subsystem;
 
+import static edu.wpi.first.units.Units.Revolutions;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.pid.MoTalonFxPID;
+import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.ShootMath;
 
 public class HoodSubsystem extends SubsystemBase {
 
     private final TalonFX motor;
-    private PIDController pid;
+    private MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
 
-    private double position;
+    private MoRotationEncoder encoder;
 
     public HoodSubsystem() {
 
         motor = new TalonFX(Constants.HOOD_PORT.address());
 
-        motor.setPosition(0);
+        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        encoder.setPosition(Units.Revolutions.of(0));
 
-        pid = new PIDController(0, 0, 0);
+        pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
 
         MoTuner.builder("Hood PID")
                 .d(pid::setD)
                 .i(pid::setI)
                 .p(pid::setP)
                 .iZone(pid::setIZone)
-                .measurement(motor.getPosition()::getValueAsDouble)
-                .parameter("tolerance", pid::setTolerance)
+                .measurement(encoder::getPositionInEncoderUnits)
                 .safeBuild();
     }
 
@@ -47,13 +55,7 @@ public class HoodSubsystem extends SubsystemBase {
      * @param position the desired position of the hood, in rotations
      */
     public void setPosition(double position) {
-        this.position = position;
+        pid.setPositionReference(Units.Revolutions.of(position));
     }
 
-    /**
-     * Moves to the desired position.
-     */
-    public void moveToPosition() {
-        motor.set(pid.calculate(motor.getPosition().getValueAsDouble(), position));
-    }
 }
