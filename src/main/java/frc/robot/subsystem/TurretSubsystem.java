@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -34,6 +35,7 @@ import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.util.LimelightTargetingHelper;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.NTHelpers.BooleanChangeSubscriber;
+import frc.robot.util.TurretAngleHelper;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
@@ -49,9 +51,18 @@ public class TurretSubsystem extends SubsystemBase {
     private TalonFXConfiguration turretMotorConfig;
     private MoRotationEncoder turretEncoder;
 
+    /*
+     * Notes about the encoders.
+     * <ul>
+     * <li> Positive rotation is counter-clockwise. This applies to all encoders and the motor.
+     * <li> The absolute encoder is zeroed at the clockwise-most position of the mechanism.
+     * <li> The relative encoder is zeroed pointing forward on the robot (towards the intake).
+     * </ul>
+     */
     private MoAbsoluteEncoder absEncoder1;
     private MoAbsoluteEncoder absEncoder2;
     private VernierEncoder vernierEncoder;
+    private TurretAngleHelper angleHelper;
 
     private MoTalonFxPID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private PIDController turretRelativePid;
@@ -87,6 +98,16 @@ public class TurretSubsystem extends SubsystemBase {
             turretMotor.getConfigurator().apply(turretMotorConfig);
         });
 
+        MoPrefsUtils.multiSubscribe(
+                MoPrefs.turretMinSoftLimit,
+                MoPrefs.turretMaxSoftLimit,
+                (min, max) -> {
+                    angleHelper = new TurretAngleHelper(
+                            Rotation2d.fromRadians(min.in(Units.Radians)),
+                            Rotation2d.fromRadians(max.in(Units.Radians)));
+                },
+                true);
+
         this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Radians);
         MoPrefs.turretRelativeEncoderScale.subscribe(turretEncoder::setConversionFactor, true);
 
@@ -100,10 +121,11 @@ public class TurretSubsystem extends SubsystemBase {
         MoPrefsUtils.multiSubscribe(
                 MoPrefs.turretEncoder1Zero,
                 MoPrefs.turretEncoder2Zero,
-                (zero1, zero2) -> {
+                MoPrefs.turretRelativeEncoderOffset,
+                (zero1, zero2, offset) -> {
                     absEncoder1.setEncoderZero((Angle) zero1);
                     absEncoder2.setEncoderZero((Angle) zero2);
-                    turretEncoder.setPosition(vernierEncoder.getPosition());
+                    turretEncoder.setPosition(vernierEncoder.getPosition().plus(offset));
                 },
                 true);
 
@@ -157,7 +179,7 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     public void alignAbsolute(Angle angle) {
-        turretAbsolutePid.setPositionReference(angle);
+        turretAbsolutePid.setPositionReference(angleHelper.turretAngleModulus(angle));
     }
 
     public void alignRelative() {
@@ -174,7 +196,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        relativeEncoderPublisher.set(turretEncoder.getPosition().in(Units.Rotations));
+        relativeEncoderPublisher.set(turretEncoder.getPosition().in(Units.Degrees));
         absEncoder1Publisher.set(absEncoder1.getPosition().in(Units.Rotations));
         absEncoder2Publisher.set(absEncoder2.getPosition().in(Units.Rotations));
         targetTagPublisher.set(targetingHelper.getTargetId());

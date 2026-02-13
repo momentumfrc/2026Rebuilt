@@ -2,12 +2,17 @@ package frc.robot.util;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.MutAngle;
 
 public class TurretAngleHelper {
     private static final double FLOAT_DELTA = 1e-9;
 
     private final Rotation2d minAngle;
     private final Rotation2d maxAngle;
+
+    private MutAngle mutAngle = Units.Radians.mutable(0);
 
     public TurretAngleHelper(Rotation2d minAngle, Rotation2d maxAngle) {
         if (maxAngle.getRadians() <= minAngle.getRadians()) {
@@ -22,7 +27,14 @@ public class TurretAngleHelper {
      * Limits values to within [minAngle, maxAngle]. Returns null if a value is out of range.
      */
     public Rotation2d turretAngleModulus(Rotation2d angle) {
-        double rads = angle.getRadians();
+        return Rotation2d.fromRadians(turretAngleModulusRads(angle.getRadians()));
+    }
+
+    public Angle turretAngleModulus(Angle angle) {
+        return mutAngle.mut_replace(turretAngleModulusRads(angle.in(Units.Radians)), Units.Radians);
+    }
+
+    private double turretAngleModulusRads(double rads) {
         double min = minAngle.getRadians();
         double max = maxAngle.getRadians();
 
@@ -34,9 +46,9 @@ public class TurretAngleHelper {
         }
 
         if (min - rads > FLOAT_DELTA || rads - max > FLOAT_DELTA) {
-            return null;
+            return Double.NaN;
         }
 
-        return Rotation2d.fromRadians(rads);
+        return rads;
     }
 }
