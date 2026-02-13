@@ -34,7 +34,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngleUnitPref turretMinSoftLimit = degreesPref("Turret Min Soft Limit", Units.Degrees.of(5));
     public static final AngleUnitPref turretMaxSoftLimit = degreesPref("Turret Max Soft Limit", Units.Degrees.of(355));
 
-    public static final AngularVelocityUnitPref flywheelSpeedTolerance = rotationsPerSecPref("Flywheel Speed Tolerance", Units.RotationsPerSecond.of(20));
+    public static final AngularVelocityUnitPref flywheelSpeedTolerance =
+            rotationsPerSecPref("Flywheel Speed Tolerance", Units.RotationsPerSecond.of(20));
 
     public static final AngleUnitPref turretEncoder1Zero =
             rotationsPref("Turret Encoder 1 Zero", Units.Rotations.zero());

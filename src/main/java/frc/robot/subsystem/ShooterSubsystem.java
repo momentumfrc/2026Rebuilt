@@ -54,7 +54,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean isUpToSpeed() {
-        return Math.abs(getMotorVelocity() - pid.getSetpoint()) < MoPrefs.flywheelSpeedTolerance.get().baseUnitMagnitude();
+        return Math.abs(getMotorVelocity() - pid.getSetpoint())
+                < MoPrefs.flywheelSpeedTolerance.get().baseUnitMagnitude();
     }
 
     public double getMotorVelocity() {
