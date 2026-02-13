@@ -38,13 +38,14 @@ public class MoPrefs extends MoPrefsBase {
                     "Turret Relative Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(255.0 / 8.0));
 
     /**
-     * This value is summed with the absolute encoder reading, and the result is used to zero the relative encoder.
-     * Theoretically, the relative zero is 15 degrees clockwise of the absolute zero, so the theoretical value is -15
-     * degrees. To calibrate this, first calibrate the encoder zero. Then manually move the turret to be aligned with
-     * the front of the robot, subtract 1 rotation from the absolute reading, and set that here.
+     * This value is summed with the absolute encoder reading, and the result is used to set the relative encoder.
+     * Theoretically, the absolute zero is 15 degrees counter-clockwise of the relative zero, so the theoretical value
+     * is 15 degrees. To calibrate this, first calibrate the encoder zero. Then manually move the turret to be aligned
+     * with the front of the robot. This position should be 360deg on the relative encoder, so subtract
+     * (360deg - abs_encoder_reading), and set the result as the relative encoder offset.
      */
     public static final AngleUnitPref turretRelativeEncoderOffset =
-            rotationsPref("Turret Relative Encoder Offset", Units.Rotations.of(-15));
+            rotationsPref("Turret Relative Encoder Offset", Units.Rotations.of(15));
 
     public static final AngleUnitPref turretMinSoftLimit = degreesPref("Turret Min Soft Limit", Units.Degrees.of(17.5));
     public static final AngleUnitPref turretMaxSoftLimit =
