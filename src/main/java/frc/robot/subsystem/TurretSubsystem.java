@@ -47,9 +47,9 @@ public class TurretSubsystem extends SubsystemBase {
     private static final Transform3d limelightPositionRelativeToTurret =
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
 
-    private TalonFX turretMotor;
-    private TalonFXConfiguration turretMotorConfig;
-    private MoRotationEncoder turretEncoder;
+    private final TalonFX turretMotor;
+    private final TalonFXConfiguration turretMotorConfig;
+    private final MoRotationEncoder turretEncoder;
 
     /*
      * Notes about the encoders.
@@ -59,23 +59,23 @@ public class TurretSubsystem extends SubsystemBase {
      * <li> The relative encoder is zeroed pointing forward on the robot (towards the intake).
      * </ul>
      */
-    private MoAbsoluteEncoder absEncoder1;
-    private MoAbsoluteEncoder absEncoder2;
-    private VernierEncoder vernierEncoder;
+    private final MoAbsoluteEncoder absEncoder1;
+    private final MoAbsoluteEncoder absEncoder2;
+    private final VernierEncoder vernierEncoder;
     private TurretAngleHelper angleHelper;
 
-    private MoTalonFxPID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
-    private PIDController turretRelativePid;
+    private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
+    private final PIDController turretRelativePid;
 
-    private LimelightTargetingHelper targetingHelper;
+    private final LimelightTargetingHelper targetingHelper;
 
-    private DoublePublisher relativeEncoderPublisher;
-    private DoublePublisher absEncoder1Publisher;
-    private DoublePublisher absEncoder2Publisher;
-    private DoublePublisher vernierEncoderPublisher;
-    private IntegerPublisher targetTagPublisher;
+    private final DoublePublisher relativeEncoderPublisher;
+    private final DoublePublisher absEncoder1Publisher;
+    private final DoublePublisher absEncoder2Publisher;
+    private final DoublePublisher vernierEncoderPublisher;
+    private final IntegerPublisher targetTagPublisher;
 
-    private BooleanChangeSubscriber coastMotorSubscriber;
+    private final BooleanChangeSubscriber coastMotorSubscriber;
 
     public TurretSubsystem() {
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
