@@ -183,7 +183,12 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     public void alignAbsolute(Angle angle) {
-        turretAbsolutePid.setPositionReference(angleHelper.turretAngleModulus(angle));
+        var setpoint = angleHelper.turretAngleModulus(angle);
+        if (setpoint == null) {
+            turretMotor.stopMotor();
+        } else {
+            turretAbsolutePid.setPositionReference(setpoint);
+        }
     }
 
     public void alignRelative() {
