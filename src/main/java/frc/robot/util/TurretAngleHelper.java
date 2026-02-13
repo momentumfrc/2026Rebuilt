@@ -27,11 +27,19 @@ public class TurretAngleHelper {
      * Limits values to within [minAngle, maxAngle]. Returns null if a value is out of range.
      */
     public Rotation2d turretAngleModulus(Rotation2d angle) {
-        return Rotation2d.fromRadians(turretAngleModulusRads(angle.getRadians()));
+        double result = turretAngleModulusRads(angle.getRadians());
+        if (Double.isNaN(result)) {
+            return null;
+        }
+        return Rotation2d.fromRadians(result);
     }
 
     public Angle turretAngleModulus(Angle angle) {
-        return mutAngle.mut_replace(turretAngleModulusRads(angle.in(Units.Radians)), Units.Radians);
+        double result = turretAngleModulusRads(angle.in(Units.Radians));
+        if (Double.isNaN(result)) {
+            return null;
+        }
+        return mutAngle.mut_replace(result, Units.Radians);
     }
 
     private double turretAngleModulusRads(double rads) {
