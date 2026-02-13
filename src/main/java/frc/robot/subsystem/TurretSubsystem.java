@@ -78,6 +78,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final BooleanChangeSubscriber coastMotorSubscriber;
 
     public TurretSubsystem() {
+        /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
         this.turretMotorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
@@ -98,6 +99,7 @@ public class TurretSubsystem extends SubsystemBase {
             turretMotor.getConfigurator().apply(turretMotorConfig);
         });
 
+        /* ==== ENCODER SETUP ==== */
         MoPrefsUtils.multiSubscribe(
                 MoPrefs.turretMinSoftLimit,
                 MoPrefs.turretMaxSoftLimit,
@@ -129,6 +131,7 @@ public class TurretSubsystem extends SubsystemBase {
                 },
                 true);
 
+        /* ==== PID SETUP ==== */
         this.turretAbsolutePid = new MoTalonFxPID<AngleUnit, AngularVelocityUnit>(
                 MoTalonFxPID.Type.POSITION, turretMotor, turretEncoder.getInternalEncoderUnits());
         TunerUtils.forMoTalonFx(turretAbsolutePid, "Turret Absolute Position");
@@ -145,6 +148,7 @@ public class TurretSubsystem extends SubsystemBase {
                 .measurement(targetingHelper::getTx)
                 .safeBuild();
 
+        /* ==== DASHBOARD SETUP ==== */
         var table = NTHelpers.getTable("turret");
         relativeEncoderPublisher = table.getDoubleTopic("Relative Encoder").publish();
         absEncoder1Publisher = table.getDoubleTopic("Abs Encoder 1").publish();
