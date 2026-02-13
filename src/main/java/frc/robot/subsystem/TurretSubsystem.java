@@ -2,9 +2,12 @@ package frc.robot.subsystem;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -20,6 +23,8 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -88,7 +93,14 @@ public class TurretSubsystem extends SubsystemBase {
                         .withReverseSoftLimitThreshold(MoPrefs.turretMinSoftLimit.get())
                         .withReverseSoftLimitEnable(true)
                         .withForwardSoftLimitThreshold(MoPrefs.turretMaxSoftLimit.get())
-                        .withForwardSoftLimitEnable(true));
+                        .withForwardSoftLimitEnable(true))
+                .withVoltage(new VoltageConfigs()
+                        .withPeakForwardVoltage((Voltage) MoPrefs.turretMaxPower.get())
+                        .withPeakReverseVoltage((Voltage) MoPrefs.turretMaxPower.get()))
+                .withClosedLoopRamps(
+                        new ClosedLoopRampsConfigs().withVoltageClosedLoopRampPeriod(MoPrefs.turretVoltRampRate.get()))
+                .withOpenLoopRamps(
+                        new OpenLoopRampsConfigs().withVoltageOpenLoopRampPeriod(MoPrefs.turretVoltRampRate.get()));
         turretMotor.getConfigurator().apply(turretMotorConfig);
 
         MoPrefsUtils.multiSubscribe(MoPrefs.turretMinSoftLimit, MoPrefs.turretMaxSoftLimit, (min, max) -> {
@@ -96,6 +108,18 @@ public class TurretSubsystem extends SubsystemBase {
                     .SoftwareLimitSwitch
                     .withReverseSoftLimitThreshold((Angle) min)
                     .withForwardSoftLimitThreshold((Angle) max);
+            turretMotor.getConfigurator().apply(turretMotorConfig);
+        });
+
+        MoPrefs.turretMaxPower.subscribe(voltage -> {
+            turretMotorConfig.Voltage.withPeakForwardVoltage((Voltage) voltage).withPeakReverseVoltage((Voltage)
+                    voltage);
+            turretMotor.getConfigurator().apply(turretMotorConfig);
+        });
+
+        MoPrefs.turretVoltRampRate.subscribe(rampRate -> {
+            turretMotorConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod((Time) rampRate);
+            turretMotorConfig.OpenLoopRamps.withVoltageOpenLoopRampPeriod((Time) rampRate);
             turretMotor.getConfigurator().apply(turretMotorConfig);
         });
 
@@ -200,7 +224,7 @@ public class TurretSubsystem extends SubsystemBase {
         }
 
         double result = turretRelativePid.calculate(targetingHelper.getTx(), 0);
-        turretMotor.set(result);
+        turretMotor.setVoltage(result);
     }
 
     @Override
