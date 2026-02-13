@@ -7,6 +7,7 @@ import edu.wpi.first.units.Units;
 import frc.robot.molib.MoUnits;
 import frc.robot.molib.prefs.AngleUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
+import frc.robot.molib.prefs.DimensionlessUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
 import frc.robot.molib.prefs.MoPrefsBase;
 import frc.robot.molib.prefs.Pref;
@@ -22,6 +23,10 @@ public class MoPrefs extends MoPrefsBase {
             rotationsPerSecPref("Swerve Max Allowed Spin", Units.RotationsPerSecond.of(1));
     public static final AngularVelocityUnitPref swerveMaxPossibleSpin =
             rotationsPerSecPref("Swerve Max Possible Spin", Units.RotationsPerSecond.of(2));
+    public static final DimensionlessUnitPref kickerRunPercentage =
+            percentPref("Kicker Run Percentage", Units.Percent.of(60));
+    public static final DimensionlessUnitPref indexerRunPercentage =
+            percentPref("Indexer Run Percentage", Units.Percent.of(60));
 
     public static final TimeUnitPref limelightPoseRefreshDelay =
             secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
