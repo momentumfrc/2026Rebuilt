@@ -206,6 +206,10 @@ public class TurretSubsystem extends SubsystemBase {
         return getTurretPose().plus(limelightPositionRelativeToTurret);
     }
 
+    public boolean absoluteTargetIsAligned() {
+        return turretAbsolutePid.atSetpoint();
+    }
+
     public void alignAbsolute(Angle angle) {
         var setpoint = angleHelper.turretAngleModulus(angle);
         if (setpoint == null) {
@@ -215,9 +219,16 @@ public class TurretSubsystem extends SubsystemBase {
         }
     }
 
+    public boolean relativeTargetIsVisible() {
+        return targetingHelper.targetIsVisible();
+    }
+
+    public boolean relativeTargetIsAligned() {
+        return turretRelativePid.atSetpoint();
+    }
+
     public void alignRelative() {
-        targetingHelper.targetNearestTag(DriverStation.getAlliance().orElse(Alliance.Red));
-        if (targetingHelper.targetIsVisible() == false) {
+        if (relativeTargetIsVisible() == false) {
             // No target visible
             turretMotor.stopMotor();
             return;
@@ -229,6 +240,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        targetingHelper.targetNearestTag(DriverStation.getAlliance().orElse(Alliance.Red));
+
         relativeEncoderPublisher.set(turretEncoder.getPosition().in(Units.Degrees));
         absEncoder1Publisher.set(absEncoder1.getPosition().in(Units.Rotations));
         absEncoder2Publisher.set(absEncoder2.getPosition().in(Units.Rotations));
