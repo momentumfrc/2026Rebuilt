@@ -10,6 +10,7 @@ import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.ShootMath;
@@ -27,13 +28,7 @@ public class ShooterSubsystem extends SubsystemBase {
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
         pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
 
-        MoTuner.builder("Shooter PID")
-                .p(pid::setP)
-                .d(pid::setD)
-                .i(pid::setI)
-                .iZone(pid::setIZone)
-                .measurement(this::getMotorVelocity)
-                .safeBuild();
+        TunerUtils.forMoTalonFx(pid, "Shooter PID");
     }
 
     /**
