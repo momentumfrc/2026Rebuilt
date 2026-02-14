@@ -4,10 +4,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
 
 public class ShootMath {
 
     public static final double G = 9.81;
+
+    private static MutAngle hoodAngle = Units.Revolution.mutable(0);
+    private static MutAngularVelocity flywheelSpeed = Units.RevolutionsPerSecond.mutable(0);
 
     /**
      * Calculates the desired heading of the hood.
@@ -41,7 +46,8 @@ public class ShootMath {
      */
     public static Angle hoodAngle(double x, double y, double targetPosX, double targetPosY) {
         HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.create();
-        return Units.Revolutions.of(holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5)));
+        hoodAngle.mut_replace(Units.Revolutions.of(holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5))));
+        return hoodAngle;
     }
 
     /**
@@ -64,7 +70,8 @@ public class ShootMath {
      */
     public static AngularVelocity flywheelSpeed(double x, double y, double targetPosX, double targetPosY) {
         HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.create();
-        return Units.RevolutionsPerSecond.of(holder.getFlywheelSpeed(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5)));
+        flywheelSpeed.mut_replace(Units.RevolutionsPerSecond.of(holder.getFlywheelSpeed(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5))));
+        return flywheelSpeed;
     }
 
     /**
