@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.molib.motune.MoTuner;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
@@ -54,6 +53,10 @@ public class HoodSubsystem extends SubsystemBase {
     }
 
     public boolean isInPosition() {
-        return Units.Revolutions.of(encoder.getPosition().minus(Units.Revolution.of(pid.getSetpoint())).abs(Units.Revolution)).compareTo(MoPrefs.hoodTolerance.get()) < 0;
+        return Units.Revolutions.of(encoder.getPosition()
+                                .minus(Units.Revolution.of(pid.getSetpoint()))
+                                .abs(Units.Revolution))
+                        .compareTo(MoPrefs.hoodTolerance.get())
+                < 0;
     }
 }

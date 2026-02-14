@@ -27,9 +27,8 @@ public class HoodAdjustCommand extends Command {
         }
     }
 
-    //will there be one?
+    // will there be one?
     public boolean isInDeadzone() {
         return true;
     }
-
 }

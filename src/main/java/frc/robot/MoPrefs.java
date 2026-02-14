@@ -1,11 +1,8 @@
 package frc.robot;
 
-import java.io.FileFilter;
-
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.DimensionlessUnit;
 import edu.wpi.first.units.PerUnit;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import frc.robot.molib.prefs.AngleUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
@@ -39,5 +36,6 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final PerUnit<DimensionlessUnit, AngleUnit> TicksPerRotation = Units.Value.per(Units.Revolution);
 
-    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale = encoderTicksPerRotationPref("Hood Encoder Scale", TicksPerRotation.ofNative(5));
+    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
+            encoderTicksPerRotationPref("Hood Encoder Scale", TicksPerRotation.ofNative(5));
 }

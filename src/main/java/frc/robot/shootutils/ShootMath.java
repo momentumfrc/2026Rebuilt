@@ -46,7 +46,8 @@ public class ShootMath {
      */
     public static Angle hoodAngle(double x, double y, double targetPosX, double targetPosY) {
         HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.create();
-        hoodAngle.mut_replace(Units.Revolutions.of(holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5))));
+        hoodAngle.mut_replace(Units.Revolutions.of(
+                holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5))));
         return hoodAngle;
     }
 
@@ -70,7 +71,8 @@ public class ShootMath {
      */
     public static AngularVelocity flywheelSpeed(double x, double y, double targetPosX, double targetPosY) {
         HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.create();
-        flywheelSpeed.mut_replace(Units.RevolutionsPerSecond.of(holder.getFlywheelSpeed(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5))));
+        flywheelSpeed.mut_replace(Units.RevolutionsPerSecond.of(
+                holder.getFlywheelSpeed(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5))));
         return flywheelSpeed;
     }
 
