@@ -8,6 +8,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.MoTuner;
 import frc.robot.molib.motune.TunerUtils;
@@ -28,6 +29,7 @@ public class HoodSubsystem extends SubsystemBase {
 
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
         encoder.setPosition(Units.Revolutions.of(0));
+        encoder.setConversionFactor(MoPrefs.hoodEncoderScale.get());
 
         pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
 
