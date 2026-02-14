@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.units.AngleUnit;
@@ -39,7 +40,6 @@ import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.util.LimelightTargetingHelper;
 import frc.robot.util.NTHelpers;
-import frc.robot.util.NTHelpers.BooleanChangeSubscriber;
 import frc.robot.util.TurretAngleHelper;
 
 public class TurretSubsystem extends SubsystemBase {
@@ -80,7 +80,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final DoublePublisher vernierEncoderPublisher;
     private final IntegerPublisher targetTagPublisher;
 
-    private final BooleanChangeSubscriber coastMotorSubscriber;
+    private final BooleanEntry coastMotorEntry;
 
     public TurretSubsystem() {
         /* ==== MOTOR SETUP === */
@@ -180,7 +180,7 @@ public class TurretSubsystem extends SubsystemBase {
         vernierEncoderPublisher = table.getDoubleTopic("Vernier Encoder").publish();
         targetTagPublisher = table.getIntegerTopic("Target Tag ID").publish();
 
-        coastMotorSubscriber = NTHelpers.getBooleanChangeSubscriber(table, "Coast Motor", false);
+        coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
     }
 
     /**
@@ -252,11 +252,9 @@ public class TurretSubsystem extends SubsystemBase {
         // if it becomes a problem.
         vernierEncoderPublisher.set(vernierEncoder.getPosition().in(Units.Rotations));
 
-        var coastMotor = coastMotorSubscriber.get();
-        if (coastMotor != BooleanChangeSubscriber.Value.NO_CHANGE) {
-            turretMotorConfig.MotorOutput.NeutralMode = (coastMotor == BooleanChangeSubscriber.Value.TRUE)
-                    ? NeutralModeValue.Coast
-                    : NeutralModeValue.Brake;
+        var desiredNeutralMode = coastMotorEntry.get() ? NeutralModeValue.Coast : NeutralModeValue.Brake;
+        if (desiredNeutralMode != turretMotorConfig.MotorOutput.NeutralMode) {
+            turretMotorConfig.MotorOutput.NeutralMode = desiredNeutralMode;
             turretMotor.getConfigurator().apply(turretMotorConfig);
         }
     }
