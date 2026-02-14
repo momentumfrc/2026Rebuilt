@@ -34,8 +34,9 @@ public class ShootCommand extends Command {
     }
 
     public void doShoot(boolean run) {
-        if (run) {
-            hood.setCalculatedPosition(drive.getRobotPosition(), TARGET_POSITION);
+        if (run && hood.isInPosition()) {
+            kicker.run();
+            indexer.run();
         } else {
             kicker.stop();
             indexer.stop();

@@ -52,4 +52,8 @@ public class HoodSubsystem extends SubsystemBase {
     public void setPosition(Angle position) {
         pid.setPositionReference(position);
     }
+
+    public boolean isInPosition() {
+        return Units.Revolutions.of(encoder.getPosition().minus(Units.Revolution.of(pid.getSetpoint())).abs(Units.Revolution)).compareTo(MoPrefs.hoodTolerance.get()) < 0;
+    }
 }

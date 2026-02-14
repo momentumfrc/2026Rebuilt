@@ -1,10 +1,13 @@
 package frc.robot;
 
+import java.io.FileFilter;
+
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.DimensionlessUnit;
 import edu.wpi.first.units.PerUnit;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
+import frc.robot.molib.prefs.AngleUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
 import frc.robot.molib.prefs.DimensionlessUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
@@ -29,6 +32,8 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final TimeUnitPref limelightPoseRefreshDelay =
             secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
+
+    public static final AngleUnitPref hoodTolerance = rotationsPref("Hood Tolerance", Units.Revolution.of(0.25));
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 
