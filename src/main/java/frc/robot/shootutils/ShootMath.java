@@ -1,6 +1,9 @@
 package frc.robot.shootutils;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 
 public class ShootMath {
 
@@ -14,8 +17,8 @@ public class ShootMath {
      * @param targetPosY the y position of the target (hub) in the same coordinate system as the robot position
      * @return the heading the hood should aim at, measured from the x-axis, in the current coordinate system
      */
-    public static double hoodAimAngle(double x, double y, double targetPosX, double targetPosY) {
-        return Math.atan2(targetPosY - y, targetPosX - x);
+    public static Angle hoodAimAngle(double x, double y, double targetPosX, double targetPosY) {
+        return Units.Revolutions.of(Math.atan2(targetPosY - y, targetPosX - x));
     }
 
     /**
@@ -24,7 +27,7 @@ public class ShootMath {
      * @param target a {@link Translation2d} representing the position of the robot
      * @return the heading the hood should aim at, measured from the x-axis, in the current coordinate system
      */
-    public static double hoodAimAngle(Translation2d robot, Translation2d target) {
+    public static Angle hoodAimAngle(Translation2d robot, Translation2d target) {
         return hoodAimAngle(robot.getX(), robot.getY(), target.getX(), target.getY());
     }
 
@@ -36,9 +39,9 @@ public class ShootMath {
      * @param targetPosY the y position of the target (hub) in the same coordinate system as the robot position
      * @return the needed hood angle to make it into the hub
      */
-    public static double hoodAngle(double x, double y, double targetPosX, double targetPosY) {
+    public static Angle hoodAngle(double x, double y, double targetPosX, double targetPosY) {
         HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.create();
-        return holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5));
+        return Units.Revolutions.of(holder.getAngle(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5)));
     }
 
     /**
@@ -47,7 +50,7 @@ public class ShootMath {
      * @param target a {@link Translation2d} representing the position of the robot
      * @return the needed hood angle to make it into the hub
      */
-    public static double hoodAngle(Translation2d robot, Translation2d target) {
+    public static Angle hoodAngle(Translation2d robot, Translation2d target) {
         return hoodAngle(robot.getX(), robot.getY(), target.getX(), target.getY());
     }
 
@@ -59,9 +62,9 @@ public class ShootMath {
      * @param targetPosY the y position of the target (hub) in the same coordinate system as the robot position
      * @return the needed flywheel speed to make it into the hub
      */
-    public static double flywheelSpeed(double x, double y, double targetPosX, double targetPosY) {
+    public static AngularVelocity flywheelSpeed(double x, double y, double targetPosX, double targetPosY) {
         HoodSerializedInformationHolder holder = HoodSerializedInformationHolder.create();
-        return holder.getFlywheelSpeed(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5));
+        return Units.RevolutionsPerSecond.of(holder.getFlywheelSpeed(Math.pow(Math.pow(x - targetPosX, 2) + Math.pow(y - targetPosY, 2), 0.5)));
     }
 
     /**
@@ -70,7 +73,7 @@ public class ShootMath {
      * @param target a {@link Translation2d} representing the position of the robot
      * @return the needed flywheel speed to make it into the hub
      */
-    public static double flywheelSpeed(Translation2d robot, Translation2d target) {
+    public static AngularVelocity flywheelSpeed(Translation2d robot, Translation2d target) {
         return flywheelSpeed(robot.getX(), robot.getY(), target.getX(), target.getY());
     }
 }

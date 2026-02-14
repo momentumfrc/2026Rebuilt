@@ -5,10 +5,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.ShootMath;
@@ -29,13 +31,7 @@ public class HoodSubsystem extends SubsystemBase {
 
         pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
 
-        MoTuner.builder("Hood PID")
-                .d(pid::setD)
-                .i(pid::setI)
-                .p(pid::setP)
-                .iZone(pid::setIZone)
-                .measurement(encoder::getPositionInEncoderUnits)
-                .safeBuild();
+        TunerUtils.forMoTalonFx(pid, "Hood PID");
     }
 
     /**
@@ -51,7 +47,7 @@ public class HoodSubsystem extends SubsystemBase {
      * Sets the desired position of the hood, in rotations.
      * @param position the desired position of the hood, in rotations
      */
-    public void setPosition(double position) {
-        pid.setPositionReference(Units.Revolutions.of(position));
+    public void setPosition(Angle position) {
+        pid.setPositionReference(position);
     }
 }

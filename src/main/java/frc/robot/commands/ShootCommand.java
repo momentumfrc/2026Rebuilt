@@ -35,7 +35,7 @@ public class ShootCommand extends Command {
 
     public void doShoot(boolean run) {
         if (run) {
-            hood.setCalculatedPosition(getRobotPosition(), TARGET_POSITION);
+            hood.setCalculatedPosition(drive.getRobotPosition(), TARGET_POSITION);
         } else {
             kicker.stop();
             indexer.stop();
@@ -45,9 +45,5 @@ public class ShootCommand extends Command {
     @Override
     public void execute() {
         doShoot(input.getShootRequest());
-    }
-
-    private Translation2d getRobotPosition() {
-        return drive.getSwerveDrive().getPose().getTranslation();
     }
 }
