@@ -3,8 +3,24 @@ package frc.robot.util;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class NTHelpers {
+
+    public static <T extends Enum<?>> SendableChooser<T> enumToChooser(Class<T> toConvert) {
+        return enumToChooser(toConvert, toConvert.getEnumConstants()[0]);
+    }
+
+    public static <T extends Enum<?>> SendableChooser<T> enumToChooser(Class<T> toConvert, T defaultValue) {
+        var chooser = new SendableChooser<T>();
+        chooser.setDefaultOption(defaultValue.name(), defaultValue);
+        for (T entry : toConvert.getEnumConstants()) {
+            if (entry != defaultValue) {
+                chooser.addOption(entry.name(), entry);
+            }
+        }
+        return chooser;
+    }
 
     public static NetworkTable getTable(String name) {
         return NetworkTableInstance.getDefault().getTable(name);
