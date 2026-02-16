@@ -12,8 +12,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -25,7 +26,7 @@ public class ShooterEmpiricalDataStore implements NetworkTable.TableEventListene
     private static final AngleUnit HOOD_ANGLE_STORE_UNIT = Units.Degrees;
     private static final AngularVelocityUnit FLYWHEEL_SPEED_STORE_UNIT = Units.RPM;
 
-    public record Datum(Distance distance, Angle hoodAngle, AngularVelocity flywheelSpeed) {}
+    public static record Datum(Distance distance, Angle hoodAngle, AngularVelocity flywheelSpeed) {}
 
     private static ShooterEmpiricalDataStore instance = null;
 
@@ -68,11 +69,11 @@ public class ShooterEmpiricalDataStore implements NetworkTable.TableEventListene
         table.getEntry(distanceStr).setDoubleArray(datumArray);
     }
 
-    public Collection<Datum> getSortedData() {
+    public List<Datum> getSortedData() {
         if (data.size() >= 2) {
-            return data.values();
+            return new ArrayList<>(data.values());
         } else {
-            return estimateData.values();
+            return new ArrayList<>(estimateData.values());
         }
     }
 
