@@ -3,6 +3,8 @@ package frc.robot.subsystem;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutCurrent;
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
+import frc.robot.util.NTHelpers;
 
 public class IntakeWristSubsystem extends SubsystemBase {
     private final SparkFlex intakeWrist;
@@ -17,6 +20,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
     private final MoSparkConfigurator intakeWristConfig;
 
     private MutCurrent intakeWristCurrent = Units.Amps.mutable(0);
+
+    private final DoublePublisher wristCurrentPublisher;
 
     public IntakeWristSubsystem() {
         intakeWrist = new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), MotorType.kBrushless);
@@ -30,6 +35,9 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
         MoPrefs.intakeWristSmartCurrentLimit.subscribe(
                 limit -> intakeWristConfig.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
+
+        var table = NTHelpers.getTable("Intake Wrist");
+        wristCurrentPublisher = table.getDoubleTopic("Intake Wrist Current").publish();
     }
 
     public void wristOut() {
@@ -56,5 +64,10 @@ public class IntakeWristSubsystem extends SubsystemBase {
         double current = intakeWrist.getOutputCurrent();
         intakeWristCurrent.mut_replace(current, Units.Amps);
         return intakeWristCurrent;
+    }
+
+    @Override
+    public void periodic() {
+        wristCurrentPublisher.set(intakeWristCurrent.in(Units.Amps));
     }
 }
