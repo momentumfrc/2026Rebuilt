@@ -17,7 +17,7 @@ public class RobotContainer {
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final TurretSubsystem turretSubsystem = new TurretSubsystem();
     public final RobotPositioning robotPositioning =
-            new RobotPositioning(driveSubsystem.getSwerveDrive(), turretSubsystem::getTurretLimelightPose);
+            new RobotPositioning(driveSubsystem.getSwerveDrive(), turretSubsystem);
 
     private Trigger resetFieldOrientedFwd;
 
