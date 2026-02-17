@@ -12,11 +12,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -24,6 +22,7 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,9 +46,8 @@ public class TurretSubsystem extends SubsystemBase {
     private static final int ENCODER_1_GEAR_TOOTH_COUNT = 15;
     private static final int ENCODER_2_GEAR_TOOTH_COUNT = 16;
 
-    private static final Translation3d turretPositionInRobotCoordinates =
-            new Translation3d(-0.154305, -0.031750, 0.381);
-    private static final Transform3d limelightPositionRelativeToTurret =
+    public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
+    public static final Transform3d turretToCamera =
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
 
     private final TalonFX turretMotor;
@@ -191,19 +189,10 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     /**
-     * Get the current pose of the turret in robot-relative coordinates.
+     * Get the current angular velocity of the turret about its axis of rotation.
      */
-    public Pose3d getTurretPose() {
-        return new Pose3d(
-                turretPositionInRobotCoordinates,
-                new Rotation3d(0, 0, getTurretYaw().in(Units.Radians)));
-    }
-
-    /**
-     * Get the current pose of the targeting limelight attached to the turret in robot-relative coordinates.
-     */
-    public Pose3d getTurretLimelightPose() {
-        return getTurretPose().plus(limelightPositionRelativeToTurret);
+    public AngularVelocity getTurretYawRate() {
+        return turretEncoder.getVelocity();
     }
 
     public boolean absoluteTargetIsAligned() {
