@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -15,6 +16,8 @@ import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngularVelocity;
+import edu.wpi.first.util.datalog.StructLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -42,6 +45,11 @@ public class RobotPositioning {
 
     private MutAngularVelocity turretAngularVelocity = Units.RPM.mutable(0);
 
+    private final StructLogEntry<Pose2d> robotPoseLogger;
+    private final StructLogEntry<Pose3d> turretLLAprilTagsLogger;
+    private final StructLogEntry<Pose3d> turretLLCalculatedPositionLogger;
+    private final StructLogEntry<Pose3d> stationaryLLAprilTagsLogger;
+
     public RobotPositioning(SwerveDrive swerveDrive, TurretSubsystem turret) {
         this.swerveDrive = swerveDrive;
         this.turret = turret;
@@ -54,6 +62,14 @@ public class RobotPositioning {
         // Disable limelight to robot transform on turret camera; we will do this ourselves with a more accurate turret
         // pose estimation
         LimelightHelpers.setCameraPose_RobotSpace(Constants.TURRET_LIMELIGHT_NAME, 0, 0, 0, 0, 0, 0);
+
+        var log = DataLogManager.getLog();
+        robotPoseLogger = StructLogEntry.create(log, "positioning/robot pose", Pose2d.struct);
+        turretLLAprilTagsLogger = StructLogEntry.create(log, "positioning/turret limelight tags", Pose3d.struct);
+        turretLLCalculatedPositionLogger =
+                StructLogEntry.create(log, "positioning/turret limelight calculated position", Pose3d.struct);
+        stationaryLLAprilTagsLogger =
+                StructLogEntry.create(log, "positioning/stationary limelight tags", Pose3d.struct);
 
         swerveDrive.stopOdometryThread();
     }
@@ -161,6 +177,8 @@ public class RobotPositioning {
             return;
         }
 
+        turretLLAprilTagsLogger.append(poseEstimate.pose, (long) (poseEstimate.timestampSeconds / 1000000.0));
+
         var turretLimelightTransform = getTurretLimelightToRobot(poseEstimate.timestampSeconds);
         if (turretLimelightTransform == null) {
             return;
@@ -168,6 +186,8 @@ public class RobotPositioning {
 
         var robotPose = poseEstimate.pose.transformBy(turretLimelightTransform);
         swerveDrive.addVisionMeasurement(robotPose.toPose2d(), poseEstimate.timestampSeconds, visionStdDevs);
+
+        turretLLCalculatedPositionLogger.append(robotPose, (long) (poseEstimate.timestampSeconds / 1000000.0));
     }
 
     private void addStationaryVisionMeasurements() {
@@ -183,22 +203,26 @@ public class RobotPositioning {
             return;
         }
 
+        LimelightHelpers.PoseEstimate poseEstimate = null;
+        Vector<N3> visionStdDevs = null;
         if (useMT2.get()) {
-            var estimate = getPoseEstimateMT2(
+            poseEstimate = getPoseEstimateMT2(
                     Constants.STATIONARY_LIMELIGHT_NAME,
                     swerveDrive.getYaw(),
                     swerveDrive.getGyro().getYawAngularVelocity());
-            if (estimate != null) {
-                swerveDrive.addVisionMeasurement(
-                        estimate.pose.toPose2d(), estimate.timestampSeconds, VecBuilder.fill(0.5, 0.5, 9999999));
-            }
+            visionStdDevs = MT2_VISION_STDDEVS;
         } else {
-            var estimate = getPoseEstimateMT1(Constants.STATIONARY_LIMELIGHT_NAME);
-            if (estimate != null) {
-                swerveDrive.addVisionMeasurement(
-                        estimate.pose.toPose2d(), estimate.timestampSeconds, VecBuilder.fill(0.7, 0.7, 9999999));
-            }
+            poseEstimate = getPoseEstimateMT1(Constants.STATIONARY_LIMELIGHT_NAME);
+            visionStdDevs = MT1_VISION_STDDEVS;
         }
+
+        if (poseEstimate == null) {
+            return;
+        }
+
+        swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds, visionStdDevs);
+
+        stationaryLLAprilTagsLogger.append(poseEstimate.pose, (long) (poseEstimate.timestampSeconds / 1000000.0));
     }
 
     public void addVisionMeasurements() {
@@ -213,5 +237,7 @@ public class RobotPositioning {
 
         swerveDrive.updateOdometry();
         addVisionMeasurements();
+
+        robotPoseLogger.append(getRobotPose());
     }
 }
