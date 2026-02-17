@@ -1,6 +1,8 @@
 package frc.robot;
 
 public class Constants {
+    public static final double LOOP_PERIOD = 0.02;
+
     public static final String TURRET_LIMELIGHT_NAME = "limelight-lembob"; // 10.49.99.12
     public static final String STATIONARY_LIMELIGHT_NAME = "limelight-jimmy"; // 10.49.99.11
 

@@ -84,8 +84,18 @@ public class RobotPositioning {
         return swerveDrive.getPose();
     }
 
+    /**
+     * Get the field-relative velocity of the robot.
+     */
     public ChassisSpeeds getFieldVelocity() {
         return swerveDrive.getFieldVelocity();
+    }
+
+    /**
+     * Get the robot-relative velocity of the robot.
+     */
+    public ChassisSpeeds getRobotVelocity() {
+        return swerveDrive.getRobotVelocity();
     }
 
     // Logic adapted from https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation

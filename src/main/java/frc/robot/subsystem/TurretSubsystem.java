@@ -35,7 +35,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
-import frc.robot.RobotPositioning;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.encoder.absolute.MoAbsoluteEncoder;
 import frc.robot.molib.encoder.absolute.VernierEncoder;
@@ -43,6 +42,7 @@ import frc.robot.molib.motune.MoTuner;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxProfilePID;
 import frc.robot.molib.prefs.MoPrefsUtils;
+import frc.robot.shootutils.TurretTargeting.TurretSetpoint;
 import frc.robot.util.LimelightTargetingHelper;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.TurretAngleHelper;
@@ -55,10 +55,6 @@ public class TurretSubsystem extends SubsystemBase {
     public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
     public static final Transform3d turretToCamera =
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
-
-    private static final double LOOP_PERIOD = 0.02;
-
-    private final RobotPositioning positioning;
 
     private final TalonFX turretMotor;
     private final TalonFXConfiguration turretMotorConfig;
@@ -108,9 +104,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     private final BooleanEntry coastMotorEntry;
 
-    public TurretSubsystem(RobotPositioning positioning) {
-        this.positioning = positioning;
-
+    public TurretSubsystem() {
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
         this.turretMotorConfig = new TalonFXConfiguration()
@@ -251,17 +245,16 @@ public class TurretSubsystem extends SubsystemBase {
         return turretAbsolutePid.atSetpoint();
     }
 
+    public void alignAbsolute(TurretSetpoint setpoint) {
+        alignAbsolute(setpoint.goalAngle(), setpoint.goalVelocity());
+    }
+
     /**
-     * Align to a specified goalAngle and goalVelocity in field coordinates (with the blue alliance origin).
+     * Align to a specified goalAngle and goalVelocity in robot coordinates.
      */
     public void alignAbsolute(Angle goalAngle, AngularVelocity goalVelocity) {
-        Rotation2d robotRelativeGoalAngle = Rotation2d.fromRadians(goalAngle.in(Units.Radians))
-                .minus(positioning.getRobotPose().getRotation());
-        double robotRelativeGoalVelocity =
-                goalVelocity.in(Units.RadiansPerSecond) - positioning.getFieldVelocity().omegaRadiansPerSecond;
-
-        robotRelativeGoalAngle = angleHelper.turretAngleModulus(robotRelativeGoalAngle);
-        if (robotRelativeGoalAngle == null) {
+        Angle moduloGoalAngle = angleHelper.turretAngleModulus(goalAngle);
+        if (moduloGoalAngle == null) {
             // desired angle is outside the turret's range of motion
             turretMotor.stopMotor();
             return;
@@ -269,8 +262,8 @@ public class TurretSubsystem extends SubsystemBase {
 
         State currentState =
                 new State(getTurretYaw().in(Units.Radians), getTurretYawRate().in(Units.RadiansPerSecond));
-        State goalState = new State(robotRelativeGoalAngle.getRadians(), robotRelativeGoalVelocity);
-        State setpoint = profile.calculate(LOOP_PERIOD, currentState, goalState);
+        State goalState = new State(moduloGoalAngle.in(Units.Radians), goalVelocity.in(Units.RadiansPerSecond));
+        State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
 
         this.goalAngle.mut_replace(setpoint.position, Units.Radians);
         this.goalVelocity.mut_replace(setpoint.velocity, Units.RadiansPerSecond);

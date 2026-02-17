@@ -61,6 +61,11 @@ public class MoPrefs extends MoPrefsBase {
      */
     public static final TimeUnitPref turretVoltRampRate = secondsPref("Turret Voltage Ramp Rate", Units.Seconds.of(0));
 
+    /**
+     * The average duration between when a setpoint is commanded and when it is achieved for the turret and shooter subsystems.
+     */
+    public static final TimeUnitPref turretPhaseDelay = secondsPref("Turret Phase Delay", Units.Seconds.of(0.03));
+
     public static final AngularVelocityUnitPref turretMaxVelocity =
             degreesPerSecPref("Turret Max Velocity", Units.DegreesPerSecond.of(180));
     public static final AngularAccelerationUnitPref turretMaxAcceleration =
