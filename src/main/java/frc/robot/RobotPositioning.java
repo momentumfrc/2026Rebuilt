@@ -39,6 +39,8 @@ public class RobotPositioning {
         useTurretLimelight = NTHelpers.getBooleanEntry(table, "Use turret limelight", true);
         useStationaryLimelight = NTHelpers.getBooleanEntry(table, "Use stationary limelight", true);
         turretPoseIsUpToDate = NTHelpers.getBooleanEntry(table, "Turret pose up to date", false);
+
+        swerveDrive.stopOdometryThread();
     }
 
     public Pose2d getRobotPose() {
@@ -172,6 +174,8 @@ public class RobotPositioning {
     }
 
     public void update() {
+        swerveDrive.updateOdometry();
+
         addVisionMeasurements();
     }
 }
