@@ -1,4 +1,4 @@
-package frc.robot.subsystem;
+package frc.robot;
 
 import static edu.wpi.first.math.util.Units.radiansToDegrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -8,15 +8,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.NTHelpers;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
 
-public class PositioningSubsystem extends SubsystemBase {
+public class RobotPositioning {
     private static final double STATIONARY_CUTOFF = 1e-2;
 
     private final SwerveDrive swerveDrive;
@@ -31,7 +28,7 @@ public class PositioningSubsystem extends SubsystemBase {
     private final Timer turretUpdateTimer;
     private Pose3d lastTurretPose = null;
 
-    public PositioningSubsystem(SwerveDrive swerveDrive, Supplier<Pose3d> turretLimelightPoseSupplier) {
+    public RobotPositioning(SwerveDrive swerveDrive, Supplier<Pose3d> turretLimelightPoseSupplier) {
         this.swerveDrive = swerveDrive;
         this.turretLimelightPoseSupplier = turretLimelightPoseSupplier;
 
@@ -174,8 +171,7 @@ public class PositioningSubsystem extends SubsystemBase {
         addStationaryVisionMeasurements();
     }
 
-    @Override
-    public void periodic() {
+    public void update() {
         addVisionMeasurements();
     }
 }

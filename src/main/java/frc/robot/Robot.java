@@ -20,6 +20,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        // Update latest robot position before anything else runs.
+        m_robotContainer.robotPositioning.update();
+
         CommandScheduler.getInstance().run();
 
         MoTuner.pollAllStateValues();
