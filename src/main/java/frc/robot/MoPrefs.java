@@ -40,8 +40,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
             ampsPref("Intake Wrist Smart Current Limit", Units.Amps.of(20));
 
-    public static final TimeUnitPref intakeCurrentWristTime =
-            secondsPref("Intake Current Wrist Time", Units.Seconds.one());
+    public static final TimeUnitPref intakeHighCurrentWristTime =
+            secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
 
     public static final TimeUnitPref limelightPoseRefreshDelay =
             secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
