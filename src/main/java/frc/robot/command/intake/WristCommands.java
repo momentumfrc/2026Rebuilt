@@ -20,10 +20,11 @@ public class WristCommands {
     }
 
     public static Command moveIntakeWristCommand(IntakeWristSubsystem wrist, Direction direction) {
-        var command = switch(direction) {
-            case IN -> Commands.run(wrist::wristIn, wrist);
-            case OUT -> Commands.run(wrist::wristOut, wrist);
-        };
+        var command =
+                switch (direction) {
+                    case IN -> Commands.run(wrist::wristIn, wrist);
+                    case OUT -> Commands.run(wrist::wristOut, wrist);
+                };
         return command.withTimeout(MoPrefs.intakeCurrentWristTime.get().in(Units.Seconds));
     }
 
@@ -36,7 +37,6 @@ public class WristCommands {
         return Commands.deadline(
                 moveIntakeWristCommand(wrist, Direction.OUT).andThen(holdIntakeWristCommand(wrist, Direction.IN)));
     }
-
 
     public static Command intakeWristDefaultCommand(IntakeWristSubsystem wrist) {
         return moveIntakeWristCommand(wrist, Direction.IN)
