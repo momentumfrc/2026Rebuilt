@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import edu.wpi.first.units.Units;
 import frc.robot.shootutils.ShooterEmpiricalDataStore.Datum;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +24,7 @@ public class ShootMathTests {
         return distToAngleMap.entrySet().stream()
                 .map(entry -> new Datum(
                         Units.Meters.of(entry.getKey()), Units.Degrees.of(entry.getValue()), Units.RPM.zero()))
+                .sorted(Comparator.comparing(d -> d.distance()))
                 .toList();
     }
 
@@ -30,6 +32,7 @@ public class ShootMathTests {
         return distToSpeedMap.entrySet().stream()
                 .map(entry -> new Datum(
                         Units.Meters.of(entry.getKey()), Units.Degrees.zero(), Units.RPM.of(entry.getValue())))
+                .sorted(Comparator.comparing(d -> d.distance()))
                 .toList();
     }
 
