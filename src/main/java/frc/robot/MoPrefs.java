@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.CurrentUnit;
 import edu.wpi.first.units.DimensionlessUnit;
 import edu.wpi.first.units.PerUnit;
 import edu.wpi.first.units.Units;
@@ -28,6 +29,22 @@ public class MoPrefs extends MoPrefsBase {
             percentPref("Kicker Run Percentage", Units.Percent.of(60));
     public static final DimensionlessUnitPref indexerRunPercentage =
             percentPref("Indexer Run Percentage", Units.Percent.of(60));
+
+    // Intake prefereces
+    public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));
+
+    public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
+    public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
+            voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
+
+    public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
+            ampsPref("Intake Wrist Smart Current Limit", Units.Amps.of(20));
+
+    public static final TimeUnitPref intakeHighCurrentWristTime =
+            secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
+
+    public static final TimeUnitPref limelightPoseRefreshDelay =
+            secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 
