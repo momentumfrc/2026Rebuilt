@@ -25,7 +25,7 @@ public class WristCommands {
                     case IN -> Commands.run(wrist::wristIn, wrist);
                     case OUT -> Commands.run(wrist::wristOut, wrist);
                 };
-        return command.withTimeout(MoPrefs.intakeCurrentWristTime.get().in(Units.Seconds));
+        return command.withTimeout(MoPrefs.intakeHighCurrentWristTime.get().in(Units.Seconds));
     }
 
     public static Command deployIntakeWristCommand(IntakeWristSubsystem wrist) {
