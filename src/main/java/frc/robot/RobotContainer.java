@@ -15,12 +15,13 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private final TurretSubsystem turretSubsystem = new TurretSubsystem();
 
     public final RobotPositioning robotPositioning = new RobotPositioning(
             driveSubsystem.getSwerveDrive(),
-            turretSubsystem::getTimestampedTurretYaw,
-            turretSubsystem::getTurretYawRate);
+            () -> getTurretSubsystem().getTimestampedTurretYaw(),
+            () -> getTurretSubsystem().getTurretYawRate());
+
+    private final TurretSubsystem turretSubsystem = new TurretSubsystem(robotPositioning);
 
     private Trigger resetFieldOrientedFwd;
 
@@ -60,5 +61,9 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
+    }
+
+    private TurretSubsystem getTurretSubsystem() {
+        return turretSubsystem;
     }
 }

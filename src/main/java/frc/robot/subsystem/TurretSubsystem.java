@@ -15,6 +15,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -24,6 +26,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,12 +35,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.RobotPositioning;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.encoder.absolute.MoAbsoluteEncoder;
 import frc.robot.molib.encoder.absolute.VernierEncoder;
 import frc.robot.molib.motune.MoTuner;
 import frc.robot.molib.motune.TunerUtils;
-import frc.robot.molib.pid.MoTalonFxPID;
+import frc.robot.molib.pid.MoTalonFxProfilePID;
 import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.util.LimelightTargetingHelper;
 import frc.robot.util.NTHelpers;
@@ -51,6 +55,10 @@ public class TurretSubsystem extends SubsystemBase {
     public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
     public static final Transform3d turretToCamera =
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
+
+    private static final double LOOP_PERIOD = 0.02;
+
+    private final RobotPositioning positioning;
 
     private final TalonFX turretMotor;
     private final TalonFXConfiguration turretMotorConfig;
@@ -84,11 +92,14 @@ public class TurretSubsystem extends SubsystemBase {
     private final VernierEncoder vernierEncoder;
     private TurretAngleHelper angleHelper;
 
-    private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
+    private TrapezoidProfile profile;
+    private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private final PIDController turretRelativePid;
 
-    private final LimelightTargetingHelper targetingHelper;
+    private final MutAngle goalAngle = Units.Rotations.mutable(0);
+    private final MutAngularVelocity goalVelocity = Units.RPM.mutable(0);
 
+    private final LimelightTargetingHelper targetingHelper;
     private final DoublePublisher relativeEncoderPublisher;
     private final DoublePublisher absEncoder1Publisher;
     private final DoublePublisher absEncoder2Publisher;
@@ -97,7 +108,9 @@ public class TurretSubsystem extends SubsystemBase {
 
     private final BooleanEntry coastMotorEntry;
 
-    public TurretSubsystem() {
+    public TurretSubsystem(RobotPositioning positioning) {
+        this.positioning = positioning;
+
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
         this.turretMotorConfig = new TalonFXConfiguration()
@@ -149,7 +162,7 @@ public class TurretSubsystem extends SubsystemBase {
                 },
                 true);
 
-        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Radians);
+        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Degrees);
         MoPrefs.turretRelativeEncoderScale.subscribe(turretEncoder::setConversionFactor, true);
 
         this.absEncoder1 = MoAbsoluteEncoder.forDio(Constants.TURRET_ABSOLUTE_ENCODER_1.dioPort());
@@ -171,9 +184,18 @@ public class TurretSubsystem extends SubsystemBase {
                 true);
 
         /* ==== PID SETUP ==== */
-        this.turretAbsolutePid = new MoTalonFxPID<AngleUnit, AngularVelocityUnit>(
-                MoTalonFxPID.Type.POSITION, turretMotor, turretEncoder.getInternalEncoderUnits());
-        TunerUtils.forMoTalonFx(turretAbsolutePid, "Turret Absolute Position");
+        MoPrefsUtils.multiSubscribe(
+                MoPrefs.turretMaxVelocity,
+                MoPrefs.turretMaxAcceleration,
+                (maxVel, maxAcc) -> {
+                    this.profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
+                            maxVel.in(Units.RadiansPerSecond), maxAcc.in(Units.RadiansPerSecondPerSecond)));
+                },
+                true);
+
+        this.turretAbsolutePid = new MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit>(
+                turretMotor, turretEncoder.getInternalEncoderUnits());
+        TunerUtils.forMoTalonFxProfile(turretAbsolutePid, "Turret Absolute Position");
 
         this.targetingHelper = new LimelightTargetingHelper(Constants.TURRET_LIMELIGHT_NAME);
 
@@ -229,13 +251,31 @@ public class TurretSubsystem extends SubsystemBase {
         return turretAbsolutePid.atSetpoint();
     }
 
-    public void alignAbsolute(Angle angle) {
-        var setpoint = angleHelper.turretAngleModulus(angle);
-        if (setpoint == null) {
+    /**
+     * Align to a specified goalAngle and goalVelocity in field coordinates (with the blue alliance origin).
+     */
+    public void alignAbsolute(Angle goalAngle, AngularVelocity goalVelocity) {
+        Rotation2d robotRelativeGoalAngle = Rotation2d.fromRadians(goalAngle.in(Units.Radians))
+                .minus(positioning.getRobotPose().getRotation());
+        double robotRelativeGoalVelocity =
+                goalVelocity.in(Units.RadiansPerSecond) - positioning.getFieldVelocity().omegaRadiansPerSecond;
+
+        robotRelativeGoalAngle = angleHelper.turretAngleModulus(robotRelativeGoalAngle);
+        if (robotRelativeGoalAngle == null) {
+            // desired angle is outside the turret's range of motion
             turretMotor.stopMotor();
-        } else {
-            turretAbsolutePid.setPositionReference(setpoint);
+            return;
         }
+
+        State currentState =
+                new State(getTurretYaw().in(Units.Radians), getTurretYawRate().in(Units.RadiansPerSecond));
+        State goalState = new State(robotRelativeGoalAngle.getRadians(), robotRelativeGoalVelocity);
+        State setpoint = profile.calculate(LOOP_PERIOD, currentState, goalState);
+
+        this.goalAngle.mut_replace(setpoint.position, Units.Radians);
+        this.goalVelocity.mut_replace(setpoint.velocity, Units.RadiansPerSecond);
+
+        this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
     }
 
     public boolean relativeTargetIsVisible() {

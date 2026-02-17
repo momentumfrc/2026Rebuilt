@@ -7,6 +7,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.VoltageUnit;
 import frc.robot.molib.MoUnits;
 import frc.robot.molib.prefs.AngleUnitPref;
+import frc.robot.molib.prefs.AngularAccelerationUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
 import frc.robot.molib.prefs.DimensionlessUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
@@ -49,8 +50,21 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngleUnitPref turretMaxSoftLimit =
             degreesPref("Turret Max Soft Limit", Units.Degrees.of(362.5));
 
+    /**
+     * The maximum output voltage to the turret motor. This value allows rough control of the turret's max speed, however
+     * it is preferred to use turretMaxVelocity for more fine control.
+     */
     public static final UnitPref<VoltageUnit> turretMaxPower = voltsPref("Turret Max Power", Units.Volts.of(6));
+    /**
+     * The minimum duration for the turret motor output voltage to sweep between 0 and 12 volts. This value is allows rough control
+     * of the turret's max acceleration, however it is preferred to use turretMaxAcceleration for more fine control.
+     */
     public static final TimeUnitPref turretVoltRampRate = secondsPref("Turret Voltage Ramp Rate", Units.Seconds.of(0));
+
+    public static final AngularVelocityUnitPref turretMaxVelocity =
+            degreesPerSecPref("Turret Max Velocity", Units.DegreesPerSecond.of(180));
+    public static final AngularAccelerationUnitPref turretMaxAcceleration =
+            degreesPerSec2Pref("Turret Max Acceleration", Units.DegreesPerSecondPerSecond.of(360));
 
     public static final AngularVelocityUnitPref flywheelSpeedTolerance =
             rotationsPerSecPref("Flywheel Speed Tolerance", Units.RotationsPerSecond.of(20));
