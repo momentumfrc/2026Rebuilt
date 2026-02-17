@@ -4,6 +4,7 @@ import static edu.wpi.first.math.util.Units.radiansToDegrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,6 +42,10 @@ public class PositioningSubsystem extends SubsystemBase {
         useTurretLimelight = NTHelpers.getBooleanEntry(table, "Use turret limelight", true);
         useStationaryLimelight = NTHelpers.getBooleanEntry(table, "Use stationary limelight", true);
         turretPoseIsUpToDate = NTHelpers.getBooleanEntry(table, "Turret pose up to date", false);
+    }
+
+    public Pose2d getRobotPose() {
+        return swerveDrive.getPose();
     }
 
     private boolean checkTurretPoseIsUpToDate() {
