@@ -84,7 +84,7 @@ public class RobotContainer {
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
         // Intake Trigger Bindings
-        runIntakeTrigger.onTrue(runRollerCommand);
+        runIntakeTrigger.whileTrue(runRollerCommand);
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
     }
