@@ -18,10 +18,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.util.datalog.StructLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.NTHelpers;
+import java.util.function.Supplier;
 import swervelib.SwerveDrive;
 
 public class RobotPositioning {
@@ -29,7 +29,8 @@ public class RobotPositioning {
     private static final double TURRET_ANGLE_BUFFER_TIME = 2.0; // seconds
 
     private final SwerveDrive swerveDrive;
-    private final TurretSubsystem turret;
+    private final Supplier<TurretSubsystem.TimestampedEncoderReading> turretYawSupplier;
+    private final Supplier<AngularVelocity> turretYawRateSupplier;
 
     private final BooleanEntry useMT2;
     private final BooleanEntry useTurretLimelight;
@@ -50,9 +51,13 @@ public class RobotPositioning {
     private final StructLogEntry<Pose3d> turretLLCalculatedPositionLogger;
     private final StructLogEntry<Pose3d> stationaryLLAprilTagsLogger;
 
-    public RobotPositioning(SwerveDrive swerveDrive, TurretSubsystem turret) {
+    public RobotPositioning(
+            SwerveDrive swerveDrive,
+            Supplier<TurretSubsystem.TimestampedEncoderReading> turretYawSupplier,
+            Supplier<AngularVelocity> turretYawRateSupplier) {
         this.swerveDrive = swerveDrive;
-        this.turret = turret;
+        this.turretYawSupplier = turretYawSupplier;
+        this.turretYawRateSupplier = turretYawRateSupplier;
 
         var table = NTHelpers.getTable("odometry");
         useMT2 = NTHelpers.getBooleanEntry(table, "Use MT2", true);
@@ -156,10 +161,10 @@ public class RobotPositioning {
 
         var turretPosition = swerveDrive
                 .getYaw()
-                .plus(Rotation2d.fromRadians(turret.getTurretYaw().in(Units.Radians)));
+                .plus(Rotation2d.fromRadians(turretYawSupplier.get().value().in(Units.Radians)));
         var turretVelocity = turretAngularVelocity.mut_replace(
                 swerveDrive.getGyro().getYawAngularVelocity().in(Units.RadiansPerSecond)
-                        + turret.getTurretYawRate().in(Units.RadiansPerSecond),
+                        + turretYawRateSupplier.get().in(Units.RadiansPerSecond),
                 Units.RadiansPerSecond);
 
         LimelightHelpers.PoseEstimate poseEstimate = null;
@@ -231,9 +236,10 @@ public class RobotPositioning {
     }
 
     public void update() {
+        var encoderReading = turretYawSupplier.get();
         turretYawBuffer.addSample(
-                Timer.getTimestamp(),
-                Rotation2d.fromRadians(turret.getTurretYaw().in(Units.Radians)));
+                encoderReading.timestamp(),
+                Rotation2d.fromRadians(encoderReading.value().in(Units.Radians)));
 
         swerveDrive.updateOdometry();
         addVisionMeasurements();

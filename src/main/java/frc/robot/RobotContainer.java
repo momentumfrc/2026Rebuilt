@@ -16,8 +16,11 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final TurretSubsystem turretSubsystem = new TurretSubsystem();
-    public final RobotPositioning robotPositioning =
-            new RobotPositioning(driveSubsystem.getSwerveDrive(), turretSubsystem);
+
+    public final RobotPositioning robotPositioning = new RobotPositioning(
+            driveSubsystem.getSwerveDrive(),
+            turretSubsystem::getTimestampedTurretYaw,
+            turretSubsystem::getTurretYawRate);
 
     private Trigger resetFieldOrientedFwd;
 
