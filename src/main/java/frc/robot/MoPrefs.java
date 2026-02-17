@@ -29,9 +29,6 @@ public class MoPrefs extends MoPrefsBase {
     public static final DimensionlessUnitPref indexerRunPercentage =
             percentPref("Indexer Run Percentage", Units.Percent.of(60));
 
-    public static final TimeUnitPref limelightPoseRefreshDelay =
-            secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
-
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> turretRelativeEncoderScale =
