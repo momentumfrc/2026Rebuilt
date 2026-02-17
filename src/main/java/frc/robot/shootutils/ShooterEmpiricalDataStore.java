@@ -66,7 +66,9 @@ public class ShooterEmpiricalDataStore implements NetworkTable.TableEventListene
             datum.hoodAngle().in(HOOD_ANGLE_STORE_UNIT), datum.flywheelSpeed().in(FLYWHEEL_SPEED_STORE_UNIT)
         };
 
-        table.getEntry(distanceStr).setDoubleArray(datumArray);
+        var entry = table.getEntry(distanceStr);
+        entry.setDoubleArray(datumArray);
+        entry.setPersistent();
     }
 
     public List<Datum> getSortedData() {
