@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.MoPrefs;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 
@@ -24,6 +25,8 @@ public class HoodAdjustCommand extends Command {
     public void execute() {
         if (!isInDeadzone()) {
             hood.setCalculatedPosition(drive.getRobotPosition(), TARGET_POSITION);
+        } else {
+            hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
         }
     }
 
