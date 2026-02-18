@@ -30,8 +30,6 @@ public class MoPrefs extends MoPrefsBase {
     public static final TimeUnitPref limelightPoseRefreshDelay =
             secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
 
-    public static final AngleUnitPref hoodTolerance = rotationsPref("Hood Tolerance", Units.Revolution.of(0.25));
-
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 
     public static final PerUnit<DimensionlessUnit, AngleUnit> TicksPerRotation = Units.Value.per(Units.Revolution);
