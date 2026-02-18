@@ -28,7 +28,7 @@ public class HoodSubsystem extends SubsystemBase {
 
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
         encoder.setPosition(Units.Revolutions.of(0));
-        encoder.setConversionFactor(MoPrefs.hoodEncoderScale.get());
+        MoPrefs.hoodEncoderScale.subscribe(encoder::setConversionFactor, true);
 
         pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
 
