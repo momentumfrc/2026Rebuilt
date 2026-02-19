@@ -6,6 +6,7 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
@@ -41,7 +42,11 @@ public class HoodSubsystem extends SubsystemBase {
      * @param target the position of the target relative to the field
      */
     public void setCalculatedPosition(Translation2d robot, Translation2d target) {
-        setPosition(ShootMath.hoodAimAngle(robot, target));
+        setPosition(ShootMath.hoodAngle(robot, target));
+    }
+
+    public void setCalculatedPosition(Distance distance) {
+        setPosition(ShootMath.hoodAngle(distance));
     }
 
     /**

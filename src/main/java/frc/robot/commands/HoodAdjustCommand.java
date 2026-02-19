@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.MoPrefs;
 import frc.robot.subsystem.DriveSubsystem;
@@ -11,8 +12,7 @@ public class HoodAdjustCommand extends Command {
     private HoodSubsystem hood;
     private DriveSubsystem drive;
 
-    // TODO: put actual coords
-    public static final Translation2d TARGET_POSITION = new Translation2d(2, 2);
+    private MutDistance targetDistance = Units.Meters.mutable(0);
 
     public HoodAdjustCommand(HoodSubsystem hood, DriveSubsystem drive) {
         this.hood = hood;
@@ -24,10 +24,11 @@ public class HoodAdjustCommand extends Command {
     @Override
     public void execute() {
         if (!isInDeadzone()) {
-            hood.setCalculatedPosition(drive.getRobotPosition(), TARGET_POSITION);
+            hood.setCalculatedPosition(targetDistance);
         } else {
             hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
         }
+        //TODO: mut_replace
     }
 
     // will there be one?

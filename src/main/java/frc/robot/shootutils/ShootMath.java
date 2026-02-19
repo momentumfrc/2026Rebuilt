@@ -1,9 +1,11 @@
 package frc.robot.shootutils;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 
@@ -59,6 +61,17 @@ public class ShootMath {
      */
     public static Angle hoodAngle(Translation2d robot, Translation2d target) {
         return hoodAngle(robot.getX(), robot.getY(), target.getX(), target.getY());
+    }
+
+    /**
+     * Calculates the needed hood angle to make it into the hub. This uses an empirical calculation.
+     * @param toTarget a {@link Distance} representing the distance from the robot to the target
+     * @return the needed hood angle to make it into the hub
+     */
+    public static Angle hoodAngle(Distance toTarget) {
+        //Assumes we use inches. This can change depending on what coordinate system we use.
+        //Pretends that the target is in a straight line away from the target. Because angle doesn't matter, this is fine!
+        return hoodAngle(toTarget.in(Units.Inch), 0, 0, 0);
     }
 
     /**
