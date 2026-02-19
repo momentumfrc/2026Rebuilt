@@ -15,12 +15,15 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.util.datalog.StructLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
 import frc.robot.subsystem.TurretSubsystem;
+import frc.robot.util.NTHelpers;
 
 /**
  * Logic to perform turret targeting for shoot-on-the-fly.
@@ -38,6 +41,9 @@ public final class TurretTargeting {
         SOTM,
         STATIONARY
     }
+
+    private final SendableChooser<TurretTargeting.TurretTargetMode> targetModeChooser =
+            NTHelpers.enumToChooser(TurretTargeting.TurretTargetMode.class);
 
     private final RobotPositioning positioning;
 
@@ -71,6 +77,7 @@ public final class TurretTargeting {
     private final StructLogEntry<Rotation2d> outputGoalAngleLogger;
     private final DoubleLogEntry outputOmegaLogger;
     private final DoubleLogEntry outputDistanceToTargetLogger;
+    private final StringLogEntry targetingModeLogger;
 
     public TurretTargeting(RobotPositioning positioning) {
         this.positioning = positioning;
@@ -85,6 +92,7 @@ public final class TurretTargeting {
         outputGoalAngleLogger = StructLogEntry.create(log, logPrefix + "output goal angle", Rotation2d.struct);
         outputOmegaLogger = new DoubleLogEntry(log, logPrefix + "output goal angular velocity");
         outputDistanceToTargetLogger = new DoubleLogEntry(log, logPrefix + "output distance to target");
+        targetingModeLogger = new StringLogEntry(log, logPrefix + "targeting mode");
     }
 
     /**
@@ -188,6 +196,7 @@ public final class TurretTargeting {
 
     public TurretSetpoint targetPosition(Translation2d target, TurretTargetMode targetMode) {
         targetLogger.append(target);
+        targetingModeLogger.append(targetMode.toString());
 
         Pose2d turretPose =
                 switch (targetMode) {
@@ -212,5 +221,9 @@ public final class TurretTargeting {
         outputDistanceToTargetLogger.append(turretToTargetDistance);
 
         return outputSetpoint;
+    }
+
+    public TurretSetpoint targetPosition(Translation2d target) {
+        return targetPosition(target, targetModeChooser.getSelected());
     }
 }

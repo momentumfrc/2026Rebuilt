@@ -32,6 +32,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
@@ -55,6 +56,13 @@ public class TurretSubsystem extends SubsystemBase {
     public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
     public static final Transform3d turretToCamera =
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
+
+    private enum TurretAlignMode {
+        ABSOLUTE,
+        RELATIVE
+    }
+
+    private final SendableChooser<TurretAlignMode> alignModeChooser = NTHelpers.enumToChooser(TurretAlignMode.class);
 
     private final TalonFX turretMotor;
     private final TalonFXConfiguration turretMotorConfig;
@@ -244,6 +252,26 @@ public class TurretSubsystem extends SubsystemBase {
      */
     public AngularVelocity getTurretYawRate() {
         return turretEncoder.getVelocity();
+    }
+
+    public void align(TurretSetpoint setpoint) {
+        switch (alignModeChooser.getSelected()) {
+            case ABSOLUTE -> alignAbsolute(setpoint);
+            case RELATIVE -> {
+                if (relativeTargetIsVisible()) {
+                    alignRelative();
+                } else {
+                    alignAbsolute(setpoint);
+                }
+            }
+        }
+    }
+
+    public boolean targetIsAligned() {
+        return switch (alignModeChooser.getSelected()) {
+            case ABSOLUTE -> absoluteTargetIsAligned();
+            case RELATIVE -> relativeTargetIsAligned();
+        };
     }
 
     public boolean absoluteTargetIsAligned() {
