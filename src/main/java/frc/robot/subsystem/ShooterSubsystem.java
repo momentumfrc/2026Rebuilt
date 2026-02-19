@@ -36,6 +36,10 @@ public class ShooterSubsystem extends SubsystemBase {
         pid.setVelocityReference(velocity);
     }
 
+    public void stop() {
+        runAtSpeed(Units.RPM.zero());
+    }
+
     public boolean isUpToSpeed() {
         return pid.atSetpoint();
     }

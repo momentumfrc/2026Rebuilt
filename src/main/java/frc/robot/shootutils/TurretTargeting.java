@@ -34,6 +34,11 @@ public final class TurretTargeting {
             TurretSubsystem.robotToTurret.getTranslation().toTranslation2d(),
             TurretSubsystem.robotToTurret.getRotation().toRotation2d());
 
+    public enum TurretTargetMode {
+        SOTM,
+        STATIONARY
+    }
+
     private final RobotPositioning positioning;
 
     public static class TurretSetpoint {
@@ -158,9 +163,7 @@ public final class TurretTargeting {
                 goalAngle.minus(lastGoalAngle).getRadians() / Constants.LOOP_PERIOD);
     }
 
-    public TurretSetpoint targetPosition(Translation2d target) {
-        targetLogger.append(target);
-
+    private Pose2d getSOTMTurretPose(Translation2d target) {
         Pose2d estimatedPose = getEstimatedPoseAfterPhaseDelay();
         phaseDelayEstimatedPoseLogger.append(estimatedPose);
 
@@ -173,9 +176,28 @@ public final class TurretTargeting {
         Pose2d lookaheadPose = estimateLookaheadPose(target, turretPosition, robotVelocity, robotAngle);
         lookaheadPoseLogger.append(lookaheadPose);
 
-        Rotation2d goalAngle = target.minus(lookaheadPose.getTranslation()).getAngle();
+        return lookaheadPose;
+    }
+
+    private Pose2d getStationaryTurretPose() {
+        var robotPose = positioning.getRobotPose();
+        var turretPosition = robotPose.transformBy(robotToTurret);
+        turretPositionLogger.append(turretPosition);
+        return turretPosition;
+    }
+
+    public TurretSetpoint targetPosition(Translation2d target, TurretTargetMode targetMode) {
+        targetLogger.append(target);
+
+        Pose2d turretPose =
+                switch (targetMode) {
+                    case SOTM -> getSOTMTurretPose(target);
+                    case STATIONARY -> getStationaryTurretPose();
+                };
+
+        Rotation2d goalAngle = target.minus(turretPose.getTranslation()).getAngle();
         double goalVelocity = calculateGoalVelocity(goalAngle);
-        double lookaheadTurretToTargetDistance = target.getDistance(lookaheadPose.getTranslation());
+        double turretToTargetDistance = target.getDistance(turretPose.getTranslation());
 
         Rotation2d robotRelativeGoalAngle =
                 goalAngle.minus(positioning.getRobotPose().getRotation());
@@ -183,11 +205,11 @@ public final class TurretTargeting {
 
         outputSetpoint.goalAngle.mut_replace(robotRelativeGoalAngle.getRadians(), Units.Radians);
         outputSetpoint.goalVelocity.mut_replace(robotRelativeGoalVelocity, Units.RadiansPerSecond);
-        outputSetpoint.targetDistance.mut_replace(lookaheadTurretToTargetDistance, Units.Meters);
+        outputSetpoint.targetDistance.mut_replace(turretToTargetDistance, Units.Meters);
 
         outputGoalAngleLogger.append(robotRelativeGoalAngle);
         outputOmegaLogger.append(robotRelativeGoalVelocity);
-        outputDistanceToTargetLogger.append(lookaheadTurretToTargetDistance);
+        outputDistanceToTargetLogger.append(turretToTargetDistance);
 
         return outputSetpoint;
     }

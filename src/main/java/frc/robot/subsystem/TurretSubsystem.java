@@ -105,6 +105,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final BooleanEntry coastMotorEntry;
 
     public TurretSubsystem() {
+
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
         this.turretMotorConfig = new TalonFXConfiguration()
@@ -214,6 +215,10 @@ public class TurretSubsystem extends SubsystemBase {
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
     }
 
+    public TurretAngleHelper getAngleHelper() {
+        return angleHelper;
+    }
+
     /**
      * Get the current angular position of the turret about its axis of rotation.
      */
@@ -276,7 +281,7 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     public boolean relativeTargetIsAligned() {
-        return turretRelativePid.atSetpoint();
+        return targetingHelper.targetIsVisible() && turretRelativePid.atSetpoint();
     }
 
     public void alignRelative() {
@@ -288,6 +293,10 @@ public class TurretSubsystem extends SubsystemBase {
 
         double result = turretRelativePid.calculate(targetingHelper.getTx(), 0);
         turretMotor.setVoltage(result);
+    }
+
+    public void stop() {
+        turretMotor.stopMotor();
     }
 
     @Override

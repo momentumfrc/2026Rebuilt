@@ -12,27 +12,32 @@ import frc.robot.command.intake.WristCommands;
 import frc.robot.commands.ShootCommand;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
+import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.IntakeRollerSubsystem;
 import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
+import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
     // Drive
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private final TurretSubsystem turretSubsystem = new TurretSubsystem();
+    private final TurretSubsystem turret = new TurretSubsystem();
     private final IndexerSubsystem indexer = new IndexerSubsystem();
     private final KickerSubsystem kicker = new KickerSubsystem();
+    private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final HoodSubsystem hood = new HoodSubsystem();
 
     public final RobotPositioning robotPositioning = new RobotPositioning(
             driveSubsystem.getSwerveDrive(),
             () -> getTurretSubsystem().getTimestampedTurretYaw(),
             () -> getTurretSubsystem().getTurretYawRate());
+
+    private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
     private Trigger resetFieldOrientedFwd;
 
@@ -71,7 +76,7 @@ public class RobotContainer {
 
         driveFieldOrientedAngularVelocity = driveSubsystem.driveFieldOriented(driveAngularVelocity);
 
-        shootCommand = new ShootCommand(driveSubsystem, kicker, indexer, hood, input);
+        shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
 
         configureBindings();
         setDefaultCommands();
@@ -109,6 +114,6 @@ public class RobotContainer {
     }
 
     private TurretSubsystem getTurretSubsystem() {
-        return turretSubsystem;
+        return turret;
     }
 }
