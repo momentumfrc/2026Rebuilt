@@ -2,12 +2,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.input.MoInput;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
+import frc.robot.util.OdometryTargetingHelper;
 
 public class ShootCommand extends Command {
 
@@ -46,6 +49,6 @@ public class ShootCommand extends Command {
     @Override
     public void execute() {
         doShoot(input.getShootRequest());
-        // TODO: mut_replace
+        targetDistance.mut_replace(OdometryTargetingHelper.getTranslationToTarget(drive.getRobotPosition(), DriverStation.getAlliance().orElse(Alliance.Red)).getNorm(), Units.Meters);
     }
 }

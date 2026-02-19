@@ -2,10 +2,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.MoPrefs;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
+import frc.robot.util.OdometryTargetingHelper;
 
 public class HoodAdjustCommand extends Command {
 
@@ -28,7 +31,7 @@ public class HoodAdjustCommand extends Command {
         } else {
             hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
         }
-        // TODO: mut_replace
+        targetDistance.mut_replace(OdometryTargetingHelper.getTranslationToTarget(drive.getRobotPosition(), DriverStation.getAlliance().orElse(Alliance.Red)).getNorm(), Units.Meters);
     }
 
     // will there be one?
