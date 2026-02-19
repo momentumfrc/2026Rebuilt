@@ -43,6 +43,9 @@ public class MoPrefs extends MoPrefsBase {
     public static final TimeUnitPref intakeHighCurrentWristTime =
             secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
 
+    public static final UnitPref<CurrentUnit> intakeRollerSmartCurrentLimit =
+            ampsPref("Intake Rollers Current Limit", Units.Amps.of(20));
+
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 
     public static final PerUnit<DimensionlessUnit, AngleUnit> TicksPerRotation = Units.Value.per(Units.Revolution);
