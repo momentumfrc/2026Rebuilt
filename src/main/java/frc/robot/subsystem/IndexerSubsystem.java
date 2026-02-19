@@ -10,6 +10,7 @@ import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 
@@ -29,13 +30,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
         pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
 
-        MoTuner.builder("Indexer PID")
-                .d(pid::setD)
-                .i(pid::setI)
-                .p(pid::setP)
-                .iZone(pid::setIZone)
-                .measurement(encoder::getPositionInEncoderUnits)
-                .safeBuild();
+        TunerUtils.forMoTalonFx(pid, "Indexer PID");
 
         // to make things easier...
         motor.setNeutralMode(NeutralModeValue.Coast);
