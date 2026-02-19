@@ -55,7 +55,7 @@ public class ShootCommand extends Command {
 
         turret.align(firingSolution);
         hood.setCalculatedPosition(firingSolution.targetDistance());
-        shooter.runAtSpeed(firingSolution.goalVelocity());
+        shooter.runAtCalculatedSpeed(firingSolution.targetDistance());
 
         if (turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed()) {
             kicker.run();
