@@ -52,6 +52,10 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
             encoderTicksPerRotationPref("Hood Encoder Scale", TicksPerRotation.ofNative(32));
+    public static final AngularVelocityUnitPref hoodMaxVelocity =
+            degreesPerSecPref("Hood Max Velocity", Units.DegreesPerSecond.of(1000));
+    public static final AngularAccelerationUnitPref hoodMaxAcceleration =
+            degreesPerSec2Pref("Hood Max Acceleration", Units.DegreesPerSecondPerSecond.of(1000));
 
     public static final AngleUnitPref hoodDeadzonePosition = degreesPref("Hood Deadzone Position", Units.Degrees.of(0));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> kickerEncoderScale =
