@@ -25,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
         motor = new TalonFX(Constants.SHOOTER_ADDRESS.address());
 
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
-        pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
+        pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
 
         TunerUtils.forMoTalonFx(pid, "Shooter PID");
     }
