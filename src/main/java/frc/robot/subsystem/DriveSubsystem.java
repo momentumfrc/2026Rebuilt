@@ -1,6 +1,7 @@
 package frc.robot.subsystem;
 
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -59,5 +60,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
+    }
+
+    public Translation2d getRobotPosition() {
+        return swerveDrive.getPose().getTranslation();
     }
 }
