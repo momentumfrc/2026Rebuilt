@@ -14,6 +14,9 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.datalog.StructLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
@@ -56,8 +59,27 @@ public final class TurretTargeting {
     private Rotation2d lastGoalAngle = null;
     private LinearFilter turretAngleVelocityFilter = LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
 
+    private final StructLogEntry<Translation2d> targetLogger;
+    private final StructLogEntry<Pose2d> phaseDelayEstimatedPoseLogger;
+    private final StructLogEntry<Pose2d> lookaheadPoseLogger;
+    private final StructLogEntry<Pose2d> turretPositionLogger;
+    private final StructLogEntry<Rotation2d> outputGoalAngleLogger;
+    private final DoubleLogEntry outputOmegaLogger;
+    private final DoubleLogEntry outputDistanceToTargetLogger;
+
     public TurretTargeting(RobotPositioning positioning) {
         this.positioning = positioning;
+
+        var log = DataLogManager.getLog();
+        final String logPrefix = "sotf-targeting/";
+        targetLogger = StructLogEntry.create(log, logPrefix + "target", Translation2d.struct);
+        phaseDelayEstimatedPoseLogger =
+                StructLogEntry.create(log, logPrefix + "phase delay estimated pose", Pose2d.struct);
+        lookaheadPoseLogger = StructLogEntry.create(log, logPrefix + "lookahead pose", Pose2d.struct);
+        turretPositionLogger = StructLogEntry.create(log, logPrefix + "turret position", Pose2d.struct);
+        outputGoalAngleLogger = StructLogEntry.create(log, logPrefix + "output goal angle", Rotation2d.struct);
+        outputOmegaLogger = new DoubleLogEntry(log, logPrefix + "output goal angular velocity");
+        outputDistanceToTargetLogger = new DoubleLogEntry(log, logPrefix + "output distance to target");
     }
 
     /**
@@ -137,14 +159,19 @@ public final class TurretTargeting {
     }
 
     public TurretSetpoint targetPosition(Translation2d target) {
+        targetLogger.append(target);
+
         Pose2d estimatedPose = getEstimatedPoseAfterPhaseDelay();
+        phaseDelayEstimatedPoseLogger.append(estimatedPose);
 
         var turretPosition = estimatedPose.transformBy(robotToTurret);
+        turretPositionLogger.append(turretPosition);
 
         ChassisSpeeds robotVelocity = positioning.getFieldVelocity();
         Rotation2d robotAngle = estimatedPose.getRotation();
 
         Pose2d lookaheadPose = estimateLookaheadPose(target, turretPosition, robotVelocity, robotAngle);
+        lookaheadPoseLogger.append(lookaheadPose);
 
         Rotation2d goalAngle = target.minus(lookaheadPose.getTranslation()).getAngle();
         double goalVelocity = calculateGoalVelocity(goalAngle);
@@ -157,6 +184,10 @@ public final class TurretTargeting {
         outputSetpoint.goalAngle.mut_replace(robotRelativeGoalAngle.getRadians(), Units.Radians);
         outputSetpoint.goalVelocity.mut_replace(robotRelativeGoalVelocity, Units.RadiansPerSecond);
         outputSetpoint.targetDistance.mut_replace(lookaheadTurretToTargetDistance, Units.Meters);
+
+        outputGoalAngleLogger.append(robotRelativeGoalAngle);
+        outputOmegaLogger.append(robotRelativeGoalVelocity);
+        outputDistanceToTargetLogger.append(lookaheadTurretToTargetDistance);
 
         return outputSetpoint;
     }
