@@ -88,9 +88,13 @@ public final class TurretTargeting {
                         * (robotToTurret.getX() * Math.cos(robotAngle) - robotToTurret.getY() * Math.sin(robotAngle));
     }
 
+    private final MutDistance distanceToTargetForTOFEstimation =
+            HoodSerializedInformationHolder.DISTANCE_STORE_UNIT.mutable(0);
+
     private double estimateTimeOfFlight(double distanceToTarget) {
-        // TODO
-        return 0;
+        return HoodSerializedInformationHolder.getInstance()
+                .getTimeOfFlight(distanceToTargetForTOFEstimation.mut_replace(distanceToTarget, Units.Meters))
+                .in(Units.Seconds);
     }
 
     /**
