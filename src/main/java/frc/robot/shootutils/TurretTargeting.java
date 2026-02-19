@@ -19,6 +19,11 @@ import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
 import frc.robot.subsystem.TurretSubsystem;
 
+/**
+ * Logic to perform turret targeting for shoot-on-the-fly.
+ * <p>
+ * Heavily based on https://www.chiefdelphi.com/t/frc-6328-mechanical-advantage-2026-build-thread/509595/272
+ */
 public final class TurretTargeting {
     private static final int NUM_LOOKAHEAD_ESTIMATION_ITERATIONS = 20;
 
