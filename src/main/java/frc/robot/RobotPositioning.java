@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.units.Units;
@@ -84,6 +85,20 @@ public class RobotPositioning {
 
     public Pose2d getRobotPose() {
         return swerveDrive.getPose();
+    }
+
+    /**
+     * Get the field-relative velocity of the robot.
+     */
+    public ChassisSpeeds getFieldVelocity() {
+        return swerveDrive.getFieldVelocity();
+    }
+
+    /**
+     * Get the robot-relative velocity of the robot.
+     */
+    public ChassisSpeeds getRobotVelocity() {
+        return swerveDrive.getRobotVelocity();
     }
 
     // Logic adapted from https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
@@ -249,7 +264,7 @@ public class RobotPositioning {
         stationaryLLAprilTagsLogger.append(poseEstimate.pose, (long) (poseEstimate.timestampSeconds / 1000000.0));
     }
 
-    public void addVisionMeasurements() {
+    private void addVisionMeasurements() {
         addTurretVisionMeasurements();
         addStationaryVisionMeasurements();
     }

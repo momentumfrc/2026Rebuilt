@@ -82,6 +82,9 @@ public class LimelightTargetingHelper {
     }
 
     public boolean targetIsVisible() {
+        if (lastConfiguredTag < 0) {
+            return false;
+        }
         return LimelightHelpers.getTV(limelightName);
     }
 
