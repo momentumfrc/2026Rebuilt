@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -21,6 +22,7 @@ import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
+import frc.robot.util.OdometryTargetingHelper;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
@@ -51,7 +53,15 @@ public class RobotContainer {
 
     private final Command idleIndexerCommand = indexer.run(indexer::stop);
     private final Command idleKickerCommand = kicker.run(kicker::stop);
+    private final Command idleShooterCommand = shooter.run(shooter::stop);
     private final Command idleHoodCommand = hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get()));
+
+    private final Command passiveTargetingCommand = turret.run(() -> {
+        var target =
+                OdometryTargetingHelper.getTarget(DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
+        var firingSolution = turretTargetingHelper.targetPosition(target.toTranslation2d());
+        turret.align(firingSolution);
+    });
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
@@ -91,6 +101,8 @@ public class RobotContainer {
         hood.setDefaultCommand(idleHoodCommand);
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);
+        shooter.setDefaultCommand(idleShooterCommand);
+        turret.setDefaultCommand(passiveTargetingCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
     }
