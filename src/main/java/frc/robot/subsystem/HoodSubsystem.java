@@ -1,7 +1,6 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;

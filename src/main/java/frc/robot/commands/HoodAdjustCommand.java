@@ -28,7 +28,7 @@ public class HoodAdjustCommand extends Command {
         } else {
             hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
         }
-        //TODO: mut_replace
+        // TODO: mut_replace
     }
 
     // will there be one?

@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,6 +46,6 @@ public class ShootCommand extends Command {
     @Override
     public void execute() {
         doShoot(input.getShootRequest());
-        //TODO: mut_replace
+        // TODO: mut_replace
     }
 }
