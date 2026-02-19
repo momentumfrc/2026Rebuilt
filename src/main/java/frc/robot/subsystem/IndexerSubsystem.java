@@ -1,39 +1,46 @@
 package frc.robot.subsystem;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.MoSparkConfigurator;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
-import frc.robot.molib.pid.MoTalonFxPID;
-import frc.robot.molib.pid.MoTalonFxPID.Type;
+import frc.robot.molib.pid.MoSparkMaxPID;
 
 public class IndexerSubsystem extends SubsystemBase {
 
-    private final TalonFX motor;
+    private final SparkFlex motor;
+    private final MoSparkConfigurator config;
 
     private final MoRotationEncoder encoder;
 
-    private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
+    private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> pid;
 
     public IndexerSubsystem() {
+        motor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
+        config = MoSparkConfigurator.forSparkFlex(motor);
 
-        motor = new TalonFX(Constants.INDEXER_PORT.address());
+        config.accept(config -> config.smartCurrentLimit(
+                        (int) MoPrefs.indexerRollerSmartCurrentLimit.get().in(Units.Amps))
+                .inverted(false)
+                .idleMode(IdleMode.kCoast));
+        MoPrefs.indexerRollerSmartCurrentLimit.subscribe(
+                limit -> config.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
 
-        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        encoder = MoRotationEncoder.forSparkRelative(motor, Units.Revolutions);
         MoPrefs.indexerEncoderScale.subscribe(encoder::setConversionFactor, true);
 
-        pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
+        pid = new MoSparkMaxPID<>(MoSparkMaxPID.Type.VELOCITY, motor, ClosedLoopSlot.kSlot0, encoder, config);
 
-        TunerUtils.forMoTalonFx(pid, "Indexer PID");
-
-        // to make things easier...
-        motor.setNeutralMode(NeutralModeValue.Coast);
+        TunerUtils.forMoSparkMax(pid, "Indexer PID");
     }
 
     public void run() {

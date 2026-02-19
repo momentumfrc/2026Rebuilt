@@ -17,6 +17,8 @@ import frc.robot.molib.prefs.TimeUnitPref;
 import frc.robot.molib.prefs.UnitPref;
 
 public class MoPrefs extends MoPrefsBase {
+    public static final PerUnit<DimensionlessUnit, AngleUnit> TicksPerRotation = Units.Value.per(Units.Revolution);
+
     public static final LinearVelocityUnitPref swerveMaxAllowedSpeed =
             metersPerSecPref("Swerve Max Allowed Speed", Units.MetersPerSecond.of(5));
     public static final LinearVelocityUnitPref swerveMaxPossibleSpeed =
@@ -46,9 +48,12 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<CurrentUnit> intakeRollerSmartCurrentLimit =
             ampsPref("Intake Rollers Current Limit", Units.Amps.of(20));
 
-    public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
+    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> indexerEncoderScale =
+            encoderTicksPerRotationPref("Indexer Encoder Scale", TicksPerRotation.ofNative(32));
+    public static final UnitPref<CurrentUnit> indexerRollerSmartCurrentLimit =
+            ampsPref("Indexer Current Limit", Units.Amps.of(40));
 
-    public static final PerUnit<DimensionlessUnit, AngleUnit> TicksPerRotation = Units.Value.per(Units.Revolution);
+    public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
             encoderTicksPerRotationPref("Hood Encoder Scale", TicksPerRotation.ofNative(32));
@@ -67,8 +72,6 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> kickerEncoderScale =
             encoderTicksPerRotationPref("Kicker Encoder Scale", TicksPerRotation.ofNative(32));
 
-    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> indexerEncoderScale =
-            encoderTicksPerRotationPref("Indexer Encoder Scale", TicksPerRotation.ofNative(32));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> turretRelativeEncoderScale =
             encoderTicksPerRotationPref(
                     "Turret Relative Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(255.0 / 8.0));
