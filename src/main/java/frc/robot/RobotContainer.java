@@ -14,7 +14,6 @@ import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
-import frc.robot.subsystem.PositioningSubsystem;
 import frc.robot.command.intake.RollerCommands;
 import frc.robot.command.intake.WristCommands;
 import frc.robot.input.ControllerInput;
@@ -29,8 +28,6 @@ public class RobotContainer {
     // Drive
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final TurretSubsystem turretSubsystem = new TurretSubsystem();
-    private final PositioningSubsystem visionSubsystem =
-            new PositioningSubsystem(driveSubsystem.getSwerveDrive(), turretSubsystem::getTurretLimelightPose);
     private final IndexerSubsystem indexer = new IndexerSubsystem();
     private final KickerSubsystem kicker = new KickerSubsystem();
     private final HoodSubsystem hood = new HoodSubsystem();

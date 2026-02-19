@@ -36,17 +36,8 @@ public class HoodSubsystem extends SubsystemBase {
         TunerUtils.forMoTalonFx(pid, "Hood PID");
     }
 
-    /**
-     * Sets the hood position calculated by {@link ShootMath}.
-     * @param robot the position of the robot relative to the field
-     * @param target the position of the target relative to the field
-     */
-    public void setCalculatedPosition(Translation2d robot, Translation2d target) {
-        setPosition(ShootMath.hoodAngle(robot, target));
-    }
-
     public void setCalculatedPosition(Distance distance) {
-        setPosition(ShootMath.hoodAngle(distance));
+        setPosition(ShootMath.solve(distance).hoodAngle());
     }
 
     /**

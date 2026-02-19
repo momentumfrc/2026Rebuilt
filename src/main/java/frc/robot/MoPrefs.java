@@ -1,18 +1,15 @@
 package frc.robot;
 
 import edu.wpi.first.units.AngleUnit;
-<<<<<<< HEAD
 import edu.wpi.first.units.DimensionlessUnit;
 import edu.wpi.first.units.PerUnit;
 import edu.wpi.first.units.Units;
-=======
 import edu.wpi.first.units.CurrentUnit;
 import edu.wpi.first.units.DimensionlessUnit;
 import edu.wpi.first.units.PerUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.VoltageUnit;
 import frc.robot.molib.MoUnits;
->>>>>>> main
 import frc.robot.molib.prefs.AngleUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
 import frc.robot.molib.prefs.DimensionlessUnitPref;
