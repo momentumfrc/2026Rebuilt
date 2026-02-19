@@ -57,6 +57,10 @@ public class DriveSubsystem extends SubsystemBase {
         });
     }
 
+    public ChassisSpeeds getRobotRelativeSpeeds() {
+        return swerveDrive.getRobotVelocity();
+    }
+
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
     }
