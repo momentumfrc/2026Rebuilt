@@ -1,6 +1,11 @@
 package frc.robot.subsystem;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -23,6 +28,8 @@ import frc.robot.shootutils.HoodSerializedInformationHolder;
 public class HoodSubsystem extends SubsystemBase {
 
     private final TalonFX motor;
+    private final TalonFXConfiguration motorConfig;
+
     private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> pid;
     private final LinearFilter hoodAngleFilter = LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
     private TrapezoidProfile profile;
@@ -34,6 +41,21 @@ public class HoodSubsystem extends SubsystemBase {
 
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
+        motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(InvertedValue.CounterClockwise_Positive))
+                .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                        .withReverseSoftLimitThreshold(0)
+                        .withReverseSoftLimitEnable(false)
+                        .withForwardSoftLimitThreshold(MoPrefs.hoodMaxSoftLimit.get())
+                        .withForwardSoftLimitEnable(true));
+        motor.getConfigurator().apply(motorConfig);
+
+        MoPrefs.hoodMaxSoftLimit.subscribe(limit -> {
+            motorConfig.SoftwareLimitSwitch.withForwardSoftLimitThreshold((Angle) limit);
+            motor.getConfigurator().apply(motorConfig);
+        });
 
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
         encoder.setPosition(Units.Revolutions.of(0));
