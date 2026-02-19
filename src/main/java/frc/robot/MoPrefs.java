@@ -49,6 +49,10 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final PerUnit<DimensionlessUnit, AngleUnit> TicksPerRotation = Units.Value.per(Units.Revolution);
 
+    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
+            encoderTicksPerRotationPref("Hood Encoder Scale", TicksPerRotation.ofNative(32));
+
+    public static final AngleUnitPref hoodDeadzonePosition = degreesPref("Hood Deadzone Position", Units.Degrees.of(0));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> kickerEncoderScale =
             encoderTicksPerRotationPref("Kicker Encoder Scale", TicksPerRotation.ofNative(32));
 

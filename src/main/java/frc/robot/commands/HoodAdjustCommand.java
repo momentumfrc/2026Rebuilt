@@ -5,55 +5,42 @@ import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.input.MoInput;
+import frc.robot.MoPrefs;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
-import frc.robot.subsystem.IndexerSubsystem;
-import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.util.OdometryTargetingHelper;
 
-public class ShootCommand extends Command {
+public class HoodAdjustCommand extends Command {
 
-    private KickerSubsystem kicker;
-    private IndexerSubsystem indexer;
     private HoodSubsystem hood;
     private DriveSubsystem drive;
 
-    private MoInput input;
-
     private MutDistance targetDistance = Units.Meters.mutable(0);
 
-    public ShootCommand(
-            DriveSubsystem drive, KickerSubsystem kicker, IndexerSubsystem indexer, HoodSubsystem hood, MoInput input) {
-
-        this.kicker = kicker;
-        this.indexer = indexer;
+    public HoodAdjustCommand(HoodSubsystem hood, DriveSubsystem drive) {
         this.hood = hood;
         this.drive = drive;
 
-        this.input = input;
-
-        addRequirements(this.kicker, this.indexer, this.hood, this.drive);
-    }
-
-    public void doShoot(boolean run) {
-        if (run && hood.isInPosition()) {
-            kicker.run();
-            indexer.run();
-        } else {
-            kicker.stop();
-            indexer.stop();
-        }
+        addRequirements(this.hood);
     }
 
     @Override
     public void execute() {
-        doShoot(input.getShootRequest());
+        if (!isInDeadzone()) {
+            hood.setCalculatedPosition(targetDistance);
+        } else {
+            hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
+        }
         targetDistance.mut_replace(
                 OdometryTargetingHelper.getTranslationToTarget(
                                 drive.getRobotPosition(),
                                 DriverStation.getAlliance().orElse(Alliance.Red))
                         .getNorm(),
                 Units.Meters);
+    }
+
+    // will there be one?
+    public boolean isInDeadzone() {
+        return true;
     }
 }

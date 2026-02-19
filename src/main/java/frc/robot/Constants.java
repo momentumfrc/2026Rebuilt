@@ -10,6 +10,8 @@ public class Constants {
     public static final CANAddress KICKER_PORT = new CANAddress(0);
     public static final CANAddress INDEXER_PORT = new CANAddress(0);
 
+    public static final CANAddress HOOD_PORT = new CANAddress(0);
+
     public static final CANAddress TURRET_MOTOR = new CANAddress(0);
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_1 = new DIOPort(0);
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_2 = new DIOPort(1);

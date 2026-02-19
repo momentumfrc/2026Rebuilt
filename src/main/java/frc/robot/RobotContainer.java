@@ -9,11 +9,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.command.intake.RollerCommands;
 import frc.robot.command.intake.WristCommands;
+import frc.robot.commands.ShootCommand;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
 import frc.robot.subsystem.DriveSubsystem;
+import frc.robot.subsystem.HoodSubsystem;
+import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.IntakeRollerSubsystem;
 import frc.robot.subsystem.IntakeWristSubsystem;
+import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import swervelib.SwerveInputStream;
 
@@ -21,6 +25,9 @@ public class RobotContainer {
     // Drive
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final TurretSubsystem turretSubsystem = new TurretSubsystem();
+    private final IndexerSubsystem indexer = new IndexerSubsystem();
+    private final KickerSubsystem kicker = new KickerSubsystem();
+    private final HoodSubsystem hood = new HoodSubsystem();
 
     public final RobotPositioning robotPositioning = new RobotPositioning(
             driveSubsystem.getSwerveDrive(),
@@ -32,6 +39,7 @@ public class RobotContainer {
     private final SwerveInputStream driveAngularVelocity;
 
     private final Command driveFieldOrientedAngularVelocity;
+    private final ShootCommand shootCommand;
 
     // Intake
     private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
@@ -63,12 +71,17 @@ public class RobotContainer {
 
         driveFieldOrientedAngularVelocity = driveSubsystem.driveFieldOriented(driveAngularVelocity);
 
+        shootCommand = new ShootCommand(driveSubsystem, kicker, indexer, hood, input);
+
         configureBindings();
         setDefaultCommands();
     }
 
     public void setDefaultCommands() {
         driveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        hood.setDefaultCommand(shootCommand);
+        indexer.setDefaultCommand(shootCommand);
+        kicker.setDefaultCommand(shootCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
     }
