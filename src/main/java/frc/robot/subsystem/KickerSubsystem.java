@@ -27,6 +27,7 @@ public class KickerSubsystem extends SubsystemBase {
         motor = new TalonFX(Constants.KICKER_PORT.address());
 
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        MoPrefs.kickerEncoderScale.subscribe(encoder::setConversionFactor, true);
 
         pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
 

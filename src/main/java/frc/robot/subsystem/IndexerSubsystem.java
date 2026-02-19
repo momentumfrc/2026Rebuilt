@@ -13,6 +13,7 @@ import frc.robot.molib.motune.MoTuner;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
+import frc.robot.molib.prefs.MoPrefsUtils;
 
 public class IndexerSubsystem extends SubsystemBase {
 
@@ -27,6 +28,7 @@ public class IndexerSubsystem extends SubsystemBase {
         motor = new TalonFX(Constants.INDEXER_PORT.address());
 
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        MoPrefs.indexerEncoderScale.subscribe(encoder::setConversionFactor, true);
 
         pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
 
