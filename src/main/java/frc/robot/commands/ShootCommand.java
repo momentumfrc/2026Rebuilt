@@ -49,6 +49,11 @@ public class ShootCommand extends Command {
     @Override
     public void execute() {
         doShoot(input.getShootRequest());
-        targetDistance.mut_replace(OdometryTargetingHelper.getTranslationToTarget(drive.getRobotPosition(), DriverStation.getAlliance().orElse(Alliance.Red)).getNorm(), Units.Meters);
+        targetDistance.mut_replace(
+                OdometryTargetingHelper.getTranslationToTarget(
+                                drive.getRobotPosition(),
+                                DriverStation.getAlliance().orElse(Alliance.Red))
+                        .getNorm(),
+                Units.Meters);
     }
 }

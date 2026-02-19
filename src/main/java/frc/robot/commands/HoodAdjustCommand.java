@@ -31,7 +31,12 @@ public class HoodAdjustCommand extends Command {
         } else {
             hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
         }
-        targetDistance.mut_replace(OdometryTargetingHelper.getTranslationToTarget(drive.getRobotPosition(), DriverStation.getAlliance().orElse(Alliance.Red)).getNorm(), Units.Meters);
+        targetDistance.mut_replace(
+                OdometryTargetingHelper.getTranslationToTarget(
+                                drive.getRobotPosition(),
+                                DriverStation.getAlliance().orElse(Alliance.Red))
+                        .getNorm(),
+                Units.Meters);
     }
 
     // will there be one?
