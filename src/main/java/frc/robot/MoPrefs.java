@@ -30,7 +30,7 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngularVelocityUnitPref indexerRunSpeed =
             rotationsPerSecPref("Indexer Run Speed", Units.RevolutionsPerSecond.of(1500));
 
-    // Intake prefereces
+    // Intake preferences
     public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));
 
     public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
@@ -42,9 +42,6 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final TimeUnitPref intakeHighCurrentWristTime =
             secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
-
-    public static final TimeUnitPref limelightPoseRefreshDelay =
-            secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
 
