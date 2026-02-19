@@ -24,14 +24,17 @@ import frc.robot.subsystem.TurretSubsystem;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
-    // Drive
+    // **** SUBSYSTEMS ****
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final TurretSubsystem turret = new TurretSubsystem();
     private final IndexerSubsystem indexer = new IndexerSubsystem();
     private final KickerSubsystem kicker = new KickerSubsystem();
     private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final HoodSubsystem hood = new HoodSubsystem();
+    private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
+    private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
 
+    // **** UTILITIES ****
     public final RobotPositioning robotPositioning = new RobotPositioning(
             driveSubsystem.getSwerveDrive(),
             () -> getTurretSubsystem().getTimestampedTurretYaw(),
@@ -39,44 +42,45 @@ public class RobotContainer {
 
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
-    private Trigger resetFieldOrientedFwd;
-
     private final SwerveInputStream driveAngularVelocity;
 
+    // **** COMMANDS ****
     private final Command driveFieldOrientedAngularVelocity;
-    private final ShootCommand shootCommand;
 
-    // Intake
-    private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
-    private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
+    private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
+
+    private final Command idleIndexerCommand = indexer.run(indexer::stop);
+    private final Command idleKickerCommand = kicker.run(kicker::stop);
+    private final Command idleHoodCommand = hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get()));
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
-
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
     private final Command retractIntakeWristCommend = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
-
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
+
+    // **** TRIGGERS ****
+    private Trigger resetFieldOrientedFwd;
 
     private Trigger runIntakeTrigger;
     private Trigger extendIntakeTrigger;
     private Trigger retractIntakeTrigger;
 
-    private final MoInput input = new ControllerInput();
+    private Trigger shootTrigger;
+
+    // **** MISC ****
+    private final MoInput controllerInput = new ControllerInput();
 
     public RobotContainer() {
         driveAngularVelocity = SwerveInputStream.of(
-                        driveSubsystem.getSwerveDrive(),
-                        () -> input.getDriveMoveXRequest(),
-                        () -> input.getDriveMoveYRequest())
-                .withControllerRotationAxis(input::getDriveTurnRequest)
+                        driveSubsystem.getSwerveDrive(), () -> getInput().getDriveMoveXRequest(), () -> getInput()
+                                .getDriveMoveYRequest())
+                .withControllerRotationAxis(() -> getInput().getDriveTurnRequest())
                 .allianceRelativeControl(true);
 
         MoPrefs.inputDeadband.subscribe(deadband -> driveAngularVelocity.deadband(deadband), true);
 
         driveFieldOrientedAngularVelocity = driveSubsystem.driveFieldOriented(driveAngularVelocity);
-
-        shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
 
         configureBindings();
         setDefaultCommands();
@@ -84,21 +88,23 @@ public class RobotContainer {
 
     public void setDefaultCommands() {
         driveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-        hood.setDefaultCommand(shootCommand);
-        indexer.setDefaultCommand(shootCommand);
-        kicker.setDefaultCommand(shootCommand);
+        hood.setDefaultCommand(idleHoodCommand);
+        indexer.setDefaultCommand(idleIndexerCommand);
+        kicker.setDefaultCommand(idleKickerCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
     }
 
     private void configureBindings() {
         // Drive Triggers
-        resetFieldOrientedFwd = new Trigger(() -> input.getReZeroGyro());
+        resetFieldOrientedFwd = new Trigger(() -> getInput().getReZeroGyro());
 
         // Intake Triggers
-        runIntakeTrigger = new Trigger(() -> input.getRunIntake());
-        extendIntakeTrigger = new Trigger(() -> input.getExtendIntake());
-        retractIntakeTrigger = new Trigger(() -> input.getRetractIntake());
+        runIntakeTrigger = new Trigger(() -> getInput().getRunIntake());
+        extendIntakeTrigger = new Trigger(() -> getInput().getExtendIntake());
+        retractIntakeTrigger = new Trigger(() -> getInput().getRetractIntake());
+
+        shootTrigger = new Trigger(() -> getInput().getShootRequest());
 
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
@@ -107,10 +113,16 @@ public class RobotContainer {
         runIntakeTrigger.whileTrue(runRollerCommand);
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
+
+        shootTrigger.whileTrue(shootCommand);
     }
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
+    }
+
+    private MoInput getInput() {
+        return controllerInput;
     }
 
     private TurretSubsystem getTurretSubsystem() {
