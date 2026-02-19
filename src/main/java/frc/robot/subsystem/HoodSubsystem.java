@@ -13,7 +13,7 @@ import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
-import frc.robot.shootutils.ShootMath;
+import frc.robot.shootutils.HoodSerializedInformationHolder;
 
 public class HoodSubsystem extends SubsystemBase {
 
@@ -36,7 +36,7 @@ public class HoodSubsystem extends SubsystemBase {
     }
 
     public void setCalculatedPosition(Distance distance) {
-        setPosition(ShootMath.solve(distance).hoodAngle());
+        setPosition(HoodSerializedInformationHolder.getInstance().getHoodAngle(distance));
     }
 
     /**

@@ -67,7 +67,7 @@ public class HoodSerializedInformationHolder {
         }
     }
 
-    public static HoodSerializedInformationHolder create() {
+    public static HoodSerializedInformationHolder getInstance() {
         if (instance == null) {
             instance = fromFile();
         }
