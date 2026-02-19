@@ -5,6 +5,7 @@ import frc.robot.Constants;
 
 public class ControllerInput implements MoInput {
     private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
 
     @Override
     public double getDriveMoveXRequest() {
@@ -24,6 +25,21 @@ public class ControllerInput implements MoInput {
     @Override
     public boolean getReZeroGyro() {
         return driveController.getBackButton();
+    }
+
+    @Override
+    public boolean getRunIntake() {
+        return operatorController.getYButton();
+    }
+
+    @Override
+    public boolean getExtendIntake() {
+        return operatorController.getLeftBumperButton();
+    }
+
+    @Override
+    public boolean getRetractIntake() {
+        return operatorController.getRightBumperButton();
     }
 
     @Override

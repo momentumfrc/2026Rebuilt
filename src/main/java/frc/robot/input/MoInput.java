@@ -9,5 +9,11 @@ public interface MoInput {
 
     public abstract boolean getReZeroGyro();
 
+    public abstract boolean getRunIntake();
+
+    public abstract boolean getExtendIntake();
+
+    public abstract boolean getRetractIntake();
+
     public abstract boolean getShootRequest();
 }
