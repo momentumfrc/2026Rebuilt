@@ -5,12 +5,14 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
+import frc.robot.shootutils.HoodSerializedInformationHolder;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -23,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
         motor = new TalonFX(Constants.SHOOTER_ADDRESS.address());
 
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
-        pid = new MoTalonFxPID<>(Type.POSITION, motor, encoder.getInternalEncoderUnits());
+        pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
 
         TunerUtils.forMoTalonFx(pid, "Shooter PID");
     }
@@ -34,6 +36,14 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void runAtSpeed(AngularVelocity velocity) {
         pid.setVelocityReference(velocity);
+    }
+
+    public void runAtCalculatedSpeed(Distance distanceToTarget) {
+        runAtSpeed(HoodSerializedInformationHolder.getInstance().getFlywheelSpeed(distanceToTarget));
+    }
+
+    public void stop() {
+        runAtSpeed(Units.RPM.zero());
     }
 
     public boolean isUpToSpeed() {

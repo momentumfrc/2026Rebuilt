@@ -17,7 +17,13 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     public IntakeRollerSubsystem() {
         intakeRoller = new SparkFlex(Constants.INTAKE_ROLLER_PORT.address(), MotorType.kBrushless);
         intakeRollerConfig = MoSparkConfigurator.forSparkFlex(intakeRoller);
-        intakeRollerConfig.accept(config -> config.inverted(false).idleMode(IdleMode.kCoast));
+        intakeRollerConfig.accept(config -> config.smartCurrentLimit(
+                        (int) MoPrefs.intakeRollerSmartCurrentLimit.get().in(Units.Amps))
+                .inverted(false)
+                .idleMode(IdleMode.kCoast));
+
+        MoPrefs.intakeRollerSmartCurrentLimit.subscribe(
+                limit -> intakeRollerConfig.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
     }
 
     public void rollerExtake() {

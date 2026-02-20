@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.units.Units;
@@ -35,6 +36,8 @@ public class RobotPositioning {
     private final BooleanEntry useMT2;
     private final BooleanEntry useTurretLimelight;
     private final BooleanEntry useStationaryLimelight;
+
+    private final BooleanEntry hasInitialPosition;
 
     private final TimeInterpolatableBuffer<Rotation2d> turretYawBuffer =
             TimeInterpolatableBuffer.createBuffer(TURRET_ANGLE_BUFFER_TIME);
@@ -63,6 +66,7 @@ public class RobotPositioning {
         useMT2 = NTHelpers.getBooleanEntry(table, "Use MT2", true);
         useTurretLimelight = NTHelpers.getBooleanEntry(table, "Use turret limelight", true);
         useStationaryLimelight = NTHelpers.getBooleanEntry(table, "Use stationary limelight", true);
+        hasInitialPosition = NTHelpers.getBooleanEntry(table, "Has initial position", false);
 
         // Disable limelight to robot transform on turret camera; we will do this ourselves with a more accurate turret
         // pose estimation
@@ -81,6 +85,20 @@ public class RobotPositioning {
 
     public Pose2d getRobotPose() {
         return swerveDrive.getPose();
+    }
+
+    /**
+     * Get the field-relative velocity of the robot.
+     */
+    public ChassisSpeeds getFieldVelocity() {
+        return swerveDrive.getFieldVelocity();
+    }
+
+    /**
+     * Get the robot-relative velocity of the robot.
+     */
+    public ChassisSpeeds getRobotVelocity() {
+        return swerveDrive.getRobotVelocity();
     }
 
     // Logic adapted from https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
@@ -110,7 +128,8 @@ public class RobotPositioning {
         double estimatedHeadingDegrees = estimatedHeading.getDegrees();
         double gyroRateDegreesPerSecond = angularVelocity.in(DegreesPerSecond);
 
-        LimelightHelpers.SetRobotOrientation(limelightName, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(
+                limelightName, estimatedHeadingDegrees, gyroRateDegreesPerSecond, 0, 0, 0, 0);
 
         var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
         if (mt2 == null) {
@@ -154,13 +173,26 @@ public class RobotPositioning {
         return robotToLimelight.inverse();
     }
 
+    public void resetOdometry(Pose2d robotPose) {
+        swerveDrive.resetOdometry(robotPose);
+        hasInitialPosition.set(true);
+    }
+
+    private void addVisionMeasurement(Pose2d measuredPose, double timestampSeconds, Vector<N3> stdDevs) {
+        if (hasInitialPosition.get() == false) {
+            resetOdometry(measuredPose);
+        } else {
+            swerveDrive.addVisionMeasurement(measuredPose, timestampSeconds, stdDevs);
+        }
+    }
+
     private void addTurretVisionMeasurements() {
         if (useTurretLimelight.get() == false) {
             return;
         }
 
         var turretPosition = swerveDrive
-                .getYaw()
+                .getOdometryHeading()
                 .plus(Rotation2d.fromRadians(turretYawSupplier.get().value().in(Units.Radians)));
         var turretVelocity = turretAngularVelocity.mut_replace(
                 swerveDrive.getGyro().getYawAngularVelocity().in(Units.RadiansPerSecond)
@@ -170,7 +202,7 @@ public class RobotPositioning {
         LimelightHelpers.PoseEstimate poseEstimate = null;
         Vector<N3> visionStdDevs = null;
 
-        if (useMT2.get()) {
+        if (useMT2.get() && hasInitialPosition.get()) {
             poseEstimate = getPoseEstimateMT2(Constants.TURRET_LIMELIGHT_NAME, turretPosition, turretVelocity);
             visionStdDevs = MT2_VISION_STDDEVS;
         } else {
@@ -190,7 +222,8 @@ public class RobotPositioning {
         }
 
         var robotPose = poseEstimate.pose.transformBy(turretLimelightTransform);
-        swerveDrive.addVisionMeasurement(robotPose.toPose2d(), poseEstimate.timestampSeconds, visionStdDevs);
+
+        addVisionMeasurement(robotPose.toPose2d(), poseEstimate.timestampSeconds, visionStdDevs);
 
         turretLLCalculatedPositionLogger.append(robotPose, (long) (poseEstimate.timestampSeconds / 1000000.0));
     }
@@ -210,10 +243,10 @@ public class RobotPositioning {
 
         LimelightHelpers.PoseEstimate poseEstimate = null;
         Vector<N3> visionStdDevs = null;
-        if (useMT2.get()) {
+        if (useMT2.get() && hasInitialPosition.get()) {
             poseEstimate = getPoseEstimateMT2(
                     Constants.STATIONARY_LIMELIGHT_NAME,
-                    swerveDrive.getYaw(),
+                    swerveDrive.getOdometryHeading(),
                     swerveDrive.getGyro().getYawAngularVelocity());
             visionStdDevs = MT2_VISION_STDDEVS;
         } else {
@@ -225,12 +258,13 @@ public class RobotPositioning {
             return;
         }
 
+        addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds, visionStdDevs);
         swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds, visionStdDevs);
 
         stationaryLLAprilTagsLogger.append(poseEstimate.pose, (long) (poseEstimate.timestampSeconds / 1000000.0));
     }
 
-    public void addVisionMeasurements() {
+    private void addVisionMeasurements() {
         addTurretVisionMeasurements();
         addStationaryVisionMeasurements();
     }

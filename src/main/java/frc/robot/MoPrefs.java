@@ -8,8 +8,8 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.VoltageUnit;
 import frc.robot.molib.MoUnits;
 import frc.robot.molib.prefs.AngleUnitPref;
+import frc.robot.molib.prefs.AngularAccelerationUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
-import frc.robot.molib.prefs.DimensionlessUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
 import frc.robot.molib.prefs.MoPrefsBase;
 import frc.robot.molib.prefs.Pref;
@@ -17,6 +17,8 @@ import frc.robot.molib.prefs.TimeUnitPref;
 import frc.robot.molib.prefs.UnitPref;
 
 public class MoPrefs extends MoPrefsBase {
+    public static final PerUnit<DimensionlessUnit, AngleUnit> TicksPerRotation = Units.Value.per(Units.Revolution);
+
     public static final LinearVelocityUnitPref swerveMaxAllowedSpeed =
             metersPerSecPref("Swerve Max Allowed Speed", Units.MetersPerSecond.of(5));
     public static final LinearVelocityUnitPref swerveMaxPossibleSpeed =
@@ -25,12 +27,12 @@ public class MoPrefs extends MoPrefsBase {
             rotationsPerSecPref("Swerve Max Allowed Spin", Units.RotationsPerSecond.of(1));
     public static final AngularVelocityUnitPref swerveMaxPossibleSpin =
             rotationsPerSecPref("Swerve Max Possible Spin", Units.RotationsPerSecond.of(2));
-    public static final DimensionlessUnitPref kickerRunPercentage =
-            percentPref("Kicker Run Percentage", Units.Percent.of(60));
-    public static final DimensionlessUnitPref indexerRunPercentage =
-            percentPref("Indexer Run Percentage", Units.Percent.of(60));
+    public static final AngularVelocityUnitPref kickerRunSpeed =
+            rotationsPerSecPref("Kicker Run Speed", Units.RevolutionsPerSecond.of(1500));
+    public static final AngularVelocityUnitPref indexerRunSpeed =
+            rotationsPerSecPref("Indexer Run Speed", Units.RevolutionsPerSecond.of(1500));
 
-    // Intake prefereces
+    // Intake preferences
     public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));
 
     public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
@@ -43,10 +45,32 @@ public class MoPrefs extends MoPrefsBase {
     public static final TimeUnitPref intakeHighCurrentWristTime =
             secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
 
-    public static final TimeUnitPref limelightPoseRefreshDelay =
-            secondsPref("Limelight Pose Refresh Delay", Units.Seconds.of(0.02));
+    public static final UnitPref<CurrentUnit> intakeRollerSmartCurrentLimit =
+            ampsPref("Intake Rollers Current Limit", Units.Amps.of(20));
+
+    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> indexerEncoderScale =
+            encoderTicksPerRotationPref("Indexer Encoder Scale", TicksPerRotation.ofNative(32));
+    public static final UnitPref<CurrentUnit> indexerRollerSmartCurrentLimit =
+            ampsPref("Indexer Current Limit", Units.Amps.of(40));
 
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Input DeadBand", 0.05);
+
+    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
+            encoderTicksPerRotationPref("Hood Encoder Scale", TicksPerRotation.ofNative(32));
+    public static final AngularVelocityUnitPref hoodMaxVelocity =
+            degreesPerSecPref("Hood Max Velocity", Units.DegreesPerSecond.of(1000));
+    public static final AngularAccelerationUnitPref hoodMaxAcceleration =
+            degreesPerSec2Pref("Hood Max Acceleration", Units.DegreesPerSecondPerSecond.of(1000));
+    public static final AngleUnitPref hoodMaxSoftLimit = degreesPref("Hood Max Soft Limit", Units.Degrees.of(40));
+    public static final UnitPref<VoltageUnit> hoodZeroPower = voltsPref("Hood Zero Power", Units.Volts.of(3));
+    public static final UnitPref<CurrentUnit> hoodZeroCurrentThreshold =
+            ampsPref("Hood Zero Current Threshold", Units.Amps.of(30));
+    public static final TimeUnitPref hoodZeroTime = secondsPref("Hood Zero Time", Units.Seconds.of(0.5));
+    public static final UnitPref<CurrentUnit> hoodCurrentLimit = ampsPref("Hood Current Limit", Units.Amps.of(40));
+
+    public static final AngleUnitPref hoodDeadzonePosition = degreesPref("Hood Deadzone Position", Units.Degrees.of(0));
+    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> kickerEncoderScale =
+            encoderTicksPerRotationPref("Kicker Encoder Scale", TicksPerRotation.ofNative(32));
 
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> turretRelativeEncoderScale =
             encoderTicksPerRotationPref(
@@ -66,8 +90,26 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngleUnitPref turretMaxSoftLimit =
             degreesPref("Turret Max Soft Limit", Units.Degrees.of(362.5));
 
+    /**
+     * The maximum output voltage to the turret motor. This value allows rough control of the turret's max speed, however
+     * it is preferred to use turretMaxVelocity for more fine control.
+     */
     public static final UnitPref<VoltageUnit> turretMaxPower = voltsPref("Turret Max Power", Units.Volts.of(6));
+    /**
+     * The minimum duration for the turret motor output voltage to sweep between 0 and 12 volts. This value is allows rough control
+     * of the turret's max acceleration, however it is preferred to use turretMaxAcceleration for more fine control.
+     */
     public static final TimeUnitPref turretVoltRampRate = secondsPref("Turret Voltage Ramp Rate", Units.Seconds.of(0));
+
+    /**
+     * The average duration between when a setpoint is commanded and when it is achieved for the turret and shooter subsystems.
+     */
+    public static final TimeUnitPref turretPhaseDelay = secondsPref("Turret Phase Delay", Units.Seconds.of(0.03));
+
+    public static final AngularVelocityUnitPref turretMaxVelocity =
+            degreesPerSecPref("Turret Max Velocity", Units.DegreesPerSecond.of(180));
+    public static final AngularAccelerationUnitPref turretMaxAcceleration =
+            degreesPerSec2Pref("Turret Max Acceleration", Units.DegreesPerSecondPerSecond.of(360));
 
     public static final AngularVelocityUnitPref flywheelSpeedTolerance =
             rotationsPerSecPref("Flywheel Speed Tolerance", Units.RotationsPerSecond.of(20));

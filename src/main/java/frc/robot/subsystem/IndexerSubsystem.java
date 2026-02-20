@@ -1,36 +1,53 @@
 package frc.robot.subsystem;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.MoSparkConfigurator;
+import frc.robot.molib.encoder.MoRotationEncoder;
+import frc.robot.molib.motune.TunerUtils;
+import frc.robot.molib.pid.MoSparkMaxPID;
 
 public class IndexerSubsystem extends SubsystemBase {
 
-    private final TalonFX motor;
+    private final SparkFlex motor;
+    private final MoSparkConfigurator config;
+
+    private final MoRotationEncoder encoder;
+
+    private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> pid;
 
     public IndexerSubsystem() {
-        motor = new TalonFX(Constants.INDEXER_PORT.address());
+        motor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
+        config = MoSparkConfigurator.forSparkFlex(motor);
 
-        // to make our lives easier
-        motor.setNeutralMode(NeutralModeValue.Coast);
-    }
+        config.accept(config -> config.smartCurrentLimit(
+                        (int) MoPrefs.indexerRollerSmartCurrentLimit.get().in(Units.Amps))
+                .inverted(false)
+                .idleMode(IdleMode.kCoast));
+        MoPrefs.indexerRollerSmartCurrentLimit.subscribe(
+                limit -> config.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
 
-    /**
-     * Runs the motor at the given speed.
-     * @param speed speed to run motor at, from [-1.0, 1.0]
-     */
-    public void run(double speed) {
-        motor.set(speed);
+        encoder = MoRotationEncoder.forSparkRelative(motor, Units.Revolutions);
+        MoPrefs.indexerEncoderScale.subscribe(encoder::setConversionFactor, true);
+
+        pid = new MoSparkMaxPID<>(MoSparkMaxPID.Type.VELOCITY, motor, ClosedLoopSlot.kSlot0, encoder, config);
+
+        TunerUtils.forMoSparkMax(pid, "Indexer PID");
     }
 
     public void run() {
-        run(MoPrefs.indexerRunPercentage.get().in(Units.Value));
+        pid.setVelocityReference(MoPrefs.indexerRunSpeed.get());
     }
 
     public void stop() {
-        motor.stopMotor();
+        pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
     }
 }
