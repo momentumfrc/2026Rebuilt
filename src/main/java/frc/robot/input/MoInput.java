@@ -16,4 +16,6 @@ public interface MoInput {
     public abstract boolean getRetractIntake();
 
     public abstract boolean getShootRequest();
+
+    public abstract boolean getRunSysId();
 }
