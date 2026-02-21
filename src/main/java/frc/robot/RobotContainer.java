@@ -26,6 +26,8 @@ import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.OdometryTargetingHelper;
+import frc.robot.util.SysIdUtil;
+import java.util.List;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
@@ -84,8 +86,16 @@ public class RobotContainer {
 
     private Trigger zeroHoodTrigger;
 
+    private Trigger runSysIdTrigger;
+
     // **** MISC ****
     private final MoInput controllerInput = new ControllerInput();
+    private final SysIdUtil sysId = new SysIdUtil(List.of(
+            indexer.getSysIdMechanism(),
+            kicker.getSysIdMechanism(),
+            turret.getSysIdMechanism(),
+            shooter.getSysIdMechanism(),
+            hood.getSysIdMechanism()));
 
     public RobotContainer() {
         driveAngularVelocity = SwerveInputStream.of(
@@ -138,6 +148,8 @@ public class RobotContainer {
 
         zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
 
+        runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -149,6 +161,8 @@ public class RobotContainer {
         shootTrigger.whileTrue(shootCommand);
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
+
+        runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
     }
 
     public Command getAutonomousCommand() {

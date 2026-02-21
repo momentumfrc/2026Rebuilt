@@ -46,4 +46,9 @@ public class ControllerInput implements MoInput {
     public boolean getShootRequest() {
         return driveController.getAButton();
     }
+
+    @Override
+    public boolean getRunSysId() {
+        return driveController.getRightBumperButton();
+    }
 }

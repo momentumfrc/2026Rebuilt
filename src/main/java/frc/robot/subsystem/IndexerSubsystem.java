@@ -8,6 +8,7 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
@@ -49,5 +50,15 @@ public class IndexerSubsystem extends SubsystemBase {
 
     public void stop() {
         pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
+    }
+
+    public SysIdRoutine.Mechanism getSysIdMechanism() {
+        return new SysIdRoutine.Mechanism(
+                motor::setVoltage,
+                log -> log.motor("indexer")
+                        .voltage(Units.Volts.of(motor.getBusVoltage() * motor.get()))
+                        .angularPosition(encoder.getPosition())
+                        .angularVelocity(encoder.getVelocity()),
+                this);
     }
 }

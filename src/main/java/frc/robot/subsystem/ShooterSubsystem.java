@@ -7,12 +7,14 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
+import frc.robot.util.SysIdUtil;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -52,5 +54,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double getMotorVelocity() {
         return encoder.getVelocityInEncoderUnits();
+    }
+
+    public SysIdRoutine.Mechanism getSysIdMechanism() {
+        return SysIdUtil.sysIdMechanismForTalonFx(this, "shooter", motor, encoder);
     }
 }

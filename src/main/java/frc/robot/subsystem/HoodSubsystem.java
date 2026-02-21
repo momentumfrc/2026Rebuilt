@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
@@ -30,6 +31,7 @@ import frc.robot.molib.pid.MoTalonFxProfilePID;
 import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
 import frc.robot.util.NTHelpers;
+import frc.robot.util.SysIdUtil;
 
 public class HoodSubsystem extends SubsystemBase {
 
@@ -156,5 +158,9 @@ public class HoodSubsystem extends SubsystemBase {
     public void zeroEncoder() {
         encoder.setPosition(Units.Degrees.zero());
         hoodZeroed.set(true);
+    }
+
+    public SysIdRoutine.Mechanism getSysIdMechanism() {
+        return SysIdUtil.sysIdMechanismForTalonFx(this, "hood", motor, encoder);
     }
 }

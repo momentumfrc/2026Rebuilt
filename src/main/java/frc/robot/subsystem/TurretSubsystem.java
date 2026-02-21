@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
@@ -46,6 +47,7 @@ import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.shootutils.TurretTargeting.TurretSetpoint;
 import frc.robot.util.LimelightTargetingHelper;
 import frc.robot.util.NTHelpers;
+import frc.robot.util.SysIdUtil;
 import frc.robot.util.TurretAngleHelper;
 
 public class TurretSubsystem extends SubsystemBase {
@@ -346,5 +348,9 @@ public class TurretSubsystem extends SubsystemBase {
             turretMotorConfig.MotorOutput.NeutralMode = desiredNeutralMode;
             turretMotor.getConfigurator().apply(turretMotorConfig);
         }
+    }
+
+    public SysIdRoutine.Mechanism getSysIdMechanism() {
+        return SysIdUtil.sysIdMechanismForTalonFx(this, "turret", turretMotor, turretEncoder);
     }
 }

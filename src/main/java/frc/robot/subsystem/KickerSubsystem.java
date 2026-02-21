@@ -6,12 +6,14 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
+import frc.robot.util.SysIdUtil;
 
 public class KickerSubsystem extends SubsystemBase {
 
@@ -42,5 +44,9 @@ public class KickerSubsystem extends SubsystemBase {
 
     public void stop() {
         pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
+    }
+
+    public SysIdRoutine.Mechanism getSysIdMechanism() {
+        return SysIdUtil.sysIdMechanismForTalonFx(this, "kicker", motor, encoder);
     }
 }
