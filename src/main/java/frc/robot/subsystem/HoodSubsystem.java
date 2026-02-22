@@ -12,6 +12,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
@@ -51,6 +52,8 @@ public class HoodSubsystem extends SubsystemBase {
 
     private final BooleanEntry hoodZeroed;
     private final BooleanEntry coastMotor;
+
+    private final DoublePublisher currentPublisher;
 
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
@@ -98,6 +101,7 @@ public class HoodSubsystem extends SubsystemBase {
         var table = NTHelpers.getTable("shooter-hood");
         hoodZeroed = NTHelpers.getBooleanEntry(table, "Has zero?", false);
         coastMotor = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
+        currentPublisher = table.getDoubleTopic("Current").publish();
     }
 
     public void setCalculatedPosition(Distance distance) {
@@ -173,5 +177,7 @@ public class HoodSubsystem extends SubsystemBase {
             motorConfig.MotorOutput.NeutralMode = desiredNeutralMode;
             motor.getConfigurator().apply(motorConfig);
         }
+
+        currentPublisher.set(motor.getStatorCurrent().getValueAsDouble());
     }
 }
