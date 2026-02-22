@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -18,11 +19,14 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -123,16 +127,9 @@ public class HoodSubsystem extends SubsystemBase {
         setPosition(HoodSerializedInformationHolder.getInstance().getHoodAngle(distance));
     }
 
-    /**
-     * Sets the desired position of the hood, in rotations.
-     * @param position the desired position of the hood, in rotations
-     */
-    public void setPosition(Angle position) {
-        if (hoodZeroed.get() == false) {
-            motor.stopMotor();
-            return;
-        }
+    private MutAngularVelocity mutVelocityReference = Units.RadiansPerSecond.mutable(0);
 
+    public void setPosition(Angle position) {
         if (Double.isNaN(lastHoodAngle)) {
             lastHoodAngle = position.in(Units.Radians);
         }
@@ -140,10 +137,27 @@ public class HoodSubsystem extends SubsystemBase {
         double goalVelocity =
                 hoodAngleFilter.calculate((position.in(Units.Radians) - lastHoodAngle) / Constants.LOOP_PERIOD);
         lastHoodAngle = position.in(Units.Radians);
+
+        setPosition(position, mutVelocityReference.mut_replace(goalVelocity, Units.RadiansPerSecond));
+    }
+
+    /**
+     * Sets the desired position of the hood, in rotations.
+     * @param position the desired position of the hood, in rotations
+     */
+    public void setPosition(Angle position, AngularVelocity velocity) {
+        if (hoodZeroed.get() == false) {
+            motor.stopMotor();
+            return;
+        }
+
+        double goalVelocity = velocity.in(Units.RadiansPerSecond);
         State currentState = new State(
                 encoder.getPosition().in(Units.Radians), encoder.getVelocity().in(Units.RadiansPerSecond));
         State goalState = new State(position.in(Units.Radians), goalVelocity);
         State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
+
+        System.out.format("%.4f, %.4f\n", position.in(Units.Degrees), goalState.velocity);
 
         positionReference.mut_replace(setpoint.position, Units.Radians);
         velocityReference.mut_replace(setpoint.velocity, Units.RadiansPerSecond);
@@ -184,6 +198,18 @@ public class HoodSubsystem extends SubsystemBase {
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
         return SysIdUtil.sysIdMechanismForTalonFx(this, "hood", motor, encoder);
+    }
+
+    public Command testCommand(XboxController testController) {
+        return run(() -> {
+                    double y = -1 * testController.getRightY();
+                    double setpointDegrees = MathUtil.interpolate(
+                            MoPrefs.hoodMinSoftLimit.get().in(Units.Degrees),
+                            MoPrefs.hoodMaxSoftLimit.get().in(Units.Degrees),
+                            MathUtil.inverseInterpolate(-1, 1, y));
+                    setPosition(Units.Degrees.of(setpointDegrees), Units.RadiansPerSecond.zero());
+                })
+                .withName("HoodTestCommand");
     }
 
     @Override

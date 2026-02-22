@@ -68,6 +68,7 @@ public class RobotContainer {
     private final Command idleShooterCommand = shooter.run(shooter::stop);
     private final Command idleHoodCommand = hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get()));
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
+    private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
     private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
     private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
@@ -187,6 +188,7 @@ public class RobotContainer {
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
+        RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
     }
 
     public Command getAutonomousCommand() {
