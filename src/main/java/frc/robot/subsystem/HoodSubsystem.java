@@ -61,6 +61,8 @@ public class HoodSubsystem extends SubsystemBase {
 
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
+        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+
         motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
@@ -69,9 +71,11 @@ public class HoodSubsystem extends SubsystemBase {
                         .withStatorCurrentLimit((Current) MoPrefs.hoodCurrentLimit.get())
                         .withStatorCurrentLimitEnable(true))
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                        .withReverseSoftLimitThreshold(0)
-                        .withReverseSoftLimitEnable(false)
-                        .withForwardSoftLimitThreshold(MoPrefs.hoodMaxSoftLimit.get())
+                        .withReverseSoftLimitThreshold(
+                                MoPrefs.hoodMinSoftLimit.get().in(encoder.getInternalEncoderUnits()))
+                        .withReverseSoftLimitEnable(true)
+                        .withForwardSoftLimitThreshold(
+                                MoPrefs.hoodMaxSoftLimit.get().in(encoder.getInternalEncoderUnits()))
                         .withForwardSoftLimitEnable(true));
         motor.getConfigurator().apply(motorConfig);
 
@@ -81,11 +85,15 @@ public class HoodSubsystem extends SubsystemBase {
         });
 
         MoPrefs.hoodMaxSoftLimit.subscribe(limit -> {
-            motorConfig.SoftwareLimitSwitch.withForwardSoftLimitThreshold((Angle) limit);
+            motorConfig.SoftwareLimitSwitch.withForwardSoftLimitThreshold(limit.in(encoder.getInternalEncoderUnits()));
             motor.getConfigurator().apply(motorConfig);
         });
 
-        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        MoPrefs.hoodMinSoftLimit.subscribe(limit -> {
+            motorConfig.SoftwareLimitSwitch.withReverseSoftLimitThreshold(limit.in(encoder.getInternalEncoderUnits()));
+            motor.getConfigurator().apply(motorConfig);
+        });
+
         encoder.setPosition(Units.Revolutions.of(0));
         MoPrefs.hoodEncoderScale.subscribe(encoder::setConversionFactor, true);
 
