@@ -139,6 +139,7 @@ public class HoodSubsystem extends SubsystemBase {
 
         double goalVelocity =
                 hoodAngleFilter.calculate((position.in(Units.Radians) - lastHoodAngle) / Constants.LOOP_PERIOD);
+        lastHoodAngle = position.in(Units.Radians);
         State currentState = new State(
                 encoder.getPosition().in(Units.Radians), encoder.getVelocity().in(Units.RadiansPerSecond));
         State goalState = new State(position.in(Units.Radians), goalVelocity);
