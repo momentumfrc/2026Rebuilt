@@ -1,6 +1,8 @@
 package frc.robot.subsystem;
 
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
@@ -18,16 +20,21 @@ import frc.robot.util.SysIdUtil;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private final TalonFX motor;
-    private MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
-    private MoRotationEncoder encoder;
+    private final TalonFX motor1;
+    private final TalonFX motor2;
+
+    private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
+    private final MoRotationEncoder encoder;
 
     public ShooterSubsystem() {
+        motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
+        motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address());
 
-        motor = new TalonFX(Constants.SHOOTER_ADDRESS.address());
 
-        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
-        pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
+        motor2.setControl(new Follower(Constants.SHOOTER_1_ADDRESS.address(), MotorAlignmentValue.Opposed));
+
+        encoder = MoRotationEncoder.forTalonFx(motor1, Units.Revolutions);
+        pid = new MoTalonFxPID<>(Type.VELOCITY, motor1, encoder.getInternalEncoderUnits());
 
         TunerUtils.forMoTalonFx(pid, "Shooter PID");
     }
@@ -57,6 +64,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
-        return SysIdUtil.sysIdMechanismForTalonFx(this, "shooter", motor, encoder);
+        return SysIdUtil.sysIdMechanismForTalonFx(this, "shooter", motor1, encoder);
     }
 }
