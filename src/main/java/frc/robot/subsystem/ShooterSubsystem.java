@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
@@ -23,6 +24,7 @@ import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
+import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -33,6 +35,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
     private final MoRotationEncoder encoder;
+
+    private final DoublePublisher flywheelCurrentPublisher;
+    private final DoublePublisher flywheelSpeedPublisher;
 
     public ShooterSubsystem() {
         motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
@@ -57,6 +62,10 @@ public class ShooterSubsystem extends SubsystemBase {
         pid = new MoTalonFxPID<>(Type.VELOCITY, motor1, encoder.getInternalEncoderUnits());
 
         TunerUtils.forMoTalonFx(pid, "Shooter PID");
+
+        var table = NTHelpers.getTable("shooter-flywheel");
+        flywheelCurrentPublisher = table.getDoubleTopic("Flywheel Current").publish();
+        flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed").publish();
     }
 
     /**
@@ -85,5 +94,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
         return SysIdUtil.sysIdMechanismForTalonFx(this, "shooter", motor1, encoder);
+    }
+
+    @Override
+    public void periodic() {
+        flywheelCurrentPublisher.set(motor1.getStatorCurrent().getValueAsDouble());
+        flywheelSpeedPublisher.set(encoder.getVelocity().in(Units.RPM));
     }
 }
