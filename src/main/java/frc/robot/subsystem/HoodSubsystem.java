@@ -50,6 +50,7 @@ public class HoodSubsystem extends SubsystemBase {
     private final VoltageOut voltageControlRequest = new VoltageOut(0);
 
     private final BooleanEntry hoodZeroed;
+    private final BooleanEntry coastMotor;
 
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
@@ -96,6 +97,7 @@ public class HoodSubsystem extends SubsystemBase {
 
         var table = NTHelpers.getTable("shooter-hood");
         hoodZeroed = NTHelpers.getBooleanEntry(table, "Has zero?", false);
+        coastMotor = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
     }
 
     public void setCalculatedPosition(Distance distance) {
@@ -162,5 +164,14 @@ public class HoodSubsystem extends SubsystemBase {
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
         return SysIdUtil.sysIdMechanismForTalonFx(this, "hood", motor, encoder);
+    }
+
+    @Override
+    public void periodic() {
+        NeutralModeValue desiredNeutralMode = coastMotor.get() ? NeutralModeValue.Coast : NeutralModeValue.Brake;
+        if (desiredNeutralMode != motorConfig.MotorOutput.NeutralMode) {
+            motorConfig.MotorOutput.NeutralMode = desiredNeutralMode;
+            motor.getConfigurator().apply(motorConfig);
+        }
     }
 }
