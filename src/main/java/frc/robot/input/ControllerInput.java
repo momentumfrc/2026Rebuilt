@@ -3,9 +3,17 @@ package frc.robot.input;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 
-public class ControllerInput implements MoInput {
+public final class ControllerInput implements MoInput {
     private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
     private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
+
+    public XboxController getDriveController() {
+        return driveController;
+    }
+
+    public XboxController getOperatorController() {
+        return operatorController;
+    }
 
     @Override
     public double getDriveMoveXRequest() {

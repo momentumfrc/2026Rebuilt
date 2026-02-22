@@ -34,7 +34,9 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -47,9 +49,11 @@ import frc.robot.molib.motune.MoTuner;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxProfilePID;
 import frc.robot.molib.prefs.MoPrefsUtils;
+import frc.robot.shootutils.TurretTargeting;
 import frc.robot.shootutils.TurretTargeting.TurretSetpoint;
 import frc.robot.util.LimelightTargetingHelper;
 import frc.robot.util.NTHelpers;
+import frc.robot.util.OdometryTargetingHelper;
 import frc.robot.util.SysIdUtil;
 import frc.robot.util.TurretAngleHelper;
 
@@ -379,6 +383,33 @@ public class TurretSubsystem extends SubsystemBase {
 
     public boolean shouldEnablePassiveTracking() {
         return passiveTrackingEntry.get();
+    }
+
+    public Command passiveTargetingCommand(TurretTargeting targeting) {
+        return run(() -> {
+                    if (shouldEnablePassiveTracking()) {
+                        var target = OdometryTargetingHelper.getTarget(
+                                DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
+                        var firingSolution = targeting.targetPosition(target.toTranslation2d());
+                        align(firingSolution);
+                    } else {
+                        stop();
+                    }
+                })
+                .withName("TurretPassiveTargetingCommand");
+    }
+
+    public Command testCommand(XboxController testController) {
+        return run(() -> {
+                    double x = -1 * testController.getLeftY();
+                    double y = -1 * testController.getLeftX();
+                    if (Math.hypot(x, y) < 0.05) {
+                        stop();
+                    } else {
+                        alignAbsolute(Units.Radians.of(Math.atan2(y, x)), Units.RadiansPerSecond.of(0));
+                    }
+                })
+                .withName("TurretTestCommand");
     }
 
     @Override

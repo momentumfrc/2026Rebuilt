@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,7 +25,6 @@ import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
-import frc.robot.util.OdometryTargetingHelper;
 import frc.robot.util.SysIdUtil;
 import java.util.List;
 import swervelib.SwerveInputStream;
@@ -50,7 +48,7 @@ public class RobotContainer {
 
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
-    private final MoInput controllerInput = new ControllerInput();
+    private final ControllerInput controllerInput = new ControllerInput();
     private final SysIdUtil sysId = new SysIdUtil(List.of(
             indexer.getSysIdMechanism(),
             kicker.getSysIdMechanism(),
@@ -71,16 +69,8 @@ public class RobotContainer {
     private final Command idleHoodCommand = hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get()));
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
 
-    private final Command passiveTargetingCommand = turret.run(() -> {
-        if (turret.shouldEnablePassiveTracking()) {
-            var target = OdometryTargetingHelper.getTarget(
-                    DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
-            var firingSolution = turretTargetingHelper.targetPosition(target.toTranslation2d());
-            turret.align(firingSolution);
-        } else {
-            turret.stop();
-        }
-    });
+    private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
+    private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
@@ -195,6 +185,8 @@ public class RobotContainer {
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
+
+        RobotModeTriggers.test().whileTrue(turretTestCommand);
     }
 
     public Command getAutonomousCommand() {
