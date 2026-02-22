@@ -1,6 +1,5 @@
 package frc.robot.subsystem;
 
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
@@ -49,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command resetFieldOrientedFwd() {
-        return runOnce(() -> swerveDrive.setGyro(Rotation3d.kZero));
+        return runOnce(() -> swerveDrive.zeroGyro());
     }
 
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
