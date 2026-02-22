@@ -57,6 +57,7 @@ public class HoodSubsystem extends SubsystemBase {
     private final BooleanPublisher forwardSoftLimitPublisher;
     private final BooleanPublisher reverseSoftLimitPublisher;
     private final DoublePublisher currentPublisher;
+    private final DoublePublisher hoodEncoderPublisher;
 
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
@@ -107,6 +108,7 @@ public class HoodSubsystem extends SubsystemBase {
         currentPublisher = table.getDoubleTopic("Current").publish();
         forwardSoftLimitPublisher = table.getBooleanTopic("Forward Soft Limit").publish();
         reverseSoftLimitPublisher = table.getBooleanTopic("Reverse Soft Limit").publish();
+        hoodEncoderPublisher = table.getDoubleTopic("Encoder (deg)").publish();
     }
 
     public void setCalculatedPosition(Distance distance) {
@@ -186,5 +188,6 @@ public class HoodSubsystem extends SubsystemBase {
         currentPublisher.set(motor.getStatorCurrent().getValueAsDouble());
         forwardSoftLimitPublisher.set(motor.getFault_ForwardSoftLimit().getValue());
         reverseSoftLimitPublisher.set(motor.getFault_ReverseSoftLimit().getValue());
+        hoodEncoderPublisher.set(encoder.getPosition().in(Units.Degrees));
     }
 }
