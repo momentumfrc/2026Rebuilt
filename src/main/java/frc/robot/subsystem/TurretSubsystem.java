@@ -30,6 +30,7 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -38,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.encoder.DIOAbsEncoder;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.encoder.absolute.MoAbsoluteEncoder;
 import frc.robot.molib.encoder.absolute.VernierEncoder;
@@ -97,6 +99,9 @@ public class TurretSubsystem extends SubsystemBase {
     private final MoAbsoluteEncoder absEncoder1;
     private final MoAbsoluteEncoder absEncoder2;
     private final VernierEncoder vernierEncoder;
+    private final Alert encodersDisconnectedAlert =
+            new Alert("turret absolute encoder disconnected", Alert.AlertType.kError);
+
     private TurretAngleHelper angleHelper;
 
     private TrapezoidProfile profile;
@@ -117,8 +122,22 @@ public class TurretSubsystem extends SubsystemBase {
 
     private final BooleanEntry passiveTrackingEntry;
     private final BooleanEntry coastMotorEntry;
+    private final BooleanEntry hasZero;
 
     public TurretSubsystem() {
+        /* ==== DASHBOARD SETUP ==== */
+        var table = NTHelpers.getTable("turret");
+        relativeEncoderPublisher = table.getDoubleTopic("Relative Encoder").publish();
+        absEncoder1Publisher = table.getDoubleTopic("Abs Encoder 1").publish();
+        absEncoder2Publisher = table.getDoubleTopic("Abs Encoder 2").publish();
+        vernierEncoderPublisher = table.getDoubleTopic("Vernier Encoder").publish();
+        targetTagPublisher = table.getIntegerTopic("Target Tag ID").publish();
+        hitForwardSoftLimit = table.getBooleanTopic("Forward Soft Limit").publish();
+        hitReverseSoftLimit = table.getBooleanTopic("Reverse Soft Limit").publish();
+
+        passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
+        coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
+        hasZero = NTHelpers.getBooleanEntry(table, "Has Zero", false);
 
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
@@ -191,7 +210,8 @@ public class TurretSubsystem extends SubsystemBase {
                 (zero1, zero2, offset) -> {
                     absEncoder1.setEncoderZero((Angle) zero1);
                     absEncoder2.setEncoderZero((Angle) zero2);
-                    turretEncoder.setPosition(vernierEncoder.getPosition().plus(offset));
+                    hasZero.set(false);
+                    zeroEncoder();
                 },
                 true);
 
@@ -220,23 +240,31 @@ public class TurretSubsystem extends SubsystemBase {
                 .parameter("tolerance", turretRelativePid::setTolerance)
                 .measurement(targetingHelper::getTx)
                 .safeBuild();
-
-        /* ==== DASHBOARD SETUP ==== */
-        var table = NTHelpers.getTable("turret");
-        relativeEncoderPublisher = table.getDoubleTopic("Relative Encoder").publish();
-        absEncoder1Publisher = table.getDoubleTopic("Abs Encoder 1").publish();
-        absEncoder2Publisher = table.getDoubleTopic("Abs Encoder 2").publish();
-        vernierEncoderPublisher = table.getDoubleTopic("Vernier Encoder").publish();
-        targetTagPublisher = table.getIntegerTopic("Target Tag ID").publish();
-        hitForwardSoftLimit = table.getBooleanTopic("Forward Soft Limit").publish();
-        hitReverseSoftLimit = table.getBooleanTopic("Reverse Soft Limit").publish();
-
-        passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
-        coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
     }
 
     public TurretAngleHelper getAngleHelper() {
         return angleHelper;
+    }
+
+    private boolean absEncodersAreConnected() {
+        var dio1 = ((DIOAbsEncoder) absEncoder1.getMoEncoder().getEncoder()).getEncoder();
+        var dio2 = ((DIOAbsEncoder) absEncoder2.getMoEncoder().getEncoder()).getEncoder();
+
+        return dio1.isConnected() && dio2.isConnected();
+    }
+
+    public void zeroEncoder() {
+        if (!absEncodersAreConnected()) {
+            return;
+        }
+
+        var absolutePosition = vernierEncoder.getPosition();
+        if (absolutePosition.isEmpty()) {
+            return;
+        }
+
+        turretEncoder.setPosition(absolutePosition.get().plus(MoPrefs.turretRelativeEncoderOffset.get()));
+        hasZero.set(true);
     }
 
     /**
@@ -298,6 +326,11 @@ public class TurretSubsystem extends SubsystemBase {
      * Align to a specified goalAngle and goalVelocity in robot coordinates.
      */
     public void alignAbsolute(Angle goalAngle, AngularVelocity goalVelocity) {
+        if (hasZero.get() == false) {
+            stop();
+            return;
+        }
+
         Angle moduloGoalAngle = angleHelper.turretAngleModulus(goalAngle);
         if (moduloGoalAngle == null) {
             // desired angle is outside the turret's range of motion
@@ -325,9 +358,14 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     public void alignRelative() {
+        if (hasZero.get() == false) {
+            stop();
+            return;
+        }
+
         if (relativeTargetIsVisible() == false) {
             // No target visible
-            turretMotor.stopMotor();
+            stop();
             return;
         }
 
@@ -355,10 +393,15 @@ public class TurretSubsystem extends SubsystemBase {
         hitForwardSoftLimit.set(turretMotor.getFault_ForwardSoftLimit().getValue());
         hitReverseSoftLimit.set(turretMotor.getFault_ReverseSoftLimit().getValue());
 
+        encodersDisconnectedAlert.set(absEncodersAreConnected() == false);
+
         // The vernier encoder calculation is iterative, so it might be too expensive to calculate it on every loop.
         // But it's also incredibly useful information for debugging, so let's keep this line for now and remove it
         // if it becomes a problem.
-        vernierEncoderPublisher.set(vernierEncoder.getPosition().in(Units.Rotations));
+        vernierEncoderPublisher.set(vernierEncoder
+                .getPosition()
+                .map(angle -> angle.in(Units.Rotations))
+                .orElse(Double.NaN));
 
         var desiredNeutralMode = coastMotorEntry.get() ? NeutralModeValue.Coast : NeutralModeValue.Brake;
         if (desiredNeutralMode != turretMotorConfig.MotorOutput.NeutralMode) {
