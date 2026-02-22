@@ -51,9 +51,9 @@ public class DriveSubsystem extends SubsystemBase {
         return runOnce(() -> swerveDrive.zeroGyro());
     }
 
-    public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
+    public Command driveFieldOriented(Supplier<Supplier<ChassisSpeeds>> inputSupplier) {
         return run(() -> {
-            swerveDrive.driveFieldOriented(velocity.get());
+            swerveDrive.driveFieldOriented(inputSupplier.get().get());
         });
     }
 

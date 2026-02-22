@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,10 +50,18 @@ public class RobotContainer {
 
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
-    private final SwerveInputStream driveAngularVelocity;
+    private final MoInput controllerInput = new ControllerInput();
+    private final SysIdUtil sysId = new SysIdUtil(List.of(
+            indexer.getSysIdMechanism(),
+            kicker.getSysIdMechanism(),
+            turret.getSysIdMechanism(),
+            shooter.getSysIdMechanism(),
+            hood.getSysIdMechanism()));
+
+    private final SendableChooser<SwerveInputStream> driveModeChooser = new SendableChooser<>();
 
     // **** COMMANDS ****
-    private final Command driveFieldOrientedAngularVelocity;
+    private final Command driveCommand = driveSubsystem.driveFieldOriented(() -> driveModeChooser.getSelected());
 
     private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
 
@@ -88,33 +97,52 @@ public class RobotContainer {
 
     private Trigger runSysIdTrigger;
 
-    // **** MISC ****
-    private final MoInput controllerInput = new ControllerInput();
-    private final SysIdUtil sysId = new SysIdUtil(List.of(
-            indexer.getSysIdMechanism(),
-            kicker.getSysIdMechanism(),
-            turret.getSysIdMechanism(),
-            shooter.getSysIdMechanism(),
-            hood.getSysIdMechanism()));
-
     public RobotContainer() {
-        driveAngularVelocity = SwerveInputStream.of(
-                        driveSubsystem.getSwerveDrive(), () -> getInput().getDriveMoveXRequest(), () -> getInput()
-                                .getDriveMoveYRequest())
-                .withControllerRotationAxis(() -> getInput().getDriveTurnRequest())
-                .allianceRelativeControl(true);
-
-        MoPrefs.inputDeadband.subscribe(deadband -> driveAngularVelocity.deadband(deadband), true);
-
-        driveFieldOrientedAngularVelocity = driveSubsystem.driveFieldOriented(driveAngularVelocity);
-
+        setupDriveModes();
         configureBindings();
         setDefaultCommands();
         addSubsystemsToDashboard();
     }
 
+    private void setupDriveModes() {
+        var swerveInputStreamBase = SwerveInputStream.of(
+                        driveSubsystem.getSwerveDrive(), () -> getInput().getDriveMoveXRequest(), () -> getInput()
+                                .getDriveMoveYRequest())
+                .allianceRelativeControl(true)
+                .cubeTranslationControllerAxis(() -> MoPrefs.inputTranslationCubed.get())
+                .cubeRotationControllerAxis(() -> MoPrefs.inputRotationCubed.get());
+
+        var driveAngularVelocity = swerveInputStreamBase.copy().withControllerRotationAxis(() -> getInput()
+                .getDriveTurnRequest());
+
+        var driveHeading = swerveInputStreamBase
+                .copy()
+                .withControllerHeadingAxis(() -> getInput().getDriveHeadingXRequest(), () -> getInput()
+                        .getDriveHeadingYRequest());
+
+        MoPrefs.inputDeadband.subscribe(
+                deadband -> {
+                    driveAngularVelocity.deadband(deadband);
+                    driveHeading.deadband(deadband);
+                },
+                true);
+        MoPrefs.inputTranslationScale.subscribe(
+                scale -> {
+                    driveAngularVelocity.scaleTranslation(scale);
+                    driveHeading.scaleTranslation(scale);
+                },
+                true);
+        MoPrefs.inputRotationScale.subscribe(scale -> {
+            driveAngularVelocity.scaleRotation(scale);
+            driveHeading.scaleRotation(scale);
+        });
+
+        driveModeChooser.setDefaultOption("Angular Velocity", driveAngularVelocity);
+        driveModeChooser.addOption("Heading", driveHeading);
+    }
+
     private void setDefaultCommands() {
-        driveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        driveSubsystem.setDefaultCommand(driveCommand);
         hood.setDefaultCommand(idleHoodCommand);
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);

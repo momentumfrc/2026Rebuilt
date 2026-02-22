@@ -7,6 +7,10 @@ public interface MoInput {
 
     public abstract double getDriveTurnRequest();
 
+    public abstract double getDriveHeadingXRequest();
+
+    public abstract double getDriveHeadingYRequest();
+
     public abstract boolean getReZeroGyro();
 
     public abstract boolean getRunIntake();

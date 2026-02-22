@@ -23,6 +23,16 @@ public class ControllerInput implements MoInput {
     }
 
     @Override
+    public double getDriveHeadingXRequest() {
+        return driveController.getRightY();
+    }
+
+    @Override
+    public double getDriveHeadingYRequest() {
+        return driveController.getRightX();
+    }
+
+    @Override
     public boolean getReZeroGyro() {
         return driveController.getBackButton();
     }
