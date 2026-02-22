@@ -57,8 +57,14 @@ public class IndexerSubsystem extends SubsystemBase {
                 motor::setVoltage,
                 log -> log.motor("indexer")
                         .voltage(Units.Volts.of(motor.getBusVoltage() * motor.get()))
-                        .angularPosition(encoder.getPosition())
-                        .angularVelocity(encoder.getVelocity()),
+                        .value(
+                                "position",
+                                encoder.getPositionInEncoderUnits(),
+                                encoder.getInternalEncoderUnits().name())
+                        .value(
+                                "velocity",
+                                encoder.getVelocityInEncoderUnits(),
+                                encoder.getInternalEncoderVelocityUnits().name()),
                 this);
     }
 }

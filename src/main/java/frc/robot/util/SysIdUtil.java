@@ -101,10 +101,15 @@ public class SysIdUtil {
                 v -> talon.setControl(controlRequest.withOutput(v)),
                 log -> log.motor(motorName)
                         .voltage(talon.getMotorVoltage().getValue())
-                        .angularPosition(encoder.getPosition())
-                        .angularVelocity(encoder.getVelocity())
-                        .angularAcceleration(
-                                encoderOmegaUnits.of(talon.getAcceleration().getValueAsDouble())),
+                        .value(
+                                "position",
+                                encoder.getPositionInEncoderUnits(),
+                                encoder.getInternalEncoderUnits().name())
+                        .value(
+                                "velocity",
+                                encoder.getVelocityInEncoderUnits(),
+                                encoder.getInternalEncoderVelocityUnits().name())
+                        .value("acceleration", talon.getAcceleration().getValueAsDouble(), encoderOmegaUnits.name()),
                 subsystem);
     }
 }
