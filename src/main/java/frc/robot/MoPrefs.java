@@ -78,6 +78,11 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngleUnitPref turretRelativeEncoderOffset =
             degreesPref("Turret Relative Encoder Offset", Units.Degrees.of(15));
 
+    public static final AngleUnitPref turretEncoder1Zero =
+            rotationsPref("Turret Abs. Encoder 1 Zero", Units.Rotations.zero());
+    public static final AngleUnitPref turretEncoder2Zero =
+            rotationsPref("Turret Abs. Encoder 2 Zero", Units.Rotations.zero());
+
     public static final AngleUnitPref turretMinSoftLimit = degreesPref("Turret Min Soft Limit", Units.Degrees.of(17.5));
     public static final AngleUnitPref turretMaxSoftLimit =
             degreesPref("Turret Max Soft Limit", Units.Degrees.of(362.5));
@@ -86,7 +91,7 @@ public class MoPrefs extends MoPrefsBase {
      * The maximum output voltage to the turret motor. This value allows rough control of the turret's max speed, however
      * it is preferred to use turretMaxVelocity for more fine control.
      */
-    public static final UnitPref<VoltageUnit> turretMaxPower = voltsPref("Turret Max Power", Units.Volts.of(6));
+    public static final UnitPref<VoltageUnit> turretMaxPower = voltsPref("Turret Max Power", Units.Volts.of(12));
     /**
      * The minimum duration for the turret motor output voltage to sweep between 0 and 12 volts. This value is allows rough control
      * of the turret's max acceleration, however it is preferred to use turretMaxAcceleration for more fine control.
@@ -102,14 +107,6 @@ public class MoPrefs extends MoPrefsBase {
             degreesPerSecPref("Turret Max Velocity", Units.DegreesPerSecond.of(180));
     public static final AngularAccelerationUnitPref turretMaxAcceleration =
             degreesPerSec2Pref("Turret Max Acceleration", Units.DegreesPerSecondPerSecond.of(360));
-
-    public static final AngularVelocityUnitPref flywheelSpeedTolerance =
-            rotationsPerSecPref("Flywheel Speed Tolerance", Units.RotationsPerSecond.of(20));
-
-    public static final AngleUnitPref turretEncoder1Zero =
-            rotationsPref("Turret Abs. Encoder 1 Zero", Units.Rotations.zero());
-    public static final AngleUnitPref turretEncoder2Zero =
-            rotationsPref("Turret Abs. Encoder 2 Zero", Units.Rotations.zero());
 
     // **** SHOOTER HOOD ****
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
