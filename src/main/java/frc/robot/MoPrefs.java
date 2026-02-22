@@ -76,7 +76,7 @@ public class MoPrefs extends MoPrefsBase {
      * (360deg - abs_encoder_reading), and set the result as the relative encoder offset.
      */
     public static final AngleUnitPref turretRelativeEncoderOffset =
-            rotationsPref("Turret Relative Encoder Offset", Units.Degrees.of(15));
+            degreesPref("Turret Relative Encoder Offset", Units.Degrees.of(15));
 
     public static final AngleUnitPref turretMinSoftLimit = degreesPref("Turret Min Soft Limit", Units.Degrees.of(17.5));
     public static final AngleUnitPref turretMaxSoftLimit =
