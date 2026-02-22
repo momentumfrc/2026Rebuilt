@@ -1,16 +1,23 @@
 package frc.robot.subsystem;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.MoPrefs;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
@@ -22,6 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final TalonFX motor1;
     private final TalonFX motor2;
+    private final TalonFXConfiguration motor1Config;
 
     private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
     private final MoRotationEncoder encoder;
@@ -29,7 +37,19 @@ public class ShooterSubsystem extends SubsystemBase {
     public ShooterSubsystem() {
         motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
         motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address());
+        motor1Config = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Coast)
+                        .withInverted(InvertedValue.Clockwise_Positive))
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withStatorCurrentLimit((Current) MoPrefs.flywheelCurrentLimit.get())
+                        .withStatorCurrentLimitEnable(true));
+        motor1.getConfigurator().apply(motor1Config);
 
+        MoPrefs.flywheelCurrentLimit.subscribe(current -> {
+            motor1Config.CurrentLimits.withStatorCurrentLimit((Current) current);
+            motor1.getConfigurator().apply(motor1Config);
+        });
 
         motor2.setControl(new Follower(Constants.SHOOTER_1_ADDRESS.address(), MotorAlignmentValue.Opposed));
 

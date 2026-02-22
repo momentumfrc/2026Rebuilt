@@ -124,4 +124,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<CurrentUnit> hoodCurrentLimit = ampsPref("Hood Current Limit", Units.Amps.of(40));
 
     public static final AngleUnitPref hoodDeadzonePosition = degreesPref("Hood Deadzone Position", Units.Degrees.of(0));
+
+    // **** SHOOTER FLYWHEEL ****
+    public static final UnitPref<CurrentUnit> flywheelCurrentLimit =
+            ampsPref("Flywheel Current Limit", Units.Amps.of(40));
 }
