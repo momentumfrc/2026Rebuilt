@@ -72,10 +72,14 @@ public class RobotContainer {
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
 
     private final Command passiveTargetingCommand = turret.run(() -> {
-        var target =
-                OdometryTargetingHelper.getTarget(DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
-        var firingSolution = turretTargetingHelper.targetPosition(target.toTranslation2d());
-        turret.align(firingSolution);
+        if (turret.shouldEnablePassiveTracking()) {
+            var target = OdometryTargetingHelper.getTarget(
+                    DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
+            var firingSolution = turretTargetingHelper.targetPosition(target.toTranslation2d());
+            turret.align(firingSolution);
+        } else {
+            turret.stop();
+        }
     });
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);

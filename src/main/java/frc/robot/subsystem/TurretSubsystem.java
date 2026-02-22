@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.units.AngleUnit;
@@ -52,8 +53,8 @@ import frc.robot.util.TurretAngleHelper;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
-    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 15;
-    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 16;
+    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
+    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 14;
 
     public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
     public static final Transform3d turretToCamera =
@@ -111,21 +112,28 @@ public class TurretSubsystem extends SubsystemBase {
     private final DoublePublisher absEncoder2Publisher;
     private final DoublePublisher vernierEncoderPublisher;
     private final IntegerPublisher targetTagPublisher;
+    private final BooleanPublisher hitForwardSoftLimit;
+    private final BooleanPublisher hitReverseSoftLimit;
 
+    private final BooleanEntry passiveTrackingEntry;
     private final BooleanEntry coastMotorEntry;
 
     public TurretSubsystem() {
 
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
+        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Rotations);
+
         this.turretMotorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withInverted(InvertedValue.CounterClockwise_Positive))
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                        .withReverseSoftLimitThreshold(MoPrefs.turretMinSoftLimit.get())
+                        .withReverseSoftLimitThreshold(
+                                MoPrefs.turretMinSoftLimit.get().in(this.turretEncoder.getInternalEncoderUnits()))
                         .withReverseSoftLimitEnable(true)
-                        .withForwardSoftLimitThreshold(MoPrefs.turretMaxSoftLimit.get())
+                        .withForwardSoftLimitThreshold(
+                                MoPrefs.turretMaxSoftLimit.get().in(this.turretEncoder.getInternalEncoderUnits()))
                         .withForwardSoftLimitEnable(true))
                 .withVoltage(new VoltageConfigs()
                         .withPeakForwardVoltage((Voltage) MoPrefs.turretMaxPower.get())
@@ -139,8 +147,8 @@ public class TurretSubsystem extends SubsystemBase {
         MoPrefsUtils.multiSubscribe(MoPrefs.turretMinSoftLimit, MoPrefs.turretMaxSoftLimit, (min, max) -> {
             turretMotorConfig
                     .SoftwareLimitSwitch
-                    .withReverseSoftLimitThreshold((Angle) min)
-                    .withForwardSoftLimitThreshold((Angle) max);
+                    .withReverseSoftLimitThreshold(min.in(turretEncoder.getInternalEncoderUnits()))
+                    .withForwardSoftLimitThreshold(max.in(this.turretEncoder.getInternalEncoderUnits()));
             turretMotor.getConfigurator().apply(turretMotorConfig);
         });
 
@@ -167,7 +175,6 @@ public class TurretSubsystem extends SubsystemBase {
                 },
                 true);
 
-        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Degrees);
         MoPrefs.turretRelativeEncoderScale.subscribe(turretEncoder::setConversionFactor, true);
 
         this.absEncoder1 = MoAbsoluteEncoder.forDio(Constants.TURRET_ABSOLUTE_ENCODER_1.dioPort());
@@ -221,7 +228,10 @@ public class TurretSubsystem extends SubsystemBase {
         absEncoder2Publisher = table.getDoubleTopic("Abs Encoder 2").publish();
         vernierEncoderPublisher = table.getDoubleTopic("Vernier Encoder").publish();
         targetTagPublisher = table.getIntegerTopic("Target Tag ID").publish();
+        hitForwardSoftLimit = table.getBooleanTopic("Forward Soft Limit").publish();
+        hitReverseSoftLimit = table.getBooleanTopic("Reverse Soft Limit").publish();
 
+        passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
     }
 
@@ -329,6 +339,10 @@ public class TurretSubsystem extends SubsystemBase {
         turretMotor.stopMotor();
     }
 
+    public boolean shouldEnablePassiveTracking() {
+        return passiveTrackingEntry.get();
+    }
+
     @Override
     public void periodic() {
         targetingHelper.targetNearestTag(DriverStation.getAlliance().orElse(Alliance.Red));
@@ -337,6 +351,9 @@ public class TurretSubsystem extends SubsystemBase {
         absEncoder1Publisher.set(absEncoder1.getPosition().in(Units.Rotations));
         absEncoder2Publisher.set(absEncoder2.getPosition().in(Units.Rotations));
         targetTagPublisher.set(targetingHelper.getTargetId());
+
+        hitForwardSoftLimit.set(turretMotor.getFault_ForwardSoftLimit().getValue());
+        hitReverseSoftLimit.set(turretMotor.getFault_ReverseSoftLimit().getValue());
 
         // The vernier encoder calculation is iterative, so it might be too expensive to calculate it on every loop.
         // But it's also incredibly useful information for debugging, so let's keep this line for now and remove it

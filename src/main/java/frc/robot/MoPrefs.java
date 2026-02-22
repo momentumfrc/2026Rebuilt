@@ -76,7 +76,7 @@ public class MoPrefs extends MoPrefsBase {
      * (360deg - abs_encoder_reading), and set the result as the relative encoder offset.
      */
     public static final AngleUnitPref turretRelativeEncoderOffset =
-            rotationsPref("Turret Relative Encoder Offset", Units.Rotations.of(15));
+            rotationsPref("Turret Relative Encoder Offset", Units.Degrees.of(15));
 
     public static final AngleUnitPref turretMinSoftLimit = degreesPref("Turret Min Soft Limit", Units.Degrees.of(17.5));
     public static final AngleUnitPref turretMaxSoftLimit =
@@ -107,9 +107,9 @@ public class MoPrefs extends MoPrefsBase {
             rotationsPerSecPref("Flywheel Speed Tolerance", Units.RotationsPerSecond.of(20));
 
     public static final AngleUnitPref turretEncoder1Zero =
-            rotationsPref("Turret Encoder 1 Zero", Units.Rotations.zero());
+            rotationsPref("Turret Abs. Encoder 1 Zero", Units.Rotations.zero());
     public static final AngleUnitPref turretEncoder2Zero =
-            rotationsPref("Turret Encoder 2 Zero", Units.Rotations.zero());
+            rotationsPref("Turret Abs. Encoder 2 Zero", Units.Rotations.zero());
 
     // **** SHOOTER HOOD ****
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
