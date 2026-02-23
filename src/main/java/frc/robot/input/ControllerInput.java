@@ -3,9 +3,17 @@ package frc.robot.input;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 
-public class ControllerInput implements MoInput {
+public final class ControllerInput implements MoInput {
     private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
     private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
+
+    public XboxController getDriveController() {
+        return driveController;
+    }
+
+    public XboxController getOperatorController() {
+        return operatorController;
+    }
 
     @Override
     public double getDriveMoveXRequest() {
@@ -20,6 +28,16 @@ public class ControllerInput implements MoInput {
     @Override
     public double getDriveTurnRequest() {
         return -1 * driveController.getRightX();
+    }
+
+    @Override
+    public double getDriveHeadingXRequest() {
+        return driveController.getRightY();
+    }
+
+    @Override
+    public double getDriveHeadingYRequest() {
+        return driveController.getRightX();
     }
 
     @Override
@@ -45,5 +63,10 @@ public class ControllerInput implements MoInput {
     @Override
     public boolean getShootRequest() {
         return driveController.getAButton();
+    }
+
+    @Override
+    public boolean getRunSysId() {
+        return driveController.getRightBumperButton();
     }
 }

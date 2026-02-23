@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -25,8 +23,9 @@ import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
-import frc.robot.util.OdometryTargetingHelper;
-import swervelib.SwerveInputStream;
+import frc.robot.util.NTHelpers;
+import frc.robot.util.SysIdUtil;
+import java.util.List;
 
 public class RobotContainer {
     // **** SUBSYSTEMS ****
@@ -47,25 +46,30 @@ public class RobotContainer {
 
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
-    private final SwerveInputStream driveAngularVelocity;
+    private final ControllerInput controllerInput = new ControllerInput();
+    private final SysIdUtil sysId = new SysIdUtil(List.of(
+            indexer.getSysIdMechanism(),
+            kicker.getSysIdMechanism(),
+            turret.getSysIdMechanism(),
+            shooter.getSysIdMechanism(),
+            hood.getSysIdMechanism()));
 
     // **** COMMANDS ****
-    private final Command driveFieldOrientedAngularVelocity;
+    private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
 
     private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
+
+    private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
 
     private final Command idleIndexerCommand = indexer.run(indexer::stop);
     private final Command idleKickerCommand = kicker.run(kicker::stop);
     private final Command idleShooterCommand = shooter.run(shooter::stop);
     private final Command idleHoodCommand = hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get()));
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
+    private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
-    private final Command passiveTargetingCommand = turret.run(() -> {
-        var target =
-                OdometryTargetingHelper.getTarget(DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
-        var firingSolution = turretTargetingHelper.targetPosition(target.toTranslation2d());
-        turret.align(firingSolution);
-    });
+    private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
+    private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
@@ -84,27 +88,16 @@ public class RobotContainer {
 
     private Trigger zeroHoodTrigger;
 
-    // **** MISC ****
-    private final MoInput controllerInput = new ControllerInput();
+    private Trigger runSysIdTrigger;
 
     public RobotContainer() {
-        driveAngularVelocity = SwerveInputStream.of(
-                        driveSubsystem.getSwerveDrive(), () -> getInput().getDriveMoveXRequest(), () -> getInput()
-                                .getDriveMoveYRequest())
-                .withControllerRotationAxis(() -> getInput().getDriveTurnRequest())
-                .allianceRelativeControl(true);
-
-        MoPrefs.inputDeadband.subscribe(deadband -> driveAngularVelocity.deadband(deadband), true);
-
-        driveFieldOrientedAngularVelocity = driveSubsystem.driveFieldOriented(driveAngularVelocity);
-
         configureBindings();
         setDefaultCommands();
         addSubsystemsToDashboard();
     }
 
     private void setDefaultCommands() {
-        driveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        driveSubsystem.setDefaultCommand(driveCommand);
         hood.setDefaultCommand(idleHoodCommand);
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);
@@ -115,14 +108,15 @@ public class RobotContainer {
     }
 
     private void addSubsystemsToDashboard() {
-        SmartDashboard.putData(driveSubsystem);
-        SmartDashboard.putData(turret);
-        SmartDashboard.putData(indexer);
-        SmartDashboard.putData(kicker);
-        SmartDashboard.putData(shooter);
-        SmartDashboard.putData(hood);
-        SmartDashboard.putData(intakeRollerSubsystem);
-        SmartDashboard.putData(intakeWristSubsystem);
+        var table = NTHelpers.getTable("subsystems");
+        NTHelpers.publishSendable(table, driveSubsystem);
+        NTHelpers.publishSendable(table, turret);
+        NTHelpers.publishSendable(table, indexer);
+        NTHelpers.publishSendable(table, kicker);
+        NTHelpers.publishSendable(table, shooter);
+        NTHelpers.publishSendable(table, hood);
+        NTHelpers.publishSendable(table, intakeRollerSubsystem);
+        NTHelpers.publishSendable(table, intakeWristSubsystem);
     }
 
     private void configureBindings() {
@@ -138,6 +132,8 @@ public class RobotContainer {
 
         zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
 
+        runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -149,6 +145,12 @@ public class RobotContainer {
         shootTrigger.whileTrue(shootCommand);
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
+
+        runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
+
+        RobotModeTriggers.test().whileTrue(turretTestCommand);
+        RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
+        RobotModeTriggers.test().whileTrue(shooterTestCommand);
     }
 
     public Command getAutonomousCommand() {

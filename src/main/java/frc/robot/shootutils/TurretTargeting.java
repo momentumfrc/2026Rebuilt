@@ -167,8 +167,10 @@ public final class TurretTargeting {
             lastGoalAngle = goalAngle;
         }
 
-        return turretAngleVelocityFilter.calculate(
+        double velocity = turretAngleVelocityFilter.calculate(
                 goalAngle.minus(lastGoalAngle).getRadians() / Constants.LOOP_PERIOD);
+        lastGoalAngle = goalAngle;
+        return velocity;
     }
 
     private Pose2d getSOTMTurretPose(Translation2d target) {

@@ -18,7 +18,8 @@ public class Constants {
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_1 = new DIOPort(0);
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_2 = new DIOPort(1);
 
-    public static final CANAddress SHOOTER_ADDRESS = new CANAddress(0);
+    public static final CANAddress SHOOTER_1_ADDRESS = new CANAddress(0);
+    public static final CANAddress SHOOTER_2_ADDRESS = new CANAddress(0);
 
     // Intake Ports
     public static final CANAddress INTAKE_ROLLER_PORT = new CANAddress(0); // edit this with the actual robot
