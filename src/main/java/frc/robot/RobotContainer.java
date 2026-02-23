@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -27,7 +26,6 @@ import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 import java.util.List;
-import swervelib.SwerveInputStream;
 
 public class RobotContainer {
     // **** SUBSYSTEMS ****
@@ -56,10 +54,8 @@ public class RobotContainer {
             shooter.getSysIdMechanism(),
             hood.getSysIdMechanism()));
 
-    private final SendableChooser<SwerveInputStream> driveModeChooser = new SendableChooser<>();
-
     // **** COMMANDS ****
-    private final Command driveCommand = driveSubsystem.driveFieldOriented(() -> driveModeChooser.getSelected());
+    private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
 
     private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
 
@@ -95,47 +91,9 @@ public class RobotContainer {
     private Trigger runSysIdTrigger;
 
     public RobotContainer() {
-        setupDriveModes();
         configureBindings();
         setDefaultCommands();
         addSubsystemsToDashboard();
-    }
-
-    private void setupDriveModes() {
-        var swerveInputStreamBase = SwerveInputStream.of(
-                        driveSubsystem.getSwerveDrive(), () -> getInput().getDriveMoveXRequest(), () -> getInput()
-                                .getDriveMoveYRequest())
-                .allianceRelativeControl(true)
-                .cubeTranslationControllerAxis(() -> MoPrefs.inputTranslationCubed.get())
-                .cubeRotationControllerAxis(() -> MoPrefs.inputRotationCubed.get());
-
-        var driveAngularVelocity = swerveInputStreamBase.copy().withControllerRotationAxis(() -> getInput()
-                .getDriveTurnRequest());
-
-        var driveHeading = swerveInputStreamBase
-                .copy()
-                .withControllerHeadingAxis(() -> getInput().getDriveHeadingXRequest(), () -> getInput()
-                        .getDriveHeadingYRequest());
-
-        MoPrefs.inputDeadband.subscribe(
-                deadband -> {
-                    driveAngularVelocity.deadband(deadband);
-                    driveHeading.deadband(deadband);
-                },
-                true);
-        MoPrefs.inputTranslationScale.subscribe(
-                scale -> {
-                    driveAngularVelocity.scaleTranslation(scale);
-                    driveHeading.scaleTranslation(scale);
-                },
-                true);
-        MoPrefs.inputRotationScale.subscribe(scale -> {
-            driveAngularVelocity.scaleRotation(scale);
-            driveHeading.scaleRotation(scale);
-        });
-
-        driveModeChooser.setDefaultOption("Angular Velocity", driveAngularVelocity);
-        driveModeChooser.addOption("Heading", driveHeading);
     }
 
     private void setDefaultCommands() {
