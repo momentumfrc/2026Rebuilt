@@ -8,7 +8,6 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -66,8 +65,8 @@ public class SysIdUtil {
             routineCache.clear();
         });
 
-        SmartDashboard.putData("SysId Mode", modeChooser);
-        SmartDashboard.putData("SysId Mechanism", mechanismChooser);
+        NTHelpers.publishSendable(table, "SysId Mode", modeChooser);
+        NTHelpers.publishSendable(table, "SysId Mechanism", mechanismChooser);
     }
 
     private SysIdRoutine.Config getSysIdConfig() {
