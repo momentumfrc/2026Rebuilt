@@ -67,8 +67,8 @@ public class TurretSubsystem extends SubsystemBase {
             new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
 
     private enum TurretAlignMode {
-        ABSOLUTE,
-        RELATIVE
+        ODOMETRY,
+        LL_CROSSHAIRS
     }
 
     private final SendableChooser<TurretAlignMode> alignModeChooser = NTHelpers.enumToChooser(TurretAlignMode.class);
@@ -142,6 +142,8 @@ public class TurretSubsystem extends SubsystemBase {
         passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
         hasZero = NTHelpers.getBooleanEntry(table, "Has Zero", false);
+
+        NTHelpers.publishSendable(table, "Align Mode", alignModeChooser);
 
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
@@ -300,8 +302,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     public void align(TurretSetpoint setpoint) {
         switch (alignModeChooser.getSelected()) {
-            case ABSOLUTE -> alignAbsolute(setpoint);
-            case RELATIVE -> {
+            case ODOMETRY -> alignAbsolute(setpoint);
+            case LL_CROSSHAIRS -> {
                 if (relativeTargetIsVisible()) {
                     alignRelative();
                 } else {
@@ -313,8 +315,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     public boolean targetIsAligned() {
         return switch (alignModeChooser.getSelected()) {
-            case ABSOLUTE -> absoluteTargetIsAligned();
-            case RELATIVE -> relativeTargetIsAligned();
+            case ODOMETRY -> absoluteTargetIsAligned();
+            case LL_CROSSHAIRS -> relativeTargetIsAligned();
         };
     }
 
