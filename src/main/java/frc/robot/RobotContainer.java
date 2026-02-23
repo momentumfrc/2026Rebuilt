@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -25,6 +24,7 @@ import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
+import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 import java.util.List;
 import swervelib.SwerveInputStream;
@@ -150,14 +150,15 @@ public class RobotContainer {
     }
 
     private void addSubsystemsToDashboard() {
-        SmartDashboard.putData(driveSubsystem);
-        SmartDashboard.putData(turret);
-        SmartDashboard.putData(indexer);
-        SmartDashboard.putData(kicker);
-        SmartDashboard.putData(shooter);
-        SmartDashboard.putData(hood);
-        SmartDashboard.putData(intakeRollerSubsystem);
-        SmartDashboard.putData(intakeWristSubsystem);
+        var table = NTHelpers.getTable("subsystems");
+        NTHelpers.publishSendable(table, driveSubsystem);
+        NTHelpers.publishSendable(table, turret);
+        NTHelpers.publishSendable(table, indexer);
+        NTHelpers.publishSendable(table, kicker);
+        NTHelpers.publishSendable(table, shooter);
+        NTHelpers.publishSendable(table, hood);
+        NTHelpers.publishSendable(table, intakeRollerSubsystem);
+        NTHelpers.publishSendable(table, intakeWristSubsystem);
     }
 
     private void configureBindings() {
