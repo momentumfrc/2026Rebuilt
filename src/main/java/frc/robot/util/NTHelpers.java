@@ -3,6 +3,9 @@ package frc.robot.util;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class NTHelpers {
@@ -30,6 +33,22 @@ public class NTHelpers {
             }
         }
         return chooser;
+    }
+
+    public static void publishSendable(NetworkTable table, Sendable data) {
+        String name = SendableRegistry.getName(data);
+        if (!name.isEmpty()) {
+            publishSendable(table, name, data);
+        }
+    }
+
+    public static void publishSendable(NetworkTable table, String key, Sendable data) {
+        NetworkTable dataTable = table.getSubTable(key);
+        SendableBuilderImpl builder = new SendableBuilderImpl();
+        builder.setTable(dataTable);
+        SendableRegistry.publish(data, builder);
+        builder.startListeners();
+        dataTable.getEntry(".name").setString(key);
     }
 
     private NTHelpers() {
