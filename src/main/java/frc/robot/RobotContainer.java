@@ -63,6 +63,8 @@ public class RobotContainer {
 
     private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
 
+    private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
+
     private final Command idleIndexerCommand = indexer.run(indexer::stop);
     private final Command idleKickerCommand = kicker.run(kicker::stop);
     private final Command idleShooterCommand = shooter.run(shooter::stop);
@@ -189,6 +191,7 @@ public class RobotContainer {
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
         RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
+        RobotModeTriggers.test().whileTrue(shooterTestCommand);
     }
 
     public Command getAutonomousCommand() {

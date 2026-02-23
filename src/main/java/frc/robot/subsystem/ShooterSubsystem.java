@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
@@ -15,6 +16,9 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -38,6 +42,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final DoublePublisher flywheelCurrentPublisher;
     private final DoublePublisher flywheelSpeedPublisher;
+
+    private final DoubleEntry flywheelTestSetpointEntry;
 
     public ShooterSubsystem() {
         motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
@@ -66,6 +72,9 @@ public class ShooterSubsystem extends SubsystemBase {
         var table = NTHelpers.getTable("shooter-flywheel");
         flywheelCurrentPublisher = table.getDoubleTopic("Flywheel Current").publish();
         flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed").publish();
+
+        flywheelTestSetpointEntry =
+                table.getDoubleTopic("Flywheel Test Setpoint").getEntry(500);
     }
 
     /**
@@ -81,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        runAtSpeed(Units.RPM.zero());
+        motor1.stopMotor();
     }
 
     public boolean isUpToSpeed() {
@@ -94,6 +103,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
         return SysIdUtil.sysIdMechanismForTalonFx(this, "shooter", motor1, encoder);
+    }
+
+    public Command getTestCommand(XboxController controller) {
+        return Commands.startRun(
+                        () -> flywheelSpeedPublisher.set(500),
+                        () -> {
+                            if (controller.getRightBumperButton()) {
+                                runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
+                            } else {
+                                stop();
+                            }
+                        },
+                        this)
+                .withName("ShooterTestCommand");
     }
 
     @Override
