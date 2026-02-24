@@ -1,12 +1,9 @@
 package frc.robot.commands.auto;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.MoPrefs;
@@ -27,7 +24,7 @@ public class AutoChooser {
 
     private enum ShootAutoRoutines {
         AUTO1
-    } //edit with more choices once auto routines are defined
+    } // edit with more choices once auto routines are defined
 
     private final RobotPositioning robotPositioning;
     private final DriveSubsystem driveSubsystem;
@@ -66,7 +63,9 @@ public class AutoChooser {
     }
 
     public Command buildLeaveAuto() {
-        return Commands.run(() -> driveSubsystem.autoLeaveDrive(new Translation2d(MoPrefs.autoLeaveSpeed.get().in(Units.Value),0), 0)).withTimeout(null);
+        return Commands.run(() -> driveSubsystem.autoLeaveDrive(
+                        new Translation2d(MoPrefs.autoLeaveSpeed.get().in(Units.Value), 0), 0))
+                .withTimeout(null);
     }
 
     public Command buildAuto1() {
@@ -75,7 +74,7 @@ public class AutoChooser {
     } // fix this with actual path and subsystem commands once that is done
 
     public Command getAutoRoutine() {
-        return switch(autoRoutinesChooser.getSelected()){
+        return switch (autoRoutinesChooser.getSelected()) {
             case AUTO1 -> buildAuto1();
         };
     }
@@ -84,10 +83,11 @@ public class AutoChooser {
         if (!enableAutoSwitch.get()) {
             return Commands.print("Auto Disabled");
         }
-        var auto = switch(autoChoicesChooser.getSelected()) {
-            case LEAVE -> buildLeaveAuto();
-            case SHOOT -> getAutoRoutine();
-        };
+        var auto =
+                switch (autoChoicesChooser.getSelected()) {
+                    case LEAVE -> buildLeaveAuto();
+                    case SHOOT -> getAutoRoutine();
+                };
         return auto;
     }
 }
