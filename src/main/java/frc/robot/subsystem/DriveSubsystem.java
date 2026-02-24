@@ -1,5 +1,6 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -70,8 +71,8 @@ public class DriveSubsystem extends SubsystemBase {
         });
     }
 
-    public ChassisSpeeds getRobotRelativeSpeeds() {
-        return swerveDrive.getRobotVelocity();
+    public void autoDrive(Translation2d moveRequest, double turnRequest) {
+        swerveDrive.drive(moveRequest, turnRequest, false, false);
     }
 
     public SwerveDrive getSwerveDrive() {
