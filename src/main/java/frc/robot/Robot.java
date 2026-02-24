@@ -4,27 +4,40 @@
 
 package frc.robot;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.molib.motune.MoTuner;
+import frc.robot.shootutils.HoodSerializedInformationHolder;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private final RobotContainer m_robotContainer;
 
+    private final DoubleLogEntry calculatedHoodAngle;
+    private final DoubleLogEntry calculatedFlywheelSpeed;
+
     public Robot() {
         m_robotContainer = new RobotContainer();
 
         DataLogManager.start();
+        DataLog log = DataLogManager.getLog();
+        calculatedHoodAngle = new DoubleLogEntry(log, "Calculated Hood Angle");
+        calculatedFlywheelSpeed = new DoubleLogEntry(log, "Calculated Flywheel Speed");
     }
 
     @Override
     public void robotPeriodic() {
         // Update latest robot position before anything else runs.
         m_robotContainer.robotPositioning.update();
+
+        calculatedHoodAngle.append(HoodSerializedInformationHolder.getInstance().getHoodAngle(m_robotContainer.getDistanceToTarget()).in(HoodSerializedInformationHolder.HOOD_ANGLE_STORE_UNIT));
+
+        calculatedFlywheelSpeed.append(HoodSerializedInformationHolder.getInstance().getFlywheelSpeed(m_robotContainer.getDistanceToTarget()).in(HoodSerializedInformationHolder.FLYWHEEL_SPEED_STORE_UNIT));
 
         CommandScheduler.getInstance().run();
 
