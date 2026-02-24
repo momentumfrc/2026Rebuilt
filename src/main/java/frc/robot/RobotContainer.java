@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ZeroHoodCommand;
+import frc.robot.commands.auto.AutoChooser;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.input.ControllerInput;
@@ -90,6 +91,9 @@ public class RobotContainer {
 
     private Trigger runSysIdTrigger;
 
+    private AutoChooser autochooser =
+            new AutoChooser(robotPositioning, driveSubsystem, turret, indexer, kicker, shooter, hood);
+
     public RobotContainer() {
         configureBindings();
         setDefaultCommands();
@@ -154,7 +158,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return autochooser.getAutoChooserCommand();
     }
 
     private MoInput getInput() {
