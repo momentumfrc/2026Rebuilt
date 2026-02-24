@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
@@ -64,13 +66,13 @@ public class AutoChooser {
     }
 
     public Command buildLeaveAuto() {
-        return Commands.run(() -> driveSubsystem.autoDrive(new Translation2d(0,0), 0)).withTimeout(null);
+        return Commands.run(() -> driveSubsystem.autoLeaveDrive(new Translation2d(MoPrefs.autoLeaveSpeed.get().in(Units.Value),0), 0)).withTimeout(null);
     }
 
     public Command buildAuto1() {
         return Commands.deadline(
                 AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "path1"));
-    } // fix this with actual path and subsystem commands
+    } // fix this with actual path and subsystem commands once that is done
 
     public Command getAutoRoutine() {
         return switch(autoRoutinesChooser.getSelected()){

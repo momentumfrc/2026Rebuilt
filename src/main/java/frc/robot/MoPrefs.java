@@ -10,6 +10,7 @@ import frc.robot.molib.MoUnits;
 import frc.robot.molib.prefs.AngleUnitPref;
 import frc.robot.molib.prefs.AngularAccelerationUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
+import frc.robot.molib.prefs.DimensionlessUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
 import frc.robot.molib.prefs.MoPrefsBase;
 import frc.robot.molib.prefs.Pref;
@@ -128,4 +129,8 @@ public class MoPrefs extends MoPrefsBase {
     // **** SHOOTER FLYWHEEL ****
     public static final UnitPref<CurrentUnit> flywheelCurrentLimit =
             ampsPref("Flywheel Current Limit", Units.Amps.of(40));
+
+    // **** AUTO ****
+    public static final DimensionlessUnitPref autoLeaveSpeed = percentPref("Auto Leave Speed", Units.Percent.of(1));
+    public static final TimeUnitPref autoLeaveTime = secondsPref("Auto Leave Time", Units.Seconds.of(3));
 }
