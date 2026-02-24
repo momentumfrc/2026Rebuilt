@@ -14,25 +14,24 @@ import frc.robot.subsystem.DriveSubsystem;
 public class AutoPathPlannerCommands {
 
     public AutoPathPlannerCommands(RobotPositioning robotPositioning, DriveSubsystem driveSubsystem) {
+
+        // auto-builder config based on PathPlannerLIB, we can change to another auto follower if we need to
         RobotConfig config;
         try {
             config = RobotConfig.fromGUISettings();
 
             // Configure AutoBuilder last
             AutoBuilder.configure(
-                    robotPositioning::getRobotPose, // Robot pose supplier
-                    robotPositioning
-                            ::resetOdometry, // Method to reset odometry (will be called if your auto has a starting
-                    // pose)
-                    robotPositioning::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> driveSubsystem.driveFieldOriented(speeds),
+                    robotPositioning::getRobotPose,
+                    robotPositioning::resetOdometry,
+                    robotPositioning::getRobotVelocity,
+                    (speeds, feedforwards) -> driveSubsystem.driveRobotRelativeSpeeds(speeds, feedforwards),
                     new PPHolonomicDriveController(
                             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
                             new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
                             ),
                     config, // The robot configuration
                     () -> {
-
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
                             return alliance.get() == DriverStation.Alliance.Red;

@@ -1,5 +1,6 @@
 package frc.robot.subsystem;
 
+import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
@@ -71,7 +72,14 @@ public class DriveSubsystem extends SubsystemBase {
         });
     }
 
-    public void autoDrive(Translation2d moveRequest, double turnRequest) {
+    public void driveRobotRelativeSpeeds(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
+        swerveDrive.drive(
+                chassisSpeeds,
+                swerveDrive.kinematics.toSwerveModuleStates(chassisSpeeds),
+                driveFeedforwards.linearForces());
+    }
+
+    public void autoLeaveDrive(Translation2d moveRequest, double turnRequest) {
         swerveDrive.drive(moveRequest, turnRequest, false, false);
     }
 
