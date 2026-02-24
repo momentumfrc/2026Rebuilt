@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.commands.auto;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -32,9 +32,6 @@ public class AutoPathPlannerCommands {
                             ),
                     config, // The robot configuration
                     () -> {
-                        // Boolean supplier that controls when the path will be mirrored for the red alliance
-                        // This will flip the path being followed to the red side of the field.
-                        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
@@ -47,7 +44,7 @@ public class AutoPathPlannerCommands {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    } // TODO: AUTO PIDS
 
     public static Command getFollowPathCommand(
             DriveSubsystem driveSubsystem, RobotPositioning robotPositioning, String pathName) {
