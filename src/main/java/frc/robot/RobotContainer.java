@@ -4,14 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShootCommand;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
@@ -27,7 +24,6 @@ import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.NTHelpers;
-import frc.robot.util.OdometryTargetingHelper;
 import frc.robot.util.SysIdUtil;
 import java.util.List;
 
@@ -167,9 +163,5 @@ public class RobotContainer {
 
     private TurretSubsystem getTurretSubsystem() {
         return turret;
-    }
-
-    public Distance getDistanceToTarget() {
-        return turretTargetingHelper.targetPosition(OdometryTargetingHelper.getTarget(DriverStation.getAlliance().orElse(Alliance.Red)).toTranslation2d()).targetDistance();
     }
 }
