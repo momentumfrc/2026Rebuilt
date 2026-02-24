@@ -5,6 +5,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.MoPrefs;
 import frc.robot.input.MoInput;
@@ -117,6 +118,9 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command getTeleopDriveCommand(Supplier<MoInput> inputSupplier) {
-        return driveFieldOriented(setupDriveModes(inputSupplier));
+        return new ConditionalCommand(
+                run(() -> swerveDrive.lockPose()),
+                driveFieldOriented(setupDriveModes(inputSupplier)),
+                () -> inputSupplier.get().getLockRequest());
     }
 }
