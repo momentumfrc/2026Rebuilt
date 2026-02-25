@@ -1,6 +1,7 @@
 package frc.robot.subsystem;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -29,6 +30,7 @@ public class DriveSubsystem extends SubsystemBase {
         ABSOLUTE_HEADING
     };
 
+    @NotLogged
     private final SendableChooser<DriveMode> driveModeChooser =
             NTHelpers.enumToChooser(DriveMode.class, DriveMode.VELOCITY_HEADING);
 
