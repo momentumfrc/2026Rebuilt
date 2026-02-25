@@ -23,8 +23,6 @@ public class Robot extends TimedRobot {
     private final DoubleLogEntry calculatedHoodAngle;
     private final DoubleLogEntry calculatedFlywheelSpeed;
 
-
-
     public Robot() {
         m_robotContainer = new RobotContainer();
 
