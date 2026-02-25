@@ -119,4 +119,10 @@ public class DriveSubsystem extends SubsystemBase {
     public Command getTeleopDriveCommand(Supplier<MoInput> inputSupplier) {
         return driveFieldOriented(setupDriveModes(inputSupplier));
     }
+
+    public Command lockPose() {
+        return run(() -> {
+            swerveDrive.lockPose();
+        });
+    }
 }
