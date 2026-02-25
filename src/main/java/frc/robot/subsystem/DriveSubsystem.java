@@ -5,9 +5,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.MoPrefs;
 import frc.robot.input.MoInput;
 import frc.robot.molib.prefs.MoPrefsUtils;
@@ -127,5 +125,4 @@ public class DriveSubsystem extends SubsystemBase {
             swerveDrive.lockPose();
         });
     }
-
 }
