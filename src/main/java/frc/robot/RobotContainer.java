@@ -153,7 +153,7 @@ public class RobotContainer {
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 
-        lockTrigger.whileTrue(new RepeatCommand(driveSubsystem.lockPose()));
+        lockTrigger.whileTrue(driveSubsystem.lockPose());
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
         RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
