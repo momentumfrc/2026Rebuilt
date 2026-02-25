@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShootCommand;
@@ -90,6 +91,8 @@ public class RobotContainer {
 
     private Trigger runSysIdTrigger;
 
+    private Trigger lockTrigger;
+
     public RobotContainer() {
         configureBindings();
         setDefaultCommands();
@@ -134,6 +137,8 @@ public class RobotContainer {
 
         runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
 
+        lockTrigger = new Trigger(() -> getInput().getLockRequest());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -147,6 +152,8 @@ public class RobotContainer {
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
+
+        lockTrigger.whileTrue(new RepeatCommand(driveSubsystem.lockPose()));
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
         RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
