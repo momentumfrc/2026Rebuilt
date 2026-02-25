@@ -118,9 +118,12 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command getTeleopDriveCommand(Supplier<MoInput> inputSupplier) {
-        return new ConditionalCommand(
-                run(() -> swerveDrive.lockPose()),
-                driveFieldOriented(setupDriveModes(inputSupplier)),
-                () -> inputSupplier.get().getLockRequest());
+        return driveFieldOriented(setupDriveModes(inputSupplier));
+    }
+
+    public Command lockPose() {
+        return run(() -> {
+            swerveDrive.lockPose();
+        });
     }
 }
