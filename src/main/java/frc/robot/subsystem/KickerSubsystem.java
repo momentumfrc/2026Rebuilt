@@ -6,6 +6,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
@@ -20,6 +22,7 @@ import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.util.SysIdUtil;
 
+@Logged
 public class KickerSubsystem extends SubsystemBase {
 
     private final TalonFX motor;

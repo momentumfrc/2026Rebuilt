@@ -11,6 +11,8 @@ import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -57,6 +59,7 @@ import frc.robot.util.OdometryTargetingHelper;
 import frc.robot.util.SysIdUtil;
 import frc.robot.util.TurretAngleHelper;
 
+@Logged
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
     private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;

@@ -1,5 +1,6 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -18,6 +19,7 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+@Logged
 public class DriveSubsystem extends SubsystemBase {
     private final File directory = new File(Filesystem.getDeployDirectory(), "swerve");
     private final SwerveDrive swerveDrive;

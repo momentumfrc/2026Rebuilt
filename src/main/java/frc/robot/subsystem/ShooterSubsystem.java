@@ -8,6 +8,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.AngleUnit;
@@ -31,6 +33,7 @@ import frc.robot.shootutils.HoodSerializedInformationHolder;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 
+@Logged
 public class ShooterSubsystem extends SubsystemBase {
 
     private final TalonFX motor1;
