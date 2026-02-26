@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
@@ -23,7 +24,8 @@ public class AutoChooser {
     }
 
     private enum ShootAutoRoutines {
-        AUTO1
+        SCORE_LEFT_TO_HUB,
+        SCORE_RIGHT_TO_HUB
     } // edit with more choices once auto routines are defined
 
     private final RobotPositioning robotPositioning;
@@ -33,6 +35,8 @@ public class AutoChooser {
     private final KickerSubsystem kickerSubsystem;
     private final ShooterSubsystem shooterSubsystem;
     private final HoodSubsystem hoodSubsystem;
+
+    private final ShootCommand shootcommand;
 
     private final BooleanEntry enableAutoSwitch;
 
@@ -46,7 +50,8 @@ public class AutoChooser {
             IndexerSubsystem indexerSubsystem,
             KickerSubsystem kickerSubsystem,
             ShooterSubsystem shooterSubsystem,
-            HoodSubsystem hoodSubsystem) {
+            HoodSubsystem hoodSubsystem,
+            ShootCommand shootCommand) {
         this.robotPositioning = robotPositioning;
         this.driveSubsystem = driveSubsystem;
         this.turretSubsystem = turretSubsystem;
@@ -54,6 +59,7 @@ public class AutoChooser {
         this.kickerSubsystem = kickerSubsystem;
         this.shooterSubsystem = shooterSubsystem;
         this.hoodSubsystem = hoodSubsystem;
+        this.shootcommand = shootCommand;
 
         var autoTable = NTHelpers.getTable("Auto");
         enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", true);
@@ -65,17 +71,28 @@ public class AutoChooser {
     public Command buildLeaveAuto() {
         return Commands.run(() -> driveSubsystem.autoLeaveDrive(
                         new Translation2d(MoPrefs.autoLeaveSpeed.get().in(Units.Value), 0), 0))
-                .withTimeout(null);
+                .withTimeout(MoPrefs.autoLeaveTime.get().in(Units.Seconds));
     }
 
-    public Command buildAuto1() {
+    // Might need some fixing later
+    public Command buildScoreLeftAuto() {
         return Commands.deadline(
-                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "path1"));
-    } // fix this with actual path and subsystem commands once that is done
+                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left To Hub")
+                        .andThen(shootcommand)
+                        .withTimeout(2));
+    }
+
+    public Command buildScoreRightAuto() {
+        return Commands.deadline(
+                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Right To Hub")
+                        .andThen(shootcommand))
+                        .withTimeout(2);
+    }
 
     public Command getAutoRoutine() {
         return switch (autoRoutinesChooser.getSelected()) {
-            case AUTO1 -> buildAuto1();
+            case SCORE_LEFT_TO_HUB -> buildScoreLeftAuto();
+            case SCORE_RIGHT_TO_HUB -> buildScoreRightAuto();
         };
     }
 
