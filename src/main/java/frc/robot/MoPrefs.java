@@ -131,6 +131,7 @@ public class MoPrefs extends MoPrefsBase {
             ampsPref("Flywheel Current Limit", Units.Amps.of(40));
 
     // **** AUTO ****
-    public static final DimensionlessUnitPref autoLeaveSpeed = percentPref("Auto Leave Speed", Units.Percent.of(1));
-    public static final TimeUnitPref autoLeaveTime = secondsPref("Auto Leave Time", Units.Seconds.of(3));
+    //TODO: Find auto preferences
+    public static final DimensionlessUnitPref autoLeaveSpeed = percentPref("Auto Leave Speed", Units.Percent.of(0));
+    public static final TimeUnitPref autoLeaveTime = secondsPref("Auto Leave Time", Units.Seconds.of(0));
 }
