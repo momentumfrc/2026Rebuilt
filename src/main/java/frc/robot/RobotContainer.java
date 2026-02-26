@@ -91,7 +91,7 @@ public class RobotContainer {
     private Trigger runSysIdTrigger;
 
     private AutoChooser autochooser =
-            new AutoChooser(robotPositioning, driveSubsystem, turret, indexer, kicker, shooter, hood);
+            new AutoChooser(robotPositioning, driveSubsystem, turret, indexer, kicker, shooter, hood, shootCommand);
 
     public RobotContainer() {
         configureBindings();
