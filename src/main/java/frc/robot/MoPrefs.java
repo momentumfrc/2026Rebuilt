@@ -109,6 +109,9 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngularAccelerationUnitPref turretMaxAcceleration =
             degreesPerSec2Pref("Turret Max Acceleration", Units.DegreesPerSecondPerSecond.of(360));
 
+    public static final AngleUnitPref turretFallbackSetpoint =
+            degreesPref("Turret Fallback Setpoint", Units.Degrees.of(180));
+
     // **** SHOOTER HOOD ****
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> hoodEncoderScale =
             encoderTicksPerRotationPref("Hood Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(32));
@@ -126,9 +129,15 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final AngleUnitPref hoodDeadzonePosition = degreesPref("Hood Deadzone Position", Units.Degrees.of(0));
 
+    public static final AngleUnitPref hoodFallbackSetpoint =
+            degreesPref("Hood Fallback Setpoint", Units.Degrees.of(20));
+
     // **** SHOOTER FLYWHEEL ****
     public static final UnitPref<CurrentUnit> flywheelCurrentLimit =
             ampsPref("Flywheel Current Limit", Units.Amps.of(40));
+
+    public static final AngularVelocityUnitPref flywheelFallbackSetpoint =
+            rpmPref("Flywheel Fallback Setpoint", Units.RPM.of(3000));
 
     // **** AUTO ****
     //TODO: Find auto preferences

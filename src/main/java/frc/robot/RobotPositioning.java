@@ -202,13 +202,12 @@ public class RobotPositioning {
         LimelightHelpers.PoseEstimate poseEstimate = null;
         Vector<N3> visionStdDevs = null;
 
-        if (useMT2.get() && hasInitialPosition.get()) {
-            poseEstimate = getPoseEstimateMT2(Constants.TURRET_LIMELIGHT_NAME, turretPosition, turretVelocity);
-            visionStdDevs = MT2_VISION_STDDEVS;
-        } else {
-            poseEstimate = getPoseEstimateMT1(Constants.TURRET_LIMELIGHT_NAME);
-            visionStdDevs = MT1_VISION_STDDEVS;
-        }
+        // Can't use MT2 for the turret limelight, because the MT2 algorithm assumes it has an accurate, up-to-date
+        // measure of the limelight's rotation. However, the whole point of doing limelight-to-robot transform
+        // calculation on the RIO is that it's impossible to keep the limelight's set pose up-to-date since the turret
+        // moves so frequently and so fast.
+        poseEstimate = getPoseEstimateMT1(Constants.TURRET_LIMELIGHT_NAME);
+        visionStdDevs = MT1_VISION_STDDEVS;
 
         if (poseEstimate == null) {
             return;
