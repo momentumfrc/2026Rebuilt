@@ -392,7 +392,7 @@ public class TurretSubsystem extends SubsystemBase {
                     if (shouldEnablePassiveTracking()) {
                         var target = OdometryTargetingHelper.getTarget(
                                 DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
-                        var firingSolution = targeting.targetPosition(target.toTranslation2d());
+                        var firingSolution = targeting.targetPositionStationary(target.toTranslation2d());
                         align(firingSolution);
                     } else {
                         stop();
