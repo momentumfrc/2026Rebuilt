@@ -166,8 +166,6 @@ public class HoodSubsystem extends SubsystemBase {
         State goalState = new State(position.in(Units.Radians), goalVelocity);
         State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
 
-        System.out.format("%.4f, %.4f\n", position.in(Units.Degrees), goalState.velocity);
-
         positionReference.mut_replace(setpoint.position, Units.Radians);
         velocityReference.mut_replace(setpoint.velocity, Units.RadiansPerSecond);
         pid.setReference(positionReference, velocityReference);

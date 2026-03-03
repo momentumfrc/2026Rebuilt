@@ -94,6 +94,8 @@ public class RobotContainer {
 
     private Trigger runSysIdTrigger;
 
+    private Trigger lockTrigger;
+
     public RobotContainer() {
         configureBindings();
         setDefaultCommands();
@@ -138,6 +140,8 @@ public class RobotContainer {
 
         runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
 
+        lockTrigger = new Trigger(() -> getInput().getLockRequest());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -151,6 +155,8 @@ public class RobotContainer {
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
+
+        lockTrigger.whileTrue(driveSubsystem.lockPose());
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
         RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
