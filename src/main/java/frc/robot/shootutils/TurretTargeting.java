@@ -1,6 +1,5 @@
 package frc.robot.shootutils;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,7 +30,6 @@ import frc.robot.util.NTHelpers;
  * <p>
  * Heavily based on https://www.chiefdelphi.com/t/frc-6328-mechanical-advantage-2026-build-thread/509595/272
  */
-@Logged
 public final class TurretTargeting {
     private static final int NUM_LOOKAHEAD_ESTIMATION_ITERATIONS = 20;
 

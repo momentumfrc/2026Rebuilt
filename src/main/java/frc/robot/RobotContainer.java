@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -32,7 +31,6 @@ import frc.robot.util.OdometryTargetingHelper;
 import frc.robot.util.SysIdUtil;
 import java.util.List;
 
-@Logged
 public class RobotContainer {
     // **** SUBSYSTEMS ****
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();

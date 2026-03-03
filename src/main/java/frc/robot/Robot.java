@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -14,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.molib.motune.MoTuner;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
 
-@Logged
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
