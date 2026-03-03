@@ -62,7 +62,12 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getShootRequest() {
-        return driveController.getAButton();
+        return operatorController.getAButton();
+    }
+
+    @Override
+    public boolean getReverseIndexerRequest() {
+        return operatorController.getXButton();
     }
 
     @Override

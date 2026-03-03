@@ -69,6 +69,10 @@ public class RobotContainer {
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
+    private final Command runIndexerCommand = indexer.run(indexer::run).withName("RunIndexerCommand");
+    private final Command runIndexerReverseCommand =
+            indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
+
     private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
     private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
 
@@ -84,6 +88,8 @@ public class RobotContainer {
     private Trigger runIntakeTrigger;
     private Trigger extendIntakeTrigger;
     private Trigger retractIntakeTrigger;
+
+    private Trigger reverseIndexerTrigger;
 
     private Trigger shootTrigger;
 
@@ -139,6 +145,8 @@ public class RobotContainer {
 
         lockTrigger = new Trigger(() -> getInput().getLockRequest());
 
+        reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -154,6 +162,9 @@ public class RobotContainer {
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 
         lockTrigger.whileTrue(driveSubsystem.lockPose());
+
+        (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
+        reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
         RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
