@@ -26,8 +26,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -128,7 +126,8 @@ public class HoodSubsystem extends SubsystemBase {
         reverseSoftLimitPublisher = table.getBooleanTopic("Reverse Soft Limit").publish();
         hoodEncoderPublisher = table.getDoubleTopic("Encoder (deg)").publish();
 
-        calculatedHoodPositionPublisher = table.getDoubleTopic("Calculated Hood Position").publish();
+        calculatedHoodPositionPublisher =
+                table.getDoubleTopic("Calculated Hood Position").publish();
     }
 
     public void setCalculatedPosition(Distance distance) {

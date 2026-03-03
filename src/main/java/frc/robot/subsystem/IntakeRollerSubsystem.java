@@ -17,7 +17,6 @@ import frc.robot.util.NTHelpers;
 public class IntakeRollerSubsystem extends SubsystemBase {
     private final SparkFlex intakeRoller;
 
-
     private final DoublePublisher speedPublisher;
     private final MoSparkConfigurator intakeRollerConfig;
 
@@ -32,7 +31,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         MoPrefs.intakeRollerSmartCurrentLimit.subscribe(
                 limit -> intakeRollerConfig.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
 
-                NetworkTable table = NTHelpers.getTable("intake");
+        NetworkTable table = NTHelpers.getTable("intake");
 
         speedPublisher = table.getDoubleTopic("Intake Roller Speed (RPM)").publish();
     }
