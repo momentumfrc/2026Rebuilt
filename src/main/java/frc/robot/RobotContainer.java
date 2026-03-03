@@ -174,12 +174,4 @@ public class RobotContainer {
     private TurretSubsystem getTurretSubsystem() {
         return turret;
     }
-
-    public Distance getDistanceToTarget() {
-        return turretTargetingHelper
-                .targetPosition(OdometryTargetingHelper.getTarget(
-                                DriverStation.getAlliance().orElse(Alliance.Red))
-                        .toTranslation2d())
-                .targetDistance();
-    }
 }
