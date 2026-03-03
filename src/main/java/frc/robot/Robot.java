@@ -18,17 +18,12 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_robotContainer;
 
-    private final DoubleLogEntry calculatedHoodAngle;
-    private final DoubleLogEntry calculatedFlywheelSpeed;
-
     public Robot() {
         m_robotContainer = new RobotContainer();
 
         DataLogManager.start();
 
         DataLog log = DataLogManager.getLog();
-        calculatedHoodAngle = new DoubleLogEntry(log, "Calculated Hood Angle");
-        calculatedFlywheelSpeed = new DoubleLogEntry(log, "Calculated Flywheel Speed");
     }
 
     @Override
@@ -39,14 +34,6 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
         MoTuner.pollAllStateValues();
-
-        calculatedHoodAngle.append(HoodSerializedInformationHolder.getInstance()
-                .getHoodAngle(m_robotContainer.getDistanceToTarget())
-                .in(HoodSerializedInformationHolder.HOOD_ANGLE_STORE_UNIT));
-
-        calculatedFlywheelSpeed.append(HoodSerializedInformationHolder.getInstance()
-                .getFlywheelSpeed(m_robotContainer.getDistanceToTarget())
-                .in(HoodSerializedInformationHolder.FLYWHEEL_SPEED_STORE_UNIT));
     }
 
     @Override

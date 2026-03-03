@@ -17,6 +17,9 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -24,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.Robot;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
@@ -46,6 +50,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final DoublePublisher flywheelSpeedPublisher;
 
     private final DoubleEntry flywheelTestSetpointEntry;
+
+    private final DoublePublisher calculatedFlywheelSpeedPublisher;
 
     public ShooterSubsystem() {
         motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
@@ -77,6 +83,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         flywheelTestSetpointEntry =
                 table.getDoubleTopic("Flywheel Test Setpoint").getEntry(500);
+
+        calculatedFlywheelSpeedPublisher = table.getDoubleTopic("Calculated Flywheel Speed").publish();
     }
 
     /**
@@ -88,7 +96,9 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void runAtCalculatedSpeed(Distance distanceToTarget) {
-        runAtSpeed(HoodSerializedInformationHolder.getInstance().getFlywheelSpeed(distanceToTarget));
+        AngularVelocity speed = HoodSerializedInformationHolder.getInstance().getFlywheelSpeed(distanceToTarget);
+        calculatedFlywheelSpeedPublisher.set(speed.baseUnitMagnitude());
+        runAtSpeed(speed);
     }
 
     public void stop() {
