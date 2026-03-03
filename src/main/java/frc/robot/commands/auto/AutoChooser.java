@@ -77,14 +77,14 @@ public class AutoChooser {
     // Might need some fixing later
     public Command buildScoreLeftAuto() {
         return Commands.deadline(
-                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left To Hub")
+                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left Start to Left Hub")
                         .andThen(shootcommand)
                         .withTimeout(2));
     }
 
     public Command buildScoreRightAuto() {
         return Commands.deadline(
-                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Right To Hub")
+                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Right Start to Right Hub")
                         .andThen(shootcommand))
                         .withTimeout(2);
     }
