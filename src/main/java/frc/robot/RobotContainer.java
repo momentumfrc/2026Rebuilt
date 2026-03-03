@@ -92,8 +92,17 @@ public class RobotContainer {
 
     private Trigger lockTrigger;
 
-    private AutoChooser autochooser =
-            new AutoChooser(robotPositioning, driveSubsystem, turret, indexer, kicker, shooter, hood, shootCommand);
+    private AutoChooser autochooser = new AutoChooser(
+            robotPositioning,
+            driveSubsystem,
+            turret,
+            indexer,
+            kicker,
+            shooter,
+            hood,
+            intakeRollerSubsystem,
+            intakeWristSubsystem,
+            shootCommand);
 
     public RobotContainer() {
         configureBindings();

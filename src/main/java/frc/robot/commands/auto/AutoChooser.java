@@ -9,9 +9,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
 import frc.robot.commands.ShootCommand;
+import frc.robot.commands.intake.RollerCommands;
+import frc.robot.commands.intake.WristCommands;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
+import frc.robot.subsystem.IntakeRollerSubsystem;
+import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
@@ -35,8 +39,10 @@ public class AutoChooser {
     private final KickerSubsystem kickerSubsystem;
     private final ShooterSubsystem shooterSubsystem;
     private final HoodSubsystem hoodSubsystem;
+    private final IntakeRollerSubsystem intakeRollerSubsystem;
+    private final IntakeWristSubsystem intakeWristSubsystem;
 
-    private final ShootCommand shootcommand;
+    private final ShootCommand shootCommand;
 
     private final BooleanEntry enableAutoSwitch;
 
@@ -51,6 +57,8 @@ public class AutoChooser {
             KickerSubsystem kickerSubsystem,
             ShooterSubsystem shooterSubsystem,
             HoodSubsystem hoodSubsystem,
+            IntakeRollerSubsystem intakeRollerSubsystem,
+            IntakeWristSubsystem intakeWristSubsystem,
             ShootCommand shootCommand) {
         this.robotPositioning = robotPositioning;
         this.driveSubsystem = driveSubsystem;
@@ -59,7 +67,10 @@ public class AutoChooser {
         this.kickerSubsystem = kickerSubsystem;
         this.shooterSubsystem = shooterSubsystem;
         this.hoodSubsystem = hoodSubsystem;
-        this.shootcommand = shootCommand;
+        this.intakeRollerSubsystem = intakeRollerSubsystem;
+        this.intakeWristSubsystem = intakeWristSubsystem;
+
+        this.shootCommand = shootCommand;
 
         var autoTable = NTHelpers.getTable("Auto");
         enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", true);
