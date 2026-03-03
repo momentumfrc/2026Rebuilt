@@ -5,6 +5,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
@@ -16,6 +18,7 @@ import frc.robot.molib.MoSparkConfigurator;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoSparkMaxPID;
+import frc.robot.util.NTHelpers;
 
 @Logged
 public class IndexerSubsystem extends SubsystemBase {
@@ -26,6 +29,8 @@ public class IndexerSubsystem extends SubsystemBase {
     private final MoRotationEncoder encoder;
 
     private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> pid;
+
+    private final DoublePublisher speedPublisher;
 
     public IndexerSubsystem() {
         motor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
@@ -44,6 +49,10 @@ public class IndexerSubsystem extends SubsystemBase {
         pid = new MoSparkMaxPID<>(MoSparkMaxPID.Type.VELOCITY, motor, ClosedLoopSlot.kSlot0, encoder, config);
 
         TunerUtils.forMoSparkMax(pid, "Indexer PID");
+
+        NetworkTable table = NTHelpers.getTable("indexer");
+
+        speedPublisher = table.getDoubleTopic("Indexer Speed").publish();
     }
 
     public void run() {
@@ -68,5 +77,10 @@ public class IndexerSubsystem extends SubsystemBase {
                                 encoder.getVelocityInEncoderUnits(),
                                 encoder.getInternalEncoderVelocityUnits().name()),
                 this);
+    }
+
+    @Override
+    public void periodic() {
+        speedPublisher.set(encoder.getVelocity().in(Units.RPM));
     }
 }
