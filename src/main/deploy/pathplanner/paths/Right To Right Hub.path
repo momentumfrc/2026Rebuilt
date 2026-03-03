@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 3.25,
-        "y": 7.25
+        "y": 0.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1604853487829367,
-        "y": 6.630417243266547
+        "x": 2.9863876532434985,
+        "y": 2.5519658985421922
       },
       "isLocked": false,
-      "linkedName": "Left Starting Point"
+      "linkedName": "Right Starting Point"
     },
     {
       "anchor": {
         "x": 3.0,
-        "y": 5.25
+        "y": 2.75
       },
       "prevControl": {
-        "x": 3.0956129592296078,
-        "y": 5.942920344307309
+        "x": 3.0636844002252723,
+        "y": 2.054964795345498
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Side Hub"
+      "linkedName": "Right Side Hub"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
