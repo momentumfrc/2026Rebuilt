@@ -23,7 +23,6 @@ import frc.robot.util.NTHelpers;
 
 public class AutoChooser {
     private enum AutoChoices {
-        LEAVE,
         SHOOT
     }
 
@@ -81,12 +80,6 @@ public class AutoChooser {
 
         NTHelpers.publishSendable(autoTable, "Which Auto?", autoChoicesChooser);
         NTHelpers.publishSendable(autoTable, "Which Routine?", autoRoutinesChooser);
-    }
-
-    public Command buildLeaveAuto() {
-        return Commands.run(() -> driveSubsystem.autoLeaveDrive(
-                        new Translation2d(MoPrefs.autoLeaveSpeed.get().in(Units.Value), 0), 0))
-                .withTimeout(MoPrefs.autoLeaveTime.get().in(Units.Seconds));
     }
 
     public Command buildCenterAuto() {
@@ -182,7 +175,6 @@ public class AutoChooser {
         }
         var auto =
                 switch (autoChoicesChooser.getSelected()) {
-                    case LEAVE -> buildLeaveAuto();
                     case SHOOT -> getAutoRoutine();
                 };
         return auto;
