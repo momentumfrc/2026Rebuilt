@@ -140,7 +140,11 @@ public class MoPrefs extends MoPrefsBase {
             rpmPref("Flywheel Fallback Setpoint", Units.RPM.of(3000));
 
     // **** AUTO ****
-    //TODO: Find auto preferences
+    // TODO: Find auto preferences
     public static final DimensionlessUnitPref autoLeaveSpeed = percentPref("Auto Leave Speed", Units.Percent.of(0));
     public static final TimeUnitPref autoLeaveTime = secondsPref("Auto Leave Time", Units.Seconds.of(0));
+
+    public static final TimeUnitPref autoIntakeRunTime = secondsPref("Auto Intake Run Time", Units.Seconds.of(2));
+
+    public static final TimeUnitPref autoShooterRunTime = secondsPref("Auto Shooter Run Time", Units.Seconds.of(3));
 }
