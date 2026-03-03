@@ -41,7 +41,7 @@ public class AutoPathPlannerCommands {
                     driveSubsystem // Reference to this subsystem to set requirements
                     );
         } catch (Exception e) {
-            e.printStackTrace();
+            DriverStation.reportError("Failed to build and follow PathPlanner command - " + e.getMessage(), e.getStackTrace());
         }
     } // TODO: AUTO PIDS
 
@@ -53,7 +53,7 @@ public class AutoPathPlannerCommands {
 
             return AutoBuilder.followPath(path);
         } catch (Exception e) {
-            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+            DriverStation.reportError("Failed to build and follow PathPlanner command - " + e.getMessage(), e.getStackTrace());
             return Commands.none();
         }
     }
