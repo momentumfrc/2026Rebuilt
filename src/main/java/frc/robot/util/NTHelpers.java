@@ -7,6 +7,8 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NTHelpers {
 
@@ -35,6 +37,8 @@ public class NTHelpers {
         return chooser;
     }
 
+    private static final Map<String, Sendable> tablesToData = new HashMap<>();
+
     public static void publishSendable(NetworkTable table, Sendable data) {
         String name = SendableRegistry.getName(data);
         if (!name.isEmpty()) {
@@ -44,11 +48,21 @@ public class NTHelpers {
 
     public static void publishSendable(NetworkTable table, String key, Sendable data) {
         NetworkTable dataTable = table.getSubTable(key);
+        if (tablesToData.get(key) == data) {
+            return;
+        }
+        tablesToData.put(key, data);
         SendableBuilderImpl builder = new SendableBuilderImpl();
         builder.setTable(dataTable);
         SendableRegistry.publish(data, builder);
         builder.startListeners();
         dataTable.getEntry(".name").setString(key);
+    }
+
+    public static void updateSendables() {
+        for (Sendable data : tablesToData.values()) {
+            SendableRegistry.update(data);
+        }
     }
 
     private NTHelpers() {
