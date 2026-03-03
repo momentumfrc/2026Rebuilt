@@ -7,8 +7,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
@@ -21,7 +19,6 @@ import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
-import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 
 @Logged
@@ -33,8 +30,6 @@ public class KickerSubsystem extends SubsystemBase {
     private final MoRotationEncoder encoder;
 
     private final MoTalonFxPID<AngleUnit, AngularVelocityUnit> pid;
-
-    private final DoublePublisher speedPublisher;
 
     public KickerSubsystem() {
         motor = new TalonFX(Constants.KICKER_PORT.address());
@@ -57,10 +52,6 @@ public class KickerSubsystem extends SubsystemBase {
         pid = new MoTalonFxPID<>(Type.VELOCITY, motor, encoder.getInternalEncoderUnits());
 
         TunerUtils.forMoTalonFx(pid, "Kicker PID");
-
-        NetworkTable table = NTHelpers.getTable("kicker");
-
-        speedPublisher = table.getDoubleTopic("Kicker Speed (RPM)").publish();
     }
 
     public void run() {
@@ -73,10 +64,5 @@ public class KickerSubsystem extends SubsystemBase {
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
         return SysIdUtil.sysIdMechanismForTalonFx(this, "kicker", motor, encoder);
-    }
-
-    @Override
-    public void periodic() {
-        speedPublisher.set(encoder.getVelocity().in(Units.RPM));
     }
 }
