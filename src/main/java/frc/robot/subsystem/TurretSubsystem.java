@@ -59,8 +59,8 @@ import frc.robot.util.TurretAngleHelper;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
-    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
-    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 14;
+    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 12;
+    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 13;
 
     public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
     public static final Transform3d turretToCamera =
