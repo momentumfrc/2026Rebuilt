@@ -126,12 +126,12 @@ public class HoodSubsystem extends SubsystemBase {
         hoodEncoderPublisher = table.getDoubleTopic("Encoder (deg)").publish();
 
         calculatedHoodPositionPublisher =
-                table.getDoubleTopic("Calculated Hood Position").publish();
+                table.getDoubleTopic("Calculated Hood Position (deg)").publish();
     }
 
     public void setCalculatedPosition(Distance distance) {
         Angle position = HoodSerializedInformationHolder.getInstance().getHoodAngle(distance);
-        calculatedHoodPositionPublisher.set(position.baseUnitMagnitude());
+        calculatedHoodPositionPublisher.set(position.in(Units.Degrees));
         setPosition(position);
     }
 

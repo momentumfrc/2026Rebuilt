@@ -74,13 +74,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
         var table = NTHelpers.getTable("shooter-flywheel");
         flywheelCurrentPublisher = table.getDoubleTopic("Flywheel Current").publish();
-        flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed").publish();
+        flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed (RPM)").publish();
 
         flywheelTestSetpointEntry =
                 table.getDoubleTopic("Flywheel Test Setpoint").getEntry(500);
 
         calculatedFlywheelSpeedPublisher =
-                table.getDoubleTopic("Calculated Flywheel Speed").publish();
+                table.getDoubleTopic("Calculated Flywheel Speed (RPM)").publish();
     }
 
     /**
@@ -93,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void runAtCalculatedSpeed(Distance distanceToTarget) {
         AngularVelocity speed = HoodSerializedInformationHolder.getInstance().getFlywheelSpeed(distanceToTarget);
-        calculatedFlywheelSpeedPublisher.set(speed.baseUnitMagnitude());
+        calculatedFlywheelSpeedPublisher.set(speed.in(Units.RPM));
         runAtSpeed(speed);
     }
 
