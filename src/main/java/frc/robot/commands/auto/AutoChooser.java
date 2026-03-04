@@ -23,7 +23,7 @@ import frc.robot.util.NTHelpers;
 public class AutoChooser {
     private enum AutoChoices {
         SHOOT
-    } //probably won't need this, leaving it here just in case we do for whatever reason
+    } // probably won't need this, leaving it here just in case we do for whatever reason
 
     private enum ShootAutoRoutines {
         CENTER_AND_SCORE,
@@ -93,7 +93,8 @@ public class AutoChooser {
                         .withTimeout(MoPrefs.autoIntakeRunTime.get().in(Units.Seconds)));
     }
 
-    // We shoot the fuel, and then we move out of the way in case another alliance member needs to move there (unlikely but just incase)
+    // We shoot the fuel, and then we move out of the way in case another alliance member needs to move there (unlikely
+    // but just incase)
     public Command buildCenterAuto() {
         return getShootCommand()
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(

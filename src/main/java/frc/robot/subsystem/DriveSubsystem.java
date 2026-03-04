@@ -1,7 +1,6 @@
 package frc.robot.subsystem;
 
 import com.pathplanner.lib.util.DriveFeedforwards;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
