@@ -127,6 +127,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final BooleanEntry passiveTrackingEntry;
     private final BooleanEntry coastMotorEntry;
     private final BooleanEntry hasZero;
+    private final BooleanEntry rezeroEveryLoop;
 
     public TurretSubsystem() {
         /* ==== DASHBOARD SETUP ==== */
@@ -142,6 +143,7 @@ public class TurretSubsystem extends SubsystemBase {
         passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
         hasZero = NTHelpers.getBooleanEntry(table, "Has Zero", false);
+        rezeroEveryLoop = NTHelpers.getBooleanEntry(table, "Rezero Every Loop", true);
 
         NTHelpers.publishSendable(table, "Align Mode", alignModeChooser);
 
@@ -436,7 +438,7 @@ public class TurretSubsystem extends SubsystemBase {
                 .map(angle -> angle.in(Units.Rotations))
                 .orElse(Double.NaN));
 
-        if (hasZero.get() == false) {
+        if (hasZero.get() == false || rezeroEveryLoop.get()) {
             zeroEncoder();
         }
 
