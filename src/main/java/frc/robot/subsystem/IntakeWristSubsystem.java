@@ -14,7 +14,6 @@ import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
 import frc.robot.util.NTHelpers;
 
-@Logged
 public class IntakeWristSubsystem extends SubsystemBase {
     private final SparkFlex intakeWrist;
 

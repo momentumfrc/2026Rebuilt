@@ -21,7 +21,6 @@ import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.util.SysIdUtil;
 
-@Logged
 public class KickerSubsystem extends SubsystemBase {
 
     private final TalonFX motor;

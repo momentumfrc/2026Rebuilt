@@ -13,7 +13,6 @@ import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
 import frc.robot.util.NTHelpers;
 
-@Logged
 public class IntakeRollerSubsystem extends SubsystemBase {
     private final SparkFlex intakeRoller;
 

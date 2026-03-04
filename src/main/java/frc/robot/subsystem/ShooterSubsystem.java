@@ -32,7 +32,6 @@ import frc.robot.shootutils.HoodSerializedInformationHolder;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 
-@Logged
 public class ShooterSubsystem extends SubsystemBase {
 
     private final TalonFX motor1;

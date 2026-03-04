@@ -17,7 +17,6 @@ import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoSparkMaxPID;
 
-@Logged
 public class IndexerSubsystem extends SubsystemBase {
 
     private final SparkFlex motor;
