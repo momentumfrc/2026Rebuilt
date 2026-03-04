@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -108,6 +109,10 @@ public class RobotContainer {
         configureBindings();
         setDefaultCommands();
         addSubsystemsToDashboard();
+    }
+
+    private void setAutoDefaultCommnds(){
+        driveSubsystem.autoDefaultCommand(0, 0);
     }
 
     private void setDefaultCommands() {

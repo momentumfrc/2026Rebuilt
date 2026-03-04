@@ -79,8 +79,8 @@ public class DriveSubsystem extends SubsystemBase {
                 driveFeedforwards.linearForces());
     }
 
-    public void autoLeaveDrive(Translation2d moveRequest, double turnRequest) {
-        swerveDrive.drive(moveRequest, turnRequest, false, false);
+    public void autoDefaultCommand(double xRequest, double yRequest) {
+        SwerveInputStream.of(swerveDrive, () -> xRequest, () -> yRequest);
     }
 
     public SwerveDrive getSwerveDrive() {
