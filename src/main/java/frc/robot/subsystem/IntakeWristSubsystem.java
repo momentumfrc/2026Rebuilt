@@ -73,6 +73,6 @@ public class IntakeWristSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         wristCurrentPublisher.set(intakeWristCurrent.in(Units.Amps));
-        positionPublisher.set(intakeWrist.getAbsoluteEncoder().getPosition());
+        positionPublisher.set(intakeWrist.getEncoder().getPosition());
     }
 }

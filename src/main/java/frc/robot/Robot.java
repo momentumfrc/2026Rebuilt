@@ -21,7 +21,6 @@ public class Robot extends TimedRobot {
 
         DataLogManager.start();
 
-        DataLog log = DataLogManager.getLog();
     }
 
     @Override
