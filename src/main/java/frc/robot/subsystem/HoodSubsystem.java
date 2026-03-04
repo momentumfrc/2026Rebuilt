@@ -63,6 +63,8 @@ public class HoodSubsystem extends SubsystemBase {
     private final DoublePublisher currentPublisher;
     private final DoublePublisher hoodEncoderPublisher;
 
+    private final DoublePublisher calculatedHoodPositionPublisher;
+
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
@@ -121,10 +123,15 @@ public class HoodSubsystem extends SubsystemBase {
         forwardSoftLimitPublisher = table.getBooleanTopic("Forward Soft Limit").publish();
         reverseSoftLimitPublisher = table.getBooleanTopic("Reverse Soft Limit").publish();
         hoodEncoderPublisher = table.getDoubleTopic("Encoder (deg)").publish();
+
+        calculatedHoodPositionPublisher =
+                table.getDoubleTopic("Calculated Hood Position (deg)").publish();
     }
 
     public void setCalculatedPosition(Distance distance) {
-        setPosition(HoodSerializedInformationHolder.getInstance().getHoodAngle(distance));
+        Angle position = HoodSerializedInformationHolder.getInstance().getHoodAngle(distance);
+        calculatedHoodPositionPublisher.set(position.in(Units.Degrees));
+        setPosition(position);
     }
 
     private MutAngularVelocity mutVelocityReference = Units.RadiansPerSecond.mutable(0);

@@ -20,6 +20,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
     private MutCurrent intakeWristCurrent = Units.Amps.mutable(0);
 
+    private final DoublePublisher positionPublisher;
     private final DoublePublisher wristCurrentPublisher;
 
     public IntakeWristSubsystem() {
@@ -37,6 +38,9 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
         var table = NTHelpers.getTable("Intake Wrist");
         wristCurrentPublisher = table.getDoubleTopic("Intake Wrist Current").publish();
+
+        positionPublisher =
+                table.getDoubleTopic("Intake Wrist Position (rotations)").publish();
     }
 
     public void wristOut() {
@@ -68,5 +72,6 @@ public class IntakeWristSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         wristCurrentPublisher.set(intakeWristCurrent.in(Units.Amps));
+        positionPublisher.set(intakeWrist.getEncoder().getPosition());
     }
 }
