@@ -1,6 +1,5 @@
 package frc.robot.commands.auto;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -82,6 +81,12 @@ public class AutoChooser {
         NTHelpers.publishSendable(autoTable, "Which Routine?", autoRoutinesChooser);
     }
 
+    public Command getShootCommand() {
+        return Commands.deadline(
+                shootCommand.withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds)),
+                indexerSubsystem.run(indexerSubsystem::run));
+    }
+
     public Command buildCenterAuto() {
         return Commands.deadline(shootCommand
                 .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds))
@@ -93,23 +98,20 @@ public class AutoChooser {
     public Command buildScoreLeftAuto() {
         return Commands.deadline(
                 AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left Start to Left Hub")
-                        .andThen(shootCommand)
-                        .withTimeout(2));
+                        .andThen(getShootCommand()));
     }
 
     public Command buildScoreRightAuto() {
         return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
-                                driveSubsystem, robotPositioning, "Right Start to Right Hub")
-                        .andThen(shootCommand))
-                .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds));
+                        driveSubsystem, robotPositioning, "Right Start to Right Hub")
+                .andThen(getShootCommand()));
     }
 
     // might be redundant, there is probably a better way to write this
     public Command buildScoreLeftAndDepot() {
         return Commands.deadline(
                 AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left Start to Left Hub")
-                        .andThen(shootCommand)
-                        .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds))
+                        .andThen(getShootCommand())
                         .andThen(Commands.parallel(
                                 AutoPathPlannerCommands.getFollowPathCommand(
                                         driveSubsystem, robotPositioning, "Left Hub to Depot"),
@@ -118,15 +120,13 @@ public class AutoChooser {
                         .withTimeout(MoPrefs.autoIntakeRunTime.get().in(Units.Seconds))
                         .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Depot to Left Hub"))
-                        .andThen(shootCommand)
-                        .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds)));
+                        .andThen(getShootCommand()));
     }
 
     public Command buildScoreLeftAndNeutral() {
         return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Start to Left Hub")
-                .andThen(shootCommand)
-                .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds))
+                .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Hub to Left Neutral Zone"))
                 .andThen(Commands.parallel(
@@ -136,15 +136,13 @@ public class AutoChooser {
                         RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem)
                                 .withTimeout(MoPrefs.autoIntakeRunTime.get().in(Units.Seconds))
                                 .andThen(WristCommands.retractIntakeWristCommand(intakeWristSubsystem))))
-                .andThen(shootCommand)
-                .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds)));
+                .andThen(getShootCommand()));
     }
 
     public Command buildScoreRightAndNeutral() {
         return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Start to Right Hub")
-                .andThen(shootCommand)
-                .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds))
+                .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Hub to Right Neutral Zone"))
                 .andThen(Commands.parallel(
@@ -154,8 +152,7 @@ public class AutoChooser {
                         RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem)
                                 .withTimeout(MoPrefs.autoIntakeRunTime.get().in(Units.Seconds))
                                 .andThen(WristCommands.retractIntakeWristCommand(intakeWristSubsystem))))
-                .andThen(shootCommand)
-                .withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds)));
+                .andThen(getShootCommand()));
     }
 
     public Command getAutoRoutine() {
