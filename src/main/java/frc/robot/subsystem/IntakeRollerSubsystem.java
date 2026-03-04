@@ -49,6 +49,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        speedPublisher.set(intakeRoller.getAbsoluteEncoder().getVelocity());
+        speedPublisher.set(intakeRoller.getEncoder().getVelocity());
     }
 }
