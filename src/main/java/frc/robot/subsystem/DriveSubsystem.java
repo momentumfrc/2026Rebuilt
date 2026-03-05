@@ -1,5 +1,6 @@
 package frc.robot.subsystem;
 
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
@@ -9,8 +10,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.MoPrefs;
 import frc.robot.input.MoInput;
+import frc.robot.molib.motune.MoTuner;
+import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.util.NTHelpers;
+import frc.robot.utils.MutablePIDConstants;
+
 import java.io.File;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
@@ -22,6 +27,9 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class DriveSubsystem extends SubsystemBase {
     private final File directory = new File(Filesystem.getDeployDirectory(), "swerve");
     private final SwerveDrive swerveDrive;
+
+    private final MutablePIDConstants translationPIDConstants = new MutablePIDConstants();
+    private final MutablePIDConstants rotationPIDConstants = new MutablePIDConstants();
 
     private enum DriveMode {
         VELOCITY_HEADING,
@@ -76,6 +84,10 @@ public class DriveSubsystem extends SubsystemBase {
                 chassisSpeeds,
                 swerveDrive.kinematics.toSwerveModuleStates(chassisSpeeds),
                 driveFeedforwards.linearForces());
+    }
+
+    public PPHolonomicDriveController driveController() {
+        return new PPHolonomicDriveController(translationPIDConstants, rotationPIDConstants);
     }
 
     public void autoDefaultCommand(double xRequest, double yRequest) {

@@ -108,9 +108,9 @@ public class AutoChooser {
 
     // Might need some fixing later
     public Command buildScoreLeftAuto() {
-        return Commands.deadline(
-                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
-                        .andThen(getShootCommand()));
+        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
+                .andThen(getShootCommand()));
     }
 
     public Command buildScoreRightAuto() {
@@ -121,29 +121,32 @@ public class AutoChooser {
 
     // might be redundant, there is probably a better way to write this
     public Command buildScoreLeftAndDepot() {
-        return Commands.deadline(
-                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
-                        .andThen(getShootCommand())
-                        .andThen(Commands.parallel(
-                                        AutoPathPlannerCommands.getFollowPathCommand(
-                                                driveSubsystem, robotPositioning, "Left Hub to Depot", assumeRobotPose.get()),
-                                        getIntakeCommand())
-                                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                                        driveSubsystem, robotPositioning, "Depot to Left Hub", assumeRobotPose.get()))
-                                .andThen(getShootCommand())));
+        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
+                .andThen(getShootCommand())
+                .andThen(Commands.parallel(
+                                AutoPathPlannerCommands.getFollowPathCommand(
+                                        driveSubsystem, robotPositioning, "Left Hub to Depot", assumeRobotPose.get()),
+                                getIntakeCommand())
+                        .andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                                driveSubsystem, robotPositioning, "Depot to Left Hub", assumeRobotPose.get()))
+                        .andThen(getShootCommand())));
     }
 
     public Command buildScoreLeftAndNeutral() {
-        return Commands.deadline(
-                AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
-                        .andThen(getShootCommand())
-                        .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                                driveSubsystem, robotPositioning, "Left Hub to Left Neutral Zone", assumeRobotPose.get()))
-                        .andThen(Commands.parallel(
-                                AutoPathPlannerCommands.getFollowPathCommand(
-                                        driveSubsystem, robotPositioning, "Left Neutral Zone to Left Hub", assumeRobotPose.get()),
-                                getIntakeCommand()))
-                        .andThen(getShootCommand()));
+        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
+                .andThen(getShootCommand())
+                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Left Hub to Left Neutral Zone", assumeRobotPose.get()))
+                .andThen(Commands.parallel(
+                        AutoPathPlannerCommands.getFollowPathCommand(
+                                driveSubsystem,
+                                robotPositioning,
+                                "Left Neutral Zone to Left Hub",
+                                assumeRobotPose.get()),
+                        getIntakeCommand()))
+                .andThen(getShootCommand()));
     }
 
     public Command buildScoreRightAndNeutral() {
@@ -154,7 +157,10 @@ public class AutoChooser {
                         driveSubsystem, robotPositioning, "Right Hub to Right Neutral Zone", assumeRobotPose.get()))
                 .andThen(Commands.parallel(
                         AutoPathPlannerCommands.getFollowPathCommand(
-                                driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", assumeRobotPose.get()),
+                                driveSubsystem,
+                                robotPositioning,
+                                "Right Neutral Zone to Right Hub",
+                                assumeRobotPose.get()),
                         getIntakeCommand()))
                 .andThen(getShootCommand()));
     }
