@@ -110,11 +110,11 @@ public class RobotContainer {
         addSubsystemsToDashboard();
     }
 
-    private void setAutoDefaultCommnds() {
+    public void setAutoDefaultCommnds() {
         driveSubsystem.autoDefaultCommand(0, 0);
     }
 
-    private void setDefaultCommands() {
+    public void setDefaultCommands() {
         driveSubsystem.setDefaultCommand(driveCommand);
         hood.setDefaultCommand(idleHoodCommand);
         indexer.setDefaultCommand(idleIndexerCommand);
