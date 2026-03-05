@@ -16,10 +16,11 @@ import frc.robot.subsystem.DriveSubsystem;
 
 public class AutoPathPlannerCommands {
 
-    public static Command PathCommand(DriveSubsystem driveSubsystem, RobotPositioning robotPositioning) {
+    public static RobotConfig pathPlannerConfig;
+
+    public static Command PathCommand(DriveSubsystem driveSubsystem, RobotPositioning robotPositioning, PathPlannerPath path) {
         PathFollowingController driveController = driveSubsystem.driveController();
 
-        RobotConfig pathPlannerConfig;
         try {
             pathPlannerConfig = RobotConfig.fromGUISettings();
         } catch (Exception e) {
@@ -29,12 +30,14 @@ public class AutoPathPlannerCommands {
         FollowPathCommand pathFollowingCommand = new FollowPathCommand(
                 path,
                 robotPositioning::getRobotPose,
-                driveSubsystem::getRobotRelativeSpeeds,
+                robotPositioning::getRobotVelocity,
                 driveSubsystem::driveRobotRelativeSpeeds,
                 driveController,
                 pathPlannerConfig,
                 () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                 driveSubsystem);
+
+        return pathFollowingCommand;
     }
 
     public static Command getFollowPathCommand(
@@ -51,9 +54,9 @@ public class AutoPathPlannerCommands {
                         .orElseGet(() -> new Pose2d(path.getPoint(0).position, Rotation2d.kZero));
                 return new SequentialCommandGroup(
                         Commands.runOnce(() -> robotPositioning.resetOdometry(startPose)),
-                        AutoBuilder.followPath(path));
+                        PathCommand(driveSubsystem, robotPositioning, path));
             } else {
-                return PathCommand(driveSubsystem, robotPositioning).followPath(path);
+                return PathCommand(driveSubsystem, robotPositioning, path);
             }
 
         } catch (Exception e) {
