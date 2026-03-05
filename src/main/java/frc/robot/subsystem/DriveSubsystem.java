@@ -63,6 +63,9 @@ public class DriveSubsystem extends SubsystemBase {
 
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
+
+        translationPIDConstants.getTuner("TranslationPID").safeBuild();
+        rotationPIDConstants.getTuner("Rotation PID").safeBuild();
     }
 
     public void driveFieldOriented(ChassisSpeeds velocity) {
@@ -87,7 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public PPHolonomicDriveController driveController() {
-        return new PPHolonomicDriveController(translationPIDConstants, rotationPIDConstants);
+        return new PPHolonomicDriveController(translationPIDConstants.toImmutable(), rotationPIDConstants.toImmutable());
     }
 
     public void autoDefaultCommand(double xRequest, double yRequest) {
