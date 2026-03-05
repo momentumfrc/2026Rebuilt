@@ -1,13 +1,21 @@
 package frc.robot.commands.auto;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotPositioning;
 import frc.robot.subsystem.DriveSubsystem;
 
@@ -47,12 +55,21 @@ public class AutoPathPlannerCommands {
     } // TODO: AUTO PIDS
 
     public static Command getFollowPathCommand(
-            DriveSubsystem driveSubsystem, RobotPositioning robotPositioning, String pathName) {
+            DriveSubsystem driveSubsystem,
+            RobotPositioning robotPositioning,
+            String pathName,
+            boolean assumeRobotPosition) {
         try {
             // Load the path you want to follow using its name in the GUI
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
+            if (assumeRobotPosition) {
+                Pose2d startPose = path.getStartingHolonomicPose().orElseGet(() -> new Pose2d(path.getPoint(0).position, Rotation2d.kZero));
+                return new SequentialCommandGroup(Commands.runOnce(() -> robotPositioning.resetOdometry(startPose)), AutoBuilder.followPath(path));
+            } else {
             return AutoBuilder.followPath(path);
+        }
+
         } catch (Exception e) {
             DriverStation.reportError(
                     "Failed to build and follow PathPlanner command - " + e.getMessage(), e.getStackTrace());
