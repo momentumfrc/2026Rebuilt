@@ -10,6 +10,7 @@ import frc.robot.RobotPositioning;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
+import frc.robot.commands.intake.WristCommands.Direction;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
@@ -88,8 +89,10 @@ public class AutoChooser {
     }
 
     public Command getIntakeCommand() {
-        return WristCommands.deployIntakeWristCommand(intakeWristSubsystem)
-                .andThen(RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem)
+        return WristCommands.moveIntakeWristCommand(intakeWristSubsystem, Direction.OUT)
+                .andThen(Commands.parallel(
+                                WristCommands.holdIntakeWristCommand(intakeWristSubsystem, Direction.OUT),
+                                RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem))
                         .withTimeout(MoPrefs.autoIntakeRunTime.get().in(Units.Seconds)));
     }
 
