@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.util;
 
 import com.pathplanner.lib.config.PIDConstants;
 import frc.robot.molib.motune.MoTuner;
