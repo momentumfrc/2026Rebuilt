@@ -18,7 +18,8 @@ public class AutoPathPlannerCommands {
 
     public static RobotConfig pathPlannerConfig;
 
-    public static Command PathCommand(DriveSubsystem driveSubsystem, RobotPositioning robotPositioning, PathPlannerPath path) {
+    public static Command PathCommand(
+            DriveSubsystem driveSubsystem, RobotPositioning robotPositioning, PathPlannerPath path) {
         PathFollowingController driveController = driveSubsystem.driveController();
 
         try {
