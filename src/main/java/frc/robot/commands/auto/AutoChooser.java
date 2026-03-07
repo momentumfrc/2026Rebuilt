@@ -32,7 +32,8 @@ public class AutoChooser {
         SCORE_RIGHT_TO_HUB,
         SCORE_LEFT_AND_COLLECT_DEPOT,
         SCORE_LEFT_AND_COLLECT_NEUTRAL_ZONE,
-        SCORE_RIGHT_AND_COLLECT_NEUTRAL_ZONE
+        SCORE_RIGHT_AND_COLLECT_NEUTRAL_ZONE,
+        SCORE_RIGHT_AND_COLLECT_OUTPOST
     } // edit with more choices once auto routines are defined
 
     private final RobotPositioning robotPositioning;
@@ -165,6 +166,10 @@ public class AutoChooser {
                 .andThen(getShootCommand()));
     }
 
+    public Command buildScoreRightAndOutpost() {
+        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Right Hub to Outpost", assumeRobotPose.get()).andThen(shootCommand.andThen(AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Outpost to Right Hub", false).andThen(Commands.waitSeconds(2)).andThen(AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, "Outpost to Right Hub", false).andThen(shootCommand)))));
+    }
+
     public Command getAutoRoutine() {
         return switch (autoRoutinesChooser.getSelected()) {
             case CENTER_AND_SCORE -> buildCenterAuto();
@@ -173,6 +178,7 @@ public class AutoChooser {
             case SCORE_LEFT_AND_COLLECT_DEPOT -> buildScoreLeftAndDepot();
             case SCORE_LEFT_AND_COLLECT_NEUTRAL_ZONE -> buildScoreLeftAndNeutral();
             case SCORE_RIGHT_AND_COLLECT_NEUTRAL_ZONE -> buildScoreRightAndNeutral();
+            case SCORE_RIGHT_AND_COLLECT_OUTPOST -> buildScoreRightAndOutpost();
         };
     }
 
