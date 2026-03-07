@@ -9,21 +9,21 @@ public class Constants {
     public static final HIDPort DRIVE_CONTORLLER_PORT = new HIDPort(0);
     public static final HIDPort OPERATOR_CONTROLLER_PORT = new HIDPort(1);
     // TODO: actual addresses
-    public static final CANAddress KICKER_PORT = new CANAddress(0);
-    public static final CANAddress INDEXER_PORT = new CANAddress(0);
+    public static final CANAddress KICKER_PORT = new CANAddress(16);
+    public static final CANAddress INDEXER_PORT = new CANAddress(15);
 
-    public static final CANAddress HOOD_PORT = new CANAddress(0);
+    public static final CANAddress HOOD_PORT = new CANAddress(20);
 
-    public static final CANAddress TURRET_MOTOR = new CANAddress(0);
+    public static final CANAddress TURRET_MOTOR = new CANAddress(13);
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_1 = new DIOPort(0);
     public static final DIOPort TURRET_ABSOLUTE_ENCODER_2 = new DIOPort(1);
 
-    public static final CANAddress SHOOTER_1_ADDRESS = new CANAddress(0);
-    public static final CANAddress SHOOTER_2_ADDRESS = new CANAddress(0);
+    public static final CANAddress SHOOTER_1_ADDRESS = new CANAddress(21);
+    public static final CANAddress SHOOTER_2_ADDRESS = new CANAddress(22);
 
     // Intake Ports
-    public static final CANAddress INTAKE_ROLLER_PORT = new CANAddress(0); // edit this with the actual robot
-    public static final CANAddress INTAKE_WRIST_PORT = new CANAddress(0);
+    public static final CANAddress INTAKE_ROLLER_PORT = new CANAddress(14); // edit this with the actual robot
+    public static final CANAddress INTAKE_WRIST_PORT = new CANAddress(18);
 
     public static record CANAddress(int address) {}
 
