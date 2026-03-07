@@ -61,8 +61,8 @@ public class DriveSubsystem extends SubsystemBase {
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
 
-        translationPIDConstants.getTuner("TranslationPID").safeBuild();
-        rotationPIDConstants.getTuner("Rotation PID").safeBuild();
+        translationPIDConstants.getTuner("PathPlanner Translation PID").safeBuild();
+        rotationPIDConstants.getTuner("PathPlanner Rotation PID").safeBuild();
     }
 
     public void driveFieldOriented(ChassisSpeeds velocity) {

@@ -18,7 +18,7 @@ public class AutoPathPlannerCommands {
 
     public static RobotConfig pathPlannerConfig;
 
-    public static Command PathCommand(
+    public static Command getFollowPathCommand(
             DriveSubsystem driveSubsystem, RobotPositioning robotPositioning, PathPlannerPath path) {
         PathFollowingController driveController = driveSubsystem.driveController();
 
@@ -55,9 +55,9 @@ public class AutoPathPlannerCommands {
                         .orElseGet(() -> new Pose2d(path.getPoint(0).position, Rotation2d.kZero));
                 return new SequentialCommandGroup(
                         Commands.runOnce(() -> robotPositioning.resetOdometry(startPose)),
-                        PathCommand(driveSubsystem, robotPositioning, path));
+                        getFollowPathCommand(driveSubsystem, robotPositioning, path));
             } else {
-                return PathCommand(driveSubsystem, robotPositioning, path);
+                return getFollowPathCommand(driveSubsystem, robotPositioning, path);
             }
 
         } catch (Exception e) {
