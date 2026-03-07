@@ -45,7 +45,8 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final TimeUnitPref intakeRampTime = secondsPref("Intake Ramp Time", Units.Seconds.of(0.5));
 
-    public static final TimeUnitPref intakeAgitationTimeoutTime = secondsPref("Intake Agitation Timeout Time", Units.Seconds.of(0.5));
+    public static final TimeUnitPref intakeAgitationTimeoutTime =
+            secondsPref("Intake Agitation Timeout Time", Units.Seconds.of(0.5));
 
     // **** INTAKE ROLLERS ****
     public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));

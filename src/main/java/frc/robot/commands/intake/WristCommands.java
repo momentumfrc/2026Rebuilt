@@ -43,8 +43,12 @@ public class WristCommands {
 
     public static Command agitatingCommand(IntakeWristSubsystem wrist) {
         return Commands.sequence(
-                        moveIntakeWristCommand(wrist, Direction.OUT).withTimeout(MoPrefs.intakeAgitationTimeoutTime.get().in(Units.Seconds)),
-                        moveIntakeWristCommand(wrist, Direction.IN).withTimeout(MoPrefs.intakeAgitationTimeoutTime.get().in(Units.Seconds)))
+                        moveIntakeWristCommand(wrist, Direction.OUT)
+                                .withTimeout(
+                                        MoPrefs.intakeAgitationTimeoutTime.get().in(Units.Seconds)),
+                        moveIntakeWristCommand(wrist, Direction.IN)
+                                .withTimeout(
+                                        MoPrefs.intakeAgitationTimeoutTime.get().in(Units.Seconds)))
                 .repeatedly();
     }
 
