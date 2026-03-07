@@ -155,7 +155,7 @@ public class RobotContainer {
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
 
-        shootTrigger.whileTrue(shootCommand);
+        shootTrigger.whileTrue(shootCommand.alongWith(WristCommands.agitatingCommand(intakeWristSubsystem)));
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 

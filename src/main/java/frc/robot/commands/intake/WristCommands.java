@@ -41,6 +41,17 @@ public class WristCommands {
                 .andThen(WristCommands.holdIntakeWristCommand(wrist, Direction.IN));
     }
 
+    public static Command agitatingCommand(IntakeWristSubsystem wrist) {
+        return Commands.sequence(
+                        moveIntakeWristCommand(wrist, Direction.OUT)
+                                .withTimeout(
+                                        MoPrefs.intakeAgitationTimeoutTime.get().in(Units.Seconds)),
+                        moveIntakeWristCommand(wrist, Direction.IN)
+                                .withTimeout(
+                                        MoPrefs.intakeAgitationTimeoutTime.get().in(Units.Seconds)))
+                .repeatedly();
+    }
+
     private WristCommands() {
         throw new UnsupportedOperationException("IntakeCommands is a static class");
     }

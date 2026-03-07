@@ -30,11 +30,15 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
         intakeWristConfig.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.intakeWristSmartCurrentLimit.get().in(Units.Amps))
+                .openLoopRampRate(MoPrefs.intakeRampTime.get().in(Units.Seconds))
                 .idleMode(IdleMode.kCoast)
                 .inverted(false));
 
         MoPrefs.intakeWristSmartCurrentLimit.subscribe(
                 limit -> intakeWristConfig.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
+
+        MoPrefs.intakeRampTime.subscribe(rampTime ->
+                intakeWristConfig.accept(config -> config.openLoopRampRate((double) rampTime.in(Units.Seconds))));
 
         var table = NTHelpers.getTable("Intake Wrist");
         wristCurrentPublisher = table.getDoubleTopic("Intake Wrist Current").publish();
