@@ -140,6 +140,8 @@ public class MoPrefs extends MoPrefsBase {
 
     // **** AUTO ****
     // TODO: Find auto preferences
+    public static final TimeUnitPref autoOutpostWaitTime = secondsPref("Auto Outpost wait Time", Units.Seconds.of(2));
+
     public static final TimeUnitPref autoIntakeRunTime = secondsPref("Auto Intake Run Time", Units.Seconds.of(2));
 
     public static final TimeUnitPref autoShooterRunTime = secondsPref("Auto Shooter Run Time", Units.Seconds.of(3));
