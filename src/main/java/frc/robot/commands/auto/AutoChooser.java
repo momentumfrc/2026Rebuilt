@@ -126,10 +126,10 @@ public class AutoChooser {
                 .andThen(getShootCommand())
                 .andThen(Commands.parallel(
                                 AutoPathPlannerCommands.getFollowPathCommand(
-                                        driveSubsystem, robotPositioning, "Left Hub to Depot", assumeRobotPose.get()),
+                                        driveSubsystem, robotPositioning, "Left Hub to Depot", false),
                                 getIntakeCommand())
                         .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                                driveSubsystem, robotPositioning, "Depot to Left Hub", assumeRobotPose.get()))
+                                driveSubsystem, robotPositioning, "Depot to Left Hub", false))
                         .andThen(getShootCommand())));
     }
 
@@ -138,13 +138,13 @@ public class AutoChooser {
                         driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                        driveSubsystem, robotPositioning, "Left Hub to Left Neutral Zone", assumeRobotPose.get()))
+                        driveSubsystem, robotPositioning, "Left Hub to Left Neutral Zone", false))
                 .andThen(Commands.parallel(
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem,
                                 robotPositioning,
                                 "Left Neutral Zone to Left Hub",
-                                assumeRobotPose.get()),
+                                false),
                         getIntakeCommand()))
                 .andThen(getShootCommand()));
     }
@@ -154,13 +154,13 @@ public class AutoChooser {
                         driveSubsystem, robotPositioning, "Right Start to Right Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                        driveSubsystem, robotPositioning, "Right Hub to Right Neutral Zone", assumeRobotPose.get()))
+                        driveSubsystem, robotPositioning, "Right Hub to Right Neutral Zone", false))
                 .andThen(Commands.parallel(
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem,
                                 robotPositioning,
                                 "Right Neutral Zone to Right Hub",
-                                assumeRobotPose.get()),
+                                false),
                         getIntakeCommand()))
                 .andThen(getShootCommand()));
     }
