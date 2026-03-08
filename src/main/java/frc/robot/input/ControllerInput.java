@@ -52,12 +52,12 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getExtendIntake() {
-        return operatorController.getLeftBumperButton();
+        return driveController.getLeftBumperButton();
     }
 
     @Override
     public boolean getRetractIntake() {
-        return operatorController.getRightBumperButton();
+        return driveController.getRightBumperButton();
     }
 
     @Override
@@ -72,7 +72,7 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getRunSysId() {
-        return driveController.getRightBumperButton();
+        return driveController.getStartButton();
     }
 
     @Override
