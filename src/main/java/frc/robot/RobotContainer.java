@@ -74,6 +74,7 @@ public class RobotContainer {
             indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
 
     private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
+    private final Command idleTurretCommand = turret.run(turret::stop);
     private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
@@ -111,7 +112,7 @@ public class RobotContainer {
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);
         shooter.setDefaultCommand(idleShooterCommand);
-        turret.setDefaultCommand(passiveTargetingCommand);
+        turret.setDefaultCommand(idleTurretCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
     }
