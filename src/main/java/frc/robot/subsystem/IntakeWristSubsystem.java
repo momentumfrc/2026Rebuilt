@@ -22,6 +22,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
     private final DoublePublisher positionPublisher;
     private final DoublePublisher wristCurrentPublisher;
+    private final DoublePublisher wristVoltagePublisher;
 
     public IntakeWristSubsystem() {
         intakeWrist = new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), MotorType.kBrushless);
@@ -42,6 +43,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
         var table = NTHelpers.getTable("Intake Wrist");
         wristCurrentPublisher = table.getDoubleTopic("Intake Wrist Current").publish();
+        wristVoltagePublisher = table.getDoubleTopic("Intake Wrist Voltage").publish();
 
         positionPublisher =
                 table.getDoubleTopic("Intake Wrist Position (rotations)").publish();
@@ -77,5 +79,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
     public void periodic() {
         wristCurrentPublisher.set(intakeWristCurrent.in(Units.Amps));
         positionPublisher.set(intakeWrist.getEncoder().getPosition());
+
+        wristVoltagePublisher.set(intakeWrist.getAppliedOutput() * intakeWrist.getBusVoltage());
     }
 }
