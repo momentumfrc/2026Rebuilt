@@ -27,8 +27,6 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngularVelocityUnitPref swerveMaxPossibleSpin =
             rotationsPerSecPref("Swerve Max Possible Spin", Units.RotationsPerSecond.of(2));
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Swerve Input Deadband", 0.05);
-    public static final Pref<Double> inputTranslationScale = unitlessDoublePref("Swerve Input Translation Scale", 0.8);
-    public static final Pref<Double> inputRotationScale = unitlessDoublePref("Swerve Input Rotation Scale", 0.6);
     public static final Pref<Boolean> inputTranslationCubed = booleanPref("Swerve Input Translation Cubed?", true);
     public static final Pref<Boolean> inputRotationCubed = booleanPref("Swerve Input Rotation Cubed?", true);
 

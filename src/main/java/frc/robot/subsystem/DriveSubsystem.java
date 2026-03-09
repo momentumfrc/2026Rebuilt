@@ -99,16 +99,6 @@ public class DriveSubsystem extends SubsystemBase {
                     driveHeading.deadband(deadband);
                 },
                 true);
-        MoPrefs.inputTranslationScale.subscribe(
-                scale -> {
-                    driveAngularVelocity.scaleTranslation(scale);
-                    driveHeading.scaleTranslation(scale);
-                },
-                true);
-        MoPrefs.inputRotationScale.subscribe(scale -> {
-            driveAngularVelocity.scaleRotation(scale);
-            driveHeading.scaleRotation(scale);
-        });
 
         return () -> switch (driveModeChooser.getSelected()) {
             case VELOCITY_HEADING -> driveAngularVelocity;
