@@ -445,6 +445,7 @@ public class TurretSubsystem extends SubsystemBase {
         var desiredNeutralMode = coastMotorEntry.get() ? NeutralModeValue.Coast : NeutralModeValue.Brake;
         if (desiredNeutralMode != turretMotorConfig.MotorOutput.NeutralMode) {
             turretMotorConfig.MotorOutput.NeutralMode = desiredNeutralMode;
+            turretMotor.getConfigurator().refresh(turretMotorConfig.Feedback);
             turretMotor.getConfigurator().apply(turretMotorConfig);
         }
     }
