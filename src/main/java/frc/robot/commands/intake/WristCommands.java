@@ -29,16 +29,17 @@ public class WristCommands {
     }
 
     public static Command deployIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return moveIntakeWristCommand(wrist, Direction.OUT).andThen(holdIntakeWristCommand(wrist, Direction.OUT));
+        return moveIntakeWristCommand(wrist, Direction.OUT)
+                .andThen(holdIntakeWristCommand(wrist, Direction.OUT))
+                .withName("DeployIntakeCommand");
     }
 
     public static Command retractIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return moveIntakeWristCommand(wrist, Direction.OUT).andThen(holdIntakeWristCommand(wrist, Direction.IN));
+        return moveIntakeWristCommand(wrist, Direction.IN).andThen(holdIntakeWristCommand(wrist, Direction.IN)).withName("RetractIntakeCommand");
     }
 
     public static Command intakeWristDefaultCommand(IntakeWristSubsystem wrist) {
-        return moveIntakeWristCommand(wrist, Direction.IN)
-                .andThen(WristCommands.holdIntakeWristCommand(wrist, Direction.IN));
+        return retractIntakeWristCommand(wrist).withName("DefaultRetractIntakeCommand");
     }
 
     public static Command agitatingCommand(IntakeWristSubsystem wrist) {
