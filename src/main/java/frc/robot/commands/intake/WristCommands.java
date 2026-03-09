@@ -35,7 +35,9 @@ public class WristCommands {
     }
 
     public static Command retractIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return moveIntakeWristCommand(wrist, Direction.IN).andThen(holdIntakeWristCommand(wrist, Direction.IN)).withName("RetractIntakeCommand");
+        return moveIntakeWristCommand(wrist, Direction.IN)
+                .andThen(holdIntakeWristCommand(wrist, Direction.IN))
+                .withName("RetractIntakeCommand");
     }
 
     public static Command intakeWristDefaultCommand(IntakeWristSubsystem wrist) {
