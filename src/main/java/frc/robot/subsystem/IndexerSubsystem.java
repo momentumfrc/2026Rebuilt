@@ -1,9 +1,13 @@
 package frc.robot.subsystem;
 
+import static edu.wpi.first.units.Units.Revolutions;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
@@ -15,6 +19,7 @@ import frc.robot.molib.MoSparkConfigurator;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoSparkMaxPID;
+import frc.robot.util.NTHelpers;
 
 public class IndexerSubsystem extends SubsystemBase {
 
@@ -24,6 +29,9 @@ public class IndexerSubsystem extends SubsystemBase {
     private final MoRotationEncoder encoder;
 
     private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> pid;
+
+    private final DoublePublisher indexerEncoderPosition;
+    private final DoublePublisher indexerEncoderSpeed;
 
     public IndexerSubsystem() {
         motor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
@@ -42,6 +50,11 @@ public class IndexerSubsystem extends SubsystemBase {
         pid = new MoSparkMaxPID<>(MoSparkMaxPID.Type.VELOCITY, motor, ClosedLoopSlot.kSlot0, encoder, config);
 
         TunerUtils.forMoSparkMax(pid, "Indexer PID");
+
+        var table = NTHelpers.getTable("Indexer");
+
+        indexerEncoderPosition = table.getDoubleTopic("Indexer Encoder Position").publish();
+        indexerEncoderSpeed = table.getDoubleTopic("Indexer Encoder Speed").publish();
     }
 
     public void run() {
@@ -70,5 +83,11 @@ public class IndexerSubsystem extends SubsystemBase {
                                 encoder.getVelocityInEncoderUnits(),
                                 encoder.getInternalEncoderVelocityUnits().name()),
                 this);
+    }
+
+    @Override
+    public void periodic() {
+        indexerEncoderPosition.set(encoder.getPosition().in(Units.Revolutions));
+        indexerEncoderSpeed.set(encoder.getVelocity().in(Units.RevolutionsPerSecond));
     }
 }
