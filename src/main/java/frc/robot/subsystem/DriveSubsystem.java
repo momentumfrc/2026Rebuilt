@@ -1,6 +1,7 @@
 package frc.robot.subsystem;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,6 +13,9 @@ import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.util.NTHelpers;
 import java.io.File;
 import java.util.function.Supplier;
+
+import com.studica.frc.AHRS;
+
 import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
 import swervelib.parser.SwerveParser;
@@ -29,6 +33,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final SendableChooser<DriveMode> driveModeChooser =
             NTHelpers.enumToChooser(DriveMode.class, DriveMode.VELOCITY_HEADING);
+
+    private final DoublePublisher omegaSpeed;
 
     public DriveSubsystem() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -56,6 +62,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
+        omegaSpeed = table.getDoubleTopic("Gyro Speed (rad_s)").publish();
     }
 
     public void driveFieldOriented(ChassisSpeeds velocity) {
@@ -117,5 +124,9 @@ public class DriveSubsystem extends SubsystemBase {
         return run(() -> {
             swerveDrive.lockPose();
         });
+    }
+
+    public void periodic() {
+        omegaSpeed.set(swerveDrive.getRobotVelocity().omegaRadiansPerSecond);
     }
 }
