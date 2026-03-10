@@ -1,8 +1,12 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,9 +17,6 @@ import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.util.NTHelpers;
 import java.io.File;
 import java.util.function.Supplier;
-
-import com.studica.frc.AHRS;
-
 import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
 import swervelib.parser.SwerveParser;
@@ -70,7 +71,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command resetFieldOrientedFwd() {
-        return runOnce(() -> swerveDrive.zeroGyro());
+        return runOnce(() -> {
+            swerveDrive.zeroGyro();
+
+            var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
+            if (alliance == DriverStation.Alliance.Red) {
+                swerveDrive.setGyro(new Rotation3d(Rotation2d.k180deg));
+            }
+            swerveDrive.setGyro(new Rotation3d(Rotation2d.k180deg));
+            swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getTranslation(), Rotation2d.k180deg));
+        });
     }
 
     public Command driveFieldOriented(Supplier<Supplier<ChassisSpeeds>> inputSupplier) {
