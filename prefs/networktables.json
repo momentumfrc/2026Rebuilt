@@ -1,0 +1,730 @@
+[
+  {
+    "name": "/Preferences/Swerve Max Allowed Speed (m_s)",
+    "type": "double",
+    "value": 5.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Max Possible Speed (m_s)",
+    "type": "double",
+    "value": 5.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Max Allowed Spin (R_s)",
+    "type": "double",
+    "value": 0.85,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Max Possible Spin (R_s)",
+    "type": "double",
+    "value": 2.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Input DeadBand",
+    "type": "double",
+    "value": 0.005,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Input Deadband",
+    "type": "double",
+    "value": 0.05,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Input Translation Scale",
+    "type": "double",
+    "value": 0.8,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Input Rotation Scale",
+    "type": "double",
+    "value": 0.6,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Input Translation Cubed?",
+    "type": "boolean",
+    "value": true,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Input Rotation Cubed?",
+    "type": "boolean",
+    "value": true,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Power (V)",
+    "type": "double",
+    "value": 6.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Hold Power (V)",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Smart Current Limit (A)",
+    "type": "double",
+    "value": 20.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake High Current Wrist Time (s)",
+    "type": "double",
+    "value": 2.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Ramp Time (s)",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Agitation Timeout Time (s)",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Roller Power (V)",
+    "type": "double",
+    "value": 10.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Rollers Current Limit (A)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Indexer Run Speed (R_s)",
+    "type": "double",
+    "value": 1500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Indexer Encoder Scale (et_R)",
+    "type": "double",
+    "value": 32.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Indexer Current Limit (A)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Kicker Run Speed (R_s)",
+    "type": "double",
+    "value": 1500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Kicker Current Limit (A)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Kicker Encoder Scale (et_R)",
+    "type": "double",
+    "value": 32.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Relative Encoder Scale (et_R)",
+    "type": "double",
+    "value": 31.875,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Relative Encoder Offset (°)",
+    "type": "double",
+    "value": -3.69,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Abs. Encoder 1 Zero (R)",
+    "type": "double",
+    "value": 0.8973,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Abs. Encoder 2 Zero (R)",
+    "type": "double",
+    "value": 0.4705,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Min Soft Limit (°)",
+    "type": "double",
+    "value": -1.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Max Soft Limit (°)",
+    "type": "double",
+    "value": 340.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Max Power (V)",
+    "type": "double",
+    "value": 12.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Voltage Ramp Rate (s)",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Phase Delay (s)",
+    "type": "double",
+    "value": 0.03,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Max Velocity (°_s)",
+    "type": "double",
+    "value": 180.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Max Acceleration (°_s_s)",
+    "type": "double",
+    "value": 360.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Fallback Setpoint (°)",
+    "type": "double",
+    "value": 180.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Encoder Scale (et_R)",
+    "type": "double",
+    "value": 32.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Max Velocity (°_s)",
+    "type": "double",
+    "value": 1000.0000000000001,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Max Acceleration (°_s_s)",
+    "type": "double",
+    "value": 1000.0000000000001,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Min Soft Limit (°)",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Max Soft Limit (°)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Zero Power (V)",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Zero Current Threshold (A)",
+    "type": "double",
+    "value": 30.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Zero Time (s)",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Current Limit (A)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Deadzone Position (°)",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Hood Fallback Setpoint (°)",
+    "type": "double",
+    "value": 20.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Flywheel Current Limit (A)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Flywheel Fallback Setpoint (R_min)",
+    "type": "double",
+    "value": 3000.0000000000005,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Absolute Position/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Absolute Position/ff_kV",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Absolute Position/ff_kA",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Absolute Position/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Absolute Position/ff_kS",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Absolute Position/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Absolute Position/tolerance",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Relative Alignment/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Relative Alignment/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Relative Alignment/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Relative Alignment/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Turret Relative Alignment/tolerance",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Indexer PID/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Indexer PID/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Indexer PID/ff_kV",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Indexer PID/ff_kA",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Indexer PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Indexer PID/ff_kS",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Indexer PID/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/ff_kV",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/ff_kA",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/ff_kS",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/tolerance",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Shooter PID/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Shooter PID/ff_kV",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Shooter PID/ff_kA",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Shooter PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Shooter PID/ff_kS",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Shooter PID/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Shooter PID/tolerance",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Hood PID/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Hood PID/ff_kV",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Hood PID/ff_kA",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Hood PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Hood PID/ff_kS",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Hood PID/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Hood PID/tolerance",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Turret Encoder Scale (et_R)",
+    "type": "double",
+    "value": 31.875,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve heading correction",
+    "type": "boolean",
+    "value": true,
+    "properties": {
+      "persistent": true
+    }
+  }
+]
