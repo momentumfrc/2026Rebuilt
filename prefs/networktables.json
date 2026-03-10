@@ -146,7 +146,7 @@
   {
     "name": "/Preferences/Indexer Run Speed (R_s)",
     "type": "double",
-    "value": 1500.0,
+    "value": 100.0,
     "properties": {
       "persistent": true
     }
@@ -154,7 +154,7 @@
   {
     "name": "/Preferences/Indexer Encoder Scale (et_R)",
     "type": "double",
-    "value": 32.0,
+    "value": 4.0,
     "properties": {
       "persistent": true
     }
@@ -506,7 +506,7 @@
   {
     "name": "/momentum-tuners/Indexer PID/ff_kV",
     "type": "double",
-    "value": 0.0,
+    "value": 0.01,
     "properties": {
       "persistent": true
     }
