@@ -52,6 +52,8 @@ public class DriveSubsystem extends SubsystemBase {
                         speed.in(Units.MetersPerSecond), spin.in(Units.RadiansPerSecond)),
                 true);
 
+        MoPrefs.enableHeadingCorrection.subscribe(swerveDrive::setHeadingCorrection, true);
+
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
     }
@@ -89,6 +91,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         var driveHeading = swerveInputStreamBase
                 .copy()
+                .headingWhile(true)
                 .withControllerHeadingAxis(
                         () -> inputSupplier.get().getDriveHeadingXRequest(),
                         () -> inputSupplier.get().getDriveHeadingYRequest());

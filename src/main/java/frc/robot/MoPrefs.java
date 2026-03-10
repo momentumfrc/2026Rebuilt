@@ -29,6 +29,7 @@ public class MoPrefs extends MoPrefsBase {
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Swerve Input Deadband", 0.05);
     public static final Pref<Boolean> inputTranslationCubed = booleanPref("Swerve Input Translation Cubed?", true);
     public static final Pref<Boolean> inputRotationCubed = booleanPref("Swerve Input Rotation Cubed?", true);
+    public static final Pref<Boolean> enableHeadingCorrection = booleanPref("Swerve heading correction", true);
 
     // **** INTAKE WRIST ****
     public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));

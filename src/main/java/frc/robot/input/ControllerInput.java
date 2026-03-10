@@ -17,12 +17,12 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public double getDriveMoveXRequest() {
-        return driveController.getLeftY();
+        return -1 * driveController.getLeftY();
     }
 
     @Override
     public double getDriveMoveYRequest() {
-        return driveController.getLeftX();
+        return -1 * driveController.getLeftX();
     }
 
     @Override
