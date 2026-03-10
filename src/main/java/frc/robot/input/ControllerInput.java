@@ -17,12 +17,12 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public double getDriveMoveXRequest() {
-        return driveController.getLeftY();
+        return -1 * driveController.getLeftY();
     }
 
     @Override
     public double getDriveMoveYRequest() {
-        return driveController.getLeftX();
+        return -1 * driveController.getLeftX();
     }
 
     @Override
@@ -52,22 +52,27 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getExtendIntake() {
-        return operatorController.getLeftBumperButton();
+        return driveController.getLeftBumperButton();
     }
 
     @Override
     public boolean getRetractIntake() {
-        return operatorController.getRightBumperButton();
+        return driveController.getRightBumperButton();
     }
 
     @Override
     public boolean getShootRequest() {
-        return driveController.getAButton();
+        return operatorController.getAButton();
+    }
+
+    @Override
+    public boolean getReverseIndexerRequest() {
+        return operatorController.getXButton();
     }
 
     @Override
     public boolean getRunSysId() {
-        return driveController.getRightBumperButton();
+        return driveController.getStartButton();
     }
 
     @Override

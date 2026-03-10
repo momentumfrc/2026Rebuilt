@@ -61,14 +61,20 @@ public class RobotContainer {
 
     private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
 
-    private final Command idleIndexerCommand = indexer.run(indexer::stop);
-    private final Command idleKickerCommand = kicker.run(kicker::stop);
-    private final Command idleShooterCommand = shooter.run(shooter::stop);
-    private final Command idleHoodCommand = hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get()));
+    private final Command idleIndexerCommand = indexer.run(indexer::stop).withName("IdleIndexerCommand");
+    private final Command idleKickerCommand = kicker.run(kicker::stop).withName("IdleKickerCommand");
+    private final Command idleShooterCommand = shooter.run(shooter::stop).withName("IdleShooterCommand");
+    private final Command idleHoodCommand =
+            hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get())).withName("IdleHoodCommand");
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
+    private final Command runIndexerCommand = indexer.run(indexer::run).withName("RunIndexerCommand");
+    private final Command runIndexerReverseCommand =
+            indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
+
     private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
+    private final Command idleTurretCommand = turret.run(turret::stop);
     private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
@@ -83,6 +89,8 @@ public class RobotContainer {
     private Trigger runIntakeTrigger;
     private Trigger extendIntakeTrigger;
     private Trigger retractIntakeTrigger;
+
+    private Trigger reverseIndexerTrigger;
 
     private Trigger shootTrigger;
 
@@ -120,7 +128,7 @@ public class RobotContainer {
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);
         shooter.setDefaultCommand(idleShooterCommand);
-        turret.setDefaultCommand(passiveTargetingCommand);
+        turret.setDefaultCommand(idleTurretCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
     }
@@ -154,6 +162,8 @@ public class RobotContainer {
 
         lockTrigger = new Trigger(() -> getInput().getLockRequest());
 
+        reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -162,13 +172,16 @@ public class RobotContainer {
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
 
-        shootTrigger.whileTrue(shootCommand);
+        shootTrigger.whileTrue(shootCommand.alongWith(WristCommands.agitatingCommand(intakeWristSubsystem)));
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 
         lockTrigger.whileTrue(driveSubsystem.lockPose());
+
+        (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
+        reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
         RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);

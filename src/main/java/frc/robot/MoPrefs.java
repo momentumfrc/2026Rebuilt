@@ -27,10 +27,9 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngularVelocityUnitPref swerveMaxPossibleSpin =
             rotationsPerSecPref("Swerve Max Possible Spin", Units.RotationsPerSecond.of(2));
     public static final Pref<Double> inputDeadband = unitlessDoublePref("Swerve Input Deadband", 0.05);
-    public static final Pref<Double> inputTranslationScale = unitlessDoublePref("Swerve Input Translation Scale", 0.8);
-    public static final Pref<Double> inputRotationScale = unitlessDoublePref("Swerve Input Rotation Scale", 0.6);
     public static final Pref<Boolean> inputTranslationCubed = booleanPref("Swerve Input Translation Cubed?", true);
     public static final Pref<Boolean> inputRotationCubed = booleanPref("Swerve Input Rotation Cubed?", true);
+    public static final Pref<Boolean> enableHeadingCorrection = booleanPref("Swerve heading correction", true);
 
     // **** INTAKE WRIST ****
     public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
@@ -42,6 +41,11 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final TimeUnitPref intakeHighCurrentWristTime =
             secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
+
+    public static final TimeUnitPref intakeRampTime = secondsPref("Intake Ramp Time", Units.Seconds.of(0.5));
+
+    public static final TimeUnitPref intakeAgitationTimeoutTime =
+            secondsPref("Intake Agitation Timeout Time", Units.Seconds.of(0.5));
 
     // **** INTAKE ROLLERS ****
     public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));

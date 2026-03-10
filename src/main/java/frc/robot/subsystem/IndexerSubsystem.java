@@ -52,6 +52,10 @@ public class IndexerSubsystem extends SubsystemBase {
         pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
     }
 
+    public void runReverse() {
+        pid.setVelocityReference(MoPrefs.indexerRunSpeed.get().unaryMinus());
+    }
+
     public SysIdRoutine.Mechanism getSysIdMechanism() {
         return new SysIdRoutine.Mechanism(
                 motor::setVoltage,

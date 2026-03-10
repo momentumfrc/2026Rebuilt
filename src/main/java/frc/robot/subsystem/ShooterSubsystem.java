@@ -45,6 +45,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final DoubleEntry flywheelTestSetpointEntry;
 
+    private final DoublePublisher calculatedFlywheelSpeedPublisher;
+
     public ShooterSubsystem() {
         motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
         motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address());
@@ -71,10 +73,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
         var table = NTHelpers.getTable("shooter-flywheel");
         flywheelCurrentPublisher = table.getDoubleTopic("Flywheel Current").publish();
-        flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed").publish();
+        flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed (RPM)").publish();
 
         flywheelTestSetpointEntry =
                 table.getDoubleTopic("Flywheel Test Setpoint").getEntry(500);
+
+        calculatedFlywheelSpeedPublisher =
+                table.getDoubleTopic("Calculated Flywheel Speed (RPM)").publish();
     }
 
     /**
@@ -86,7 +91,9 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void runAtCalculatedSpeed(Distance distanceToTarget) {
-        runAtSpeed(HoodSerializedInformationHolder.getInstance().getFlywheelSpeed(distanceToTarget));
+        AngularVelocity speed = HoodSerializedInformationHolder.getInstance().getFlywheelSpeed(distanceToTarget);
+        calculatedFlywheelSpeedPublisher.set(speed.in(Units.RPM));
+        runAtSpeed(speed);
     }
 
     public void stop() {

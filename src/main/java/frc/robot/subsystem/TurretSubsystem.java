@@ -60,7 +60,7 @@ import frc.robot.util.TurretAngleHelper;
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
     private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
-    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 14;
+    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 12;
 
     public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
     public static final Transform3d turretToCamera =
@@ -127,6 +127,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final BooleanEntry passiveTrackingEntry;
     private final BooleanEntry coastMotorEntry;
     private final BooleanEntry hasZero;
+    private final BooleanEntry rezeroEveryLoop;
 
     public TurretSubsystem() {
         /* ==== DASHBOARD SETUP ==== */
@@ -142,6 +143,7 @@ public class TurretSubsystem extends SubsystemBase {
         passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
         hasZero = NTHelpers.getBooleanEntry(table, "Has Zero", false);
+        rezeroEveryLoop = NTHelpers.getBooleanEntry(table, "Rezero Every Loop", true);
 
         NTHelpers.publishSendable(table, "Align Mode", alignModeChooser);
 
@@ -436,13 +438,14 @@ public class TurretSubsystem extends SubsystemBase {
                 .map(angle -> angle.in(Units.Rotations))
                 .orElse(Double.NaN));
 
-        if (hasZero.get() == false) {
+        if (hasZero.get() == false || rezeroEveryLoop.get()) {
             zeroEncoder();
         }
 
         var desiredNeutralMode = coastMotorEntry.get() ? NeutralModeValue.Coast : NeutralModeValue.Brake;
         if (desiredNeutralMode != turretMotorConfig.MotorOutput.NeutralMode) {
             turretMotorConfig.MotorOutput.NeutralMode = desiredNeutralMode;
+            turretMotor.getConfigurator().refresh(turretMotorConfig.Feedback);
             turretMotor.getConfigurator().apply(turretMotorConfig);
         }
     }

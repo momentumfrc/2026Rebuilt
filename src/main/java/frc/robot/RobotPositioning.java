@@ -123,13 +123,8 @@ public class RobotPositioning {
         return mt1;
     }
 
-    private LimelightHelpers.PoseEstimate getPoseEstimateMT2(
-            String limelightName, Rotation2d estimatedHeading, AngularVelocity angularVelocity) {
-        double estimatedHeadingDegrees = estimatedHeading.getDegrees();
+    private LimelightHelpers.PoseEstimate getPoseEstimateMT2(String limelightName, AngularVelocity angularVelocity) {
         double gyroRateDegreesPerSecond = angularVelocity.in(DegreesPerSecond);
-
-        LimelightHelpers.SetRobotOrientation(
-                limelightName, estimatedHeadingDegrees, gyroRateDegreesPerSecond, 0, 0, 0, 0);
 
         var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
         if (mt2 == null) {
@@ -244,9 +239,7 @@ public class RobotPositioning {
         Vector<N3> visionStdDevs = null;
         if (useMT2.get() && hasInitialPosition.get()) {
             poseEstimate = getPoseEstimateMT2(
-                    Constants.STATIONARY_LIMELIGHT_NAME,
-                    swerveDrive.getOdometryHeading(),
-                    swerveDrive.getGyro().getYawAngularVelocity());
+                    Constants.STATIONARY_LIMELIGHT_NAME, swerveDrive.getGyro().getYawAngularVelocity());
             visionStdDevs = MT2_VISION_STDDEVS;
         } else {
             poseEstimate = getPoseEstimateMT1(Constants.STATIONARY_LIMELIGHT_NAME);
@@ -269,6 +262,12 @@ public class RobotPositioning {
     }
 
     public void update() {
+
+        double estimatedHeadingDegrees = swerveDrive.getOdometryHeading().getDegrees();
+        LimelightHelpers.SetRobotOrientation(
+                Constants.STATIONARY_LIMELIGHT_NAME, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(Constants.TURRET_LIMELIGHT_NAME, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
+
         var encoderReading = turretYawSupplier.get();
         turretYawBuffer.addSample(
                 encoderReading.timestamp(),

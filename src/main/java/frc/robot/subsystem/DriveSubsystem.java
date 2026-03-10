@@ -2,8 +2,13 @@ package frc.robot.subsystem;
 
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +41,8 @@ public class DriveSubsystem extends SubsystemBase {
     private final SendableChooser<DriveMode> driveModeChooser =
             NTHelpers.enumToChooser(DriveMode.class, DriveMode.VELOCITY_HEADING);
 
+    private final DoublePublisher omegaSpeed;
+
     public DriveSubsystem() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         try {
@@ -58,8 +65,11 @@ public class DriveSubsystem extends SubsystemBase {
                         speed.in(Units.MetersPerSecond), spin.in(Units.RadiansPerSecond)),
                 true);
 
+        MoPrefs.enableHeadingCorrection.subscribe(swerveDrive::setHeadingCorrection, true);
+
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
+        omegaSpeed = table.getDoubleTopic("Gyro Speed (rad_s)").publish();
 
         translationPIDConstants.getTuner("PathPlanner Translation PID").safeBuild();
         rotationPIDConstants.getTuner("PathPlanner Rotation PID").safeBuild();
@@ -70,7 +80,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command resetFieldOrientedFwd() {
-        return runOnce(() -> swerveDrive.zeroGyro());
+        return runOnce(() -> {
+            swerveDrive.zeroGyro();
+
+            var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
+            if (alliance == DriverStation.Alliance.Red) {
+                swerveDrive.setGyro(new Rotation3d(Rotation2d.k180deg));
+            }
+            swerveDrive.setGyro(new Rotation3d(Rotation2d.k180deg));
+            swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getTranslation(), Rotation2d.k180deg));
+        });
     }
 
     public Command driveFieldOriented(Supplier<Supplier<ChassisSpeeds>> inputSupplier) {
@@ -114,6 +133,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         var driveHeading = swerveInputStreamBase
                 .copy()
+                .headingWhile(true)
                 .withControllerHeadingAxis(
                         () -> inputSupplier.get().getDriveHeadingXRequest(),
                         () -> inputSupplier.get().getDriveHeadingYRequest());
@@ -124,16 +144,6 @@ public class DriveSubsystem extends SubsystemBase {
                     driveHeading.deadband(deadband);
                 },
                 true);
-        MoPrefs.inputTranslationScale.subscribe(
-                scale -> {
-                    driveAngularVelocity.scaleTranslation(scale);
-                    driveHeading.scaleTranslation(scale);
-                },
-                true);
-        MoPrefs.inputRotationScale.subscribe(scale -> {
-            driveAngularVelocity.scaleRotation(scale);
-            driveHeading.scaleRotation(scale);
-        });
 
         return () -> switch (driveModeChooser.getSelected()) {
             case VELOCITY_HEADING -> driveAngularVelocity;
@@ -149,5 +159,9 @@ public class DriveSubsystem extends SubsystemBase {
         return run(() -> {
             swerveDrive.lockPose();
         });
+    }
+
+    public void periodic() {
+        omegaSpeed.set(swerveDrive.getRobotVelocity().omegaRadiansPerSecond);
     }
 }
