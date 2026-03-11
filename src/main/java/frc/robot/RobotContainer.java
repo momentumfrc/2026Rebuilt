@@ -48,7 +48,6 @@ public class RobotContainer {
 
     private final ControllerInput controllerInput = new ControllerInput();
     private final SysIdUtil sysId = new SysIdUtil(List.of(
-            indexer.getSysIdMechanism(),
             kicker.getSysIdMechanism(),
             turret.getSysIdMechanism(),
             shooter.getSysIdMechanism(),
@@ -76,6 +75,8 @@ public class RobotContainer {
     private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
     private final Command idleTurretCommand = turret.run(turret::stop);
     private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
+
+    private final Command runKickerCommand = kicker.run(kicker::run);
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
@@ -163,6 +164,8 @@ public class RobotContainer {
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 
         lockTrigger.whileTrue(driveSubsystem.lockPose());
+
+        runIntakeTrigger.whileTrue(runKickerCommand);
 
         (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);

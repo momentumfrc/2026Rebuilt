@@ -53,8 +53,7 @@ public class MoPrefs extends MoPrefsBase {
             ampsPref("Intake Rollers Current Limit", Units.Amps.of(20));
 
     // **** HOPPER / INDEXER ****
-    public static final AngularVelocityUnitPref indexerRunSpeed =
-            rotationsPerSecPref("Indexer Run Speed", Units.RevolutionsPerSecond.of(1500));
+    public static final UnitPref<VoltageUnit> indexerRunPower = voltsPref("Indexer Run Power", Units.Volts.of(12));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> indexerEncoderScale =
             encoderTicksPerRotationPref("Indexer Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(32));
     public static final UnitPref<CurrentUnit> indexerRollerSmartCurrentLimit =

@@ -8,7 +8,7 @@ public class Constants {
 
     public static final HIDPort DRIVE_CONTORLLER_PORT = new HIDPort(0);
     public static final HIDPort OPERATOR_CONTROLLER_PORT = new HIDPort(1);
-    // TODO: actual addresses
+
     public static final CANAddress KICKER_PORT = new CANAddress(16);
     public static final CANAddress INDEXER_PORT = new CANAddress(15);
 
