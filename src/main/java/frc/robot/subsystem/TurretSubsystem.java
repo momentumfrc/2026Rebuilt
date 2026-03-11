@@ -170,7 +170,8 @@ public class TurretSubsystem extends SubsystemBase {
                         .withForwardSoftLimitEnable(true))
                 .withVoltage(new VoltageConfigs()
                         .withPeakForwardVoltage((Voltage) MoPrefs.turretMaxPower.get())
-                        .withPeakReverseVoltage((Voltage) MoPrefs.turretMaxPower.get().unaryMinus()))
+                        .withPeakReverseVoltage(
+                                (Voltage) MoPrefs.turretMaxPower.get().unaryMinus()))
                 .withClosedLoopRamps(
                         new ClosedLoopRampsConfigs().withVoltageClosedLoopRampPeriod(MoPrefs.turretVoltRampRate.get()))
                 .withOpenLoopRamps(

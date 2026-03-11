@@ -14,7 +14,6 @@ import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.NTHelpers;
 import frc.robot.util.OdometryTargetingHelper;
-import frc.robot.util.TurretAngleHelper;
 
 public class ShootCommand extends Command {
     private final KickerSubsystem kicker;
