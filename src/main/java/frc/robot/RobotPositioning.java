@@ -201,7 +201,7 @@ public class RobotPositioning {
                 .getOdometryHeading()
                 .plus(Rotation2d.fromRadians(turretYawSupplier.get().value().in(Units.Radians)));
         var turretVelocity = turretAngularVelocity.mut_replace(
-                swerveDrive.getGyro().getYawAngularVelocity().in(Units.RadiansPerSecond)
+                swerveDrive.getRobotVelocity().omegaRadiansPerSecond
                         + turretYawRateSupplier.get().in(Units.RadiansPerSecond),
                 Units.RadiansPerSecond);
 
@@ -245,7 +245,7 @@ public class RobotPositioning {
         }
 
         // The stationary limelight is assumed to be the LL2, which cannot return accurate measurements while moving.
-        var robotVelocity = swerveDrive.getFieldVelocity();
+        var robotVelocity = swerveDrive.getRobotVelocity();
         if (Math.abs(robotVelocity.vxMetersPerSecond) > STATIONARY_CUTOFF
                 || Math.abs(robotVelocity.vyMetersPerSecond) > STATIONARY_CUTOFF
                 || Math.abs(robotVelocity.omegaRadiansPerSecond) > STATIONARY_CUTOFF) {
@@ -256,7 +256,8 @@ public class RobotPositioning {
         Vector<N3> visionStdDevs = null;
         if (useMT2.get() && hasInitialPosition.get()) {
             poseEstimate = getPoseEstimateMT2(
-                    Constants.STATIONARY_LIMELIGHT_NAME, swerveDrive.getGyro().getYawAngularVelocity());
+                    Constants.STATIONARY_LIMELIGHT_NAME,
+                    Units.RadiansPerSecond.of(robotVelocity.omegaRadiansPerSecond));
             visionStdDevs = MT2_VISION_STDDEVS;
         } else {
             poseEstimate = getPoseEstimateMT1(Constants.STATIONARY_LIMELIGHT_NAME);
