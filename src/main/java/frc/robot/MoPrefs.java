@@ -32,20 +32,27 @@ public class MoPrefs extends MoPrefsBase {
     public static final Pref<Boolean> enableHeadingCorrection = booleanPref("Swerve heading correction", true);
 
     // **** INTAKE WRIST ****
-    public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
-    public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
-            voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
 
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
             ampsPref("Intake Wrist Smart Current Limit", Units.Amps.of(20));
 
-    public static final TimeUnitPref intakeHighCurrentWristTime =
-            secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
-
     public static final TimeUnitPref intakeRampTime = secondsPref("Intake Ramp Time", Units.Seconds.of(0.5));
 
-    public static final TimeUnitPref intakeAgitationTimeoutTime =
-            secondsPref("Intake Agitation Timeout Time", Units.Seconds.of(0.5));
+    public static final UnitPref<CurrentUnit> intakeWristCurrentThresh =
+            ampsPref("Intake Wrist Current Thresh", Units.Amps.of(20));
+    public static final TimeUnitPref intakeWristCurrentTime =
+            secondsPref("Intake Wrist Current Time", Units.Seconds.of(0.5));
+
+    public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
+    public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
+            voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
+
+    public static final AngleUnitPref intakeAgitateLowPos =
+            rotationsPref("Intake Wrist Agitate Low", Units.Rotations.of(0.25));
+    public static final AngleUnitPref intakeAgitateHighPos =
+            rotationsPref("Intake Wrist Agitate High", Units.Rotations.of(0.5));
+    public static final AngleUnitPref intakeWristZeroPosition =
+            rotationsPref("Intake Wrist Zero Position", Units.Rotations.of(0.75));
 
     // **** INTAKE ROLLERS ****
     public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));
@@ -66,7 +73,6 @@ public class MoPrefs extends MoPrefsBase {
             encoderTicksPerRotationPref("Kicker Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(4));
 
     // **** TURRET ****
-
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> turretRelativeEncoderScale =
             encoderTicksPerRotationPref(
                     "Turret Relative Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(255.0 / 8.0));
