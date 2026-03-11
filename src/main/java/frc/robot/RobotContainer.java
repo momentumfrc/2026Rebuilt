@@ -52,6 +52,7 @@ public class RobotContainer {
 
     private final ControllerInput controllerInput = new ControllerInput();
     private final SysIdUtil sysId = new SysIdUtil(List.of(
+            intakeWristSubsystem.getSysIdMechanism(),
             kicker.getSysIdMechanism(),
             turret.getSysIdMechanism(),
             shooter.getSysIdMechanism(),

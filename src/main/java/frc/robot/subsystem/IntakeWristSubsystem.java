@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
@@ -131,5 +132,24 @@ public class IntakeWristSubsystem extends SubsystemBase {
         positionPublisher.set(intakeWrist.getEncoder().getPosition());
 
         wristVoltagePublisher.set(intakeWrist.getAppliedOutput() * intakeWrist.getBusVoltage());
+    }
+
+    public SysIdRoutine.Mechanism getSysIdMechanism() {
+        // Note: sysid usually logs velocity in RPS, but here we're logging it in RPM (we do this because the
+        // feedforward calculations running on the spark use RPM, so we need kV in v/rpm). Hopefully it's fine,
+        // but if sysid complains try logging the value in RPS and just multiplying the kV constant by 60.
+        return new SysIdRoutine.Mechanism(
+                intakeWrist::setVoltage,
+                log -> log.motor("intake wrist")
+                        .voltage(Units.Volts.of(intakeWrist.getBusVoltage() * intakeWrist.getAppliedOutput()))
+                        .value(
+                                "position",
+                                wristEncoder.getPositionInEncoderUnits(),
+                                wristEncoder.getInternalEncoderUnits().name())
+                        .value(
+                                "velocity",
+                                wristEncoder.getVelocityInEncoderUnits(),
+                                wristEncoder.getInternalEncoderVelocityUnits().name()),
+                this);
     }
 }
