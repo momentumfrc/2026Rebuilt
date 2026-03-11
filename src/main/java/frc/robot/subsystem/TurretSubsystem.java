@@ -123,6 +123,9 @@ public class TurretSubsystem extends SubsystemBase {
     private final IntegerPublisher targetTagPublisher;
     private final BooleanPublisher hitForwardSoftLimit;
     private final BooleanPublisher hitReverseSoftLimit;
+    private final DoublePublisher goalAnglePublisher;
+    private final DoublePublisher goalVelocityPublisher;
+    private final BooleanPublisher targetInRange;
 
     private final BooleanEntry passiveTrackingEntry;
     private final BooleanEntry coastMotorEntry;
@@ -139,6 +142,9 @@ public class TurretSubsystem extends SubsystemBase {
         targetTagPublisher = table.getIntegerTopic("Target Tag ID").publish();
         hitForwardSoftLimit = table.getBooleanTopic("Forward Soft Limit").publish();
         hitReverseSoftLimit = table.getBooleanTopic("Reverse Soft Limit").publish();
+        goalAnglePublisher = table.getDoubleTopic("Goal Angle (degs)").publish();
+        goalVelocityPublisher = table.getDoubleTopic("Goal Speed (degs_s)").publish();
+        targetInRange = table.getBooleanTopic("Target In Range").publish();
 
         passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
@@ -164,7 +170,7 @@ public class TurretSubsystem extends SubsystemBase {
                         .withForwardSoftLimitEnable(true))
                 .withVoltage(new VoltageConfigs()
                         .withPeakForwardVoltage((Voltage) MoPrefs.turretMaxPower.get())
-                        .withPeakReverseVoltage((Voltage) MoPrefs.turretMaxPower.get()))
+                        .withPeakReverseVoltage((Voltage) MoPrefs.turretMaxPower.get().unaryMinus()))
                 .withClosedLoopRamps(
                         new ClosedLoopRampsConfigs().withVoltageClosedLoopRampPeriod(MoPrefs.turretVoltRampRate.get()))
                 .withOpenLoopRamps(
@@ -334,6 +340,9 @@ public class TurretSubsystem extends SubsystemBase {
      * Align to a specified goalAngle and goalVelocity in robot coordinates.
      */
     public void alignAbsolute(Angle goalAngle, AngularVelocity goalVelocity) {
+        goalAnglePublisher.set(goalAngle.in(Units.Degrees));
+        goalVelocityPublisher.set(goalVelocity.in(Units.DegreesPerSecond));
+
         if (hasZero.get() == false) {
             stop();
             return;
@@ -343,8 +352,11 @@ public class TurretSubsystem extends SubsystemBase {
         if (moduloGoalAngle == null) {
             // desired angle is outside the turret's range of motion
             turretMotor.stopMotor();
+            targetInRange.set(false);
             return;
         }
+
+        targetInRange.set(true);
 
         State currentState =
                 new State(getTurretYaw().in(Units.Radians), getTurretYawRate().in(Units.RadiansPerSecond));
@@ -374,8 +386,11 @@ public class TurretSubsystem extends SubsystemBase {
         if (relativeTargetIsVisible() == false) {
             // No target visible
             stop();
+            targetInRange.set(false);
             return;
         }
+
+        targetInRange.set(true);
 
         double result = turretRelativePid.calculate(targetingHelper.getTx(), 0);
         turretMotor.setVoltage(result);

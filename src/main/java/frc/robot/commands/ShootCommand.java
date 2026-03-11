@@ -23,7 +23,6 @@ public class ShootCommand extends Command {
     private final HoodSubsystem hood;
 
     private final TurretTargeting targeting;
-    private final TurretAngleHelper angleHelper;
 
     private final Alert targetOutOfRange = new Alert("Target out of turret range", Alert.AlertType.kInfo);
 
@@ -48,9 +47,7 @@ public class ShootCommand extends Command {
         this.shooter = shooter;
         this.hood = hood;
 
-        this.angleHelper = turret.getAngleHelper();
-
-        var table = NTHelpers.getTable("table");
+        var table = NTHelpers.getTable("turret");
         NTHelpers.publishSendable(table, "Targeting Mode", modeChooser);
 
         addRequirements(kicker, turret, shooter, hood);
@@ -69,7 +66,7 @@ public class ShootCommand extends Command {
         var targetingMode = modeChooser.getSelected();
         if (targetingMode == TargetingMode.FALLBACK) {
             var targetAngle = MoPrefs.turretFallbackSetpoint.get();
-            var moduloAngle = angleHelper.turretAngleModulus(targetAngle);
+            var moduloAngle = turret.getAngleHelper().turretAngleModulus(targetAngle);
             if (moduloAngle == null) {
                 outOfRange();
                 return;
@@ -88,7 +85,7 @@ public class ShootCommand extends Command {
                         case STATIONARY -> targeting.targetPositionStationary(target.toTranslation2d());
                         default -> throw new IllegalArgumentException("Unexpected value: " + targetingMode);
                     };
-            var moduloAngle = angleHelper.turretAngleModulus(firingSolution.goalAngle());
+            var moduloAngle = turret.getAngleHelper().turretAngleModulus(firingSolution.goalAngle());
             if (moduloAngle == null) {
                 outOfRange();
                 return;

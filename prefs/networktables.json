@@ -146,7 +146,7 @@
   {
     "name": "/Preferences/Indexer Run Speed (R_s)",
     "type": "double",
-    "value": 100.0,
+    "value": 24.0,
     "properties": {
       "persistent": true
     }
@@ -170,7 +170,7 @@
   {
     "name": "/Preferences/Kicker Run Speed (R_s)",
     "type": "double",
-    "value": 1500.0,
+    "value": 1.0,
     "properties": {
       "persistent": true
     }
@@ -178,7 +178,7 @@
   {
     "name": "/Preferences/Kicker Current Limit (A)",
     "type": "double",
-    "value": 40.0,
+    "value": 60.0,
     "properties": {
       "persistent": true
     }
@@ -186,7 +186,7 @@
   {
     "name": "/Preferences/Kicker Encoder Scale (et_R)",
     "type": "double",
-    "value": 32.0,
+    "value": 4.0,
     "properties": {
       "persistent": true
     }
@@ -226,7 +226,7 @@
   {
     "name": "/Preferences/Turret Min Soft Limit (°)",
     "type": "double",
-    "value": -1.5,
+    "value": 20.0,
     "properties": {
       "persistent": true
     }
@@ -234,7 +234,7 @@
   {
     "name": "/Preferences/Turret Max Soft Limit (°)",
     "type": "double",
-    "value": 340.0,
+    "value": 300.0,
     "properties": {
       "persistent": true
     }
@@ -266,7 +266,7 @@
   {
     "name": "/Preferences/Turret Max Velocity (°_s)",
     "type": "double",
-    "value": 180.0,
+    "value": 100.0,
     "properties": {
       "persistent": true
     }
@@ -274,7 +274,7 @@
   {
     "name": "/Preferences/Turret Max Acceleration (°_s_s)",
     "type": "double",
-    "value": 360.0,
+    "value": 100.0,
     "properties": {
       "persistent": true
     }
@@ -402,7 +402,7 @@
   {
     "name": "/momentum-tuners/Turret Absolute Position/ff_kV",
     "type": "double",
-    "value": 0.0,
+    "value": 3.7608,
     "properties": {
       "persistent": true
     }
@@ -410,7 +410,7 @@
   {
     "name": "/momentum-tuners/Turret Absolute Position/ff_kA",
     "type": "double",
-    "value": 0.0,
+    "value": 0.070368,
     "properties": {
       "persistent": true
     }
@@ -426,7 +426,7 @@
   {
     "name": "/momentum-tuners/Turret Absolute Position/ff_kS",
     "type": "double",
-    "value": 0.0,
+    "value": 0.14021,
     "properties": {
       "persistent": true
     }
@@ -506,7 +506,7 @@
   {
     "name": "/momentum-tuners/Indexer PID/ff_kV",
     "type": "double",
-    "value": 0.01,
+    "value": 0.1,
     "properties": {
       "persistent": true
     }
@@ -546,7 +546,7 @@
   {
     "name": "/momentum-tuners/Kicker PID/kP",
     "type": "double",
-    "value": 0.0,
+    "value": 4e-05,
     "properties": {
       "persistent": true
     }
@@ -554,7 +554,7 @@
   {
     "name": "/momentum-tuners/Kicker PID/ff_kV",
     "type": "double",
-    "value": 0.0,
+    "value": 0.0072539,
     "properties": {
       "persistent": true
     }
@@ -578,7 +578,7 @@
   {
     "name": "/momentum-tuners/Kicker PID/ff_kS",
     "type": "double",
-    "value": 0.0,
+    "value": 0.12216,
     "properties": {
       "persistent": true
     }
@@ -723,6 +723,30 @@
     "name": "/Preferences/Swerve heading correction",
     "type": "boolean",
     "value": true,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Indexer Run Power (V)",
+    "type": "double",
+    "value": 12.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Kicker PID/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Kicker Run Speed (R_min)",
+    "type": "double",
+    "value": 1500.0,
     "properties": {
       "persistent": true
     }

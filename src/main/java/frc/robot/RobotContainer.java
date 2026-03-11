@@ -113,7 +113,7 @@ public class RobotContainer {
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);
         shooter.setDefaultCommand(idleShooterCommand);
-        turret.setDefaultCommand(idleTurretCommand);
+        turret.setDefaultCommand(passiveTargetingCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
     }

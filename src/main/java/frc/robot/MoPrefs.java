@@ -55,16 +55,16 @@ public class MoPrefs extends MoPrefsBase {
     // **** HOPPER / INDEXER ****
     public static final UnitPref<VoltageUnit> indexerRunPower = voltsPref("Indexer Run Power", Units.Volts.of(12));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> indexerEncoderScale =
-            encoderTicksPerRotationPref("Indexer Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(32));
+            encoderTicksPerRotationPref("Indexer Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(4));
     public static final UnitPref<CurrentUnit> indexerRollerSmartCurrentLimit =
             ampsPref("Indexer Current Limit", Units.Amps.of(40));
 
     // **** KICKER ****
     public static final AngularVelocityUnitPref kickerRunSpeed =
-            rotationsPerSecPref("Kicker Run Speed", Units.RevolutionsPerSecond.of(1500));
+            rpmPref("Kicker Run Speed", Units.RPM.of(1000));
     public static final UnitPref<CurrentUnit> kickerCurrentLimit = ampsPref("Kicker Current Limit", Units.Amps.of(40));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> kickerEncoderScale =
-            encoderTicksPerRotationPref("Kicker Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(32));
+            encoderTicksPerRotationPref("Kicker Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(4));
 
     // **** TURRET ****
 
