@@ -56,6 +56,8 @@ public class MoPrefs extends MoPrefsBase {
             rotationsPref("Intake Wrist Agitate High", Units.Rotations.of(0.25));
     public static final TimeUnitPref intakeAgitateTimeout =
             secondsPref("Intake Wrist Agitate Timeout", Units.Seconds.of(0.5));
+    public static final AngleUnitPref intakeWristZeroPosition =
+            rotationsPref("Intake Wrist Zero Position", Units.Rotations.of(0.75));
 
     // **** INTAKE ROLLERS ****
     public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));
