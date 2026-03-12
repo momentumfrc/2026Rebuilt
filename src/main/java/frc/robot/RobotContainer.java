@@ -157,7 +157,7 @@ public class RobotContainer {
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
 
-        shootTrigger.whileTrue(shootCommand.alongWith(WristCommands.agitatingCommand(intakeWristSubsystem)));
+        shootTrigger.whileTrue(shootCommand);
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 
@@ -167,7 +167,7 @@ public class RobotContainer {
 
         runIntakeTrigger.whileTrue(runKickerCommand);
 
-        (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
+        //(shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);

@@ -32,33 +32,9 @@
     }
   },
   {
-    "name": "/Preferences/Input DeadBand",
-    "type": "double",
-    "value": 0.005,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/Swerve Input Deadband",
     "type": "double",
     "value": 0.005,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Swerve Input Translation Scale",
-    "type": "double",
-    "value": 0.8,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Swerve Input Rotation Scale",
-    "type": "double",
-    "value": 0.6,
     "properties": {
       "persistent": true
     }
@@ -144,14 +120,6 @@
     }
   },
   {
-    "name": "/Preferences/Indexer Run Speed (R_s)",
-    "type": "double",
-    "value": 24.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/Indexer Encoder Scale (et_R)",
     "type": "double",
     "value": 4.0,
@@ -163,14 +131,6 @@
     "name": "/Preferences/Indexer Current Limit (A)",
     "type": "double",
     "value": 40.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Kicker Run Speed (R_s)",
-    "type": "double",
-    "value": 1.0,
     "properties": {
       "persistent": true
     }
@@ -226,7 +186,7 @@
   {
     "name": "/Preferences/Turret Min Soft Limit (°)",
     "type": "double",
-    "value": 20.0,
+    "value": 1.0,
     "properties": {
       "persistent": true
     }
@@ -234,7 +194,7 @@
   {
     "name": "/Preferences/Turret Max Soft Limit (°)",
     "type": "double",
-    "value": 300.0,
+    "value": 90.0,
     "properties": {
       "persistent": true
     }
@@ -266,7 +226,7 @@
   {
     "name": "/Preferences/Turret Max Velocity (°_s)",
     "type": "double",
-    "value": 100.0,
+    "value": 2000.0,
     "properties": {
       "persistent": true
     }
@@ -274,7 +234,7 @@
   {
     "name": "/Preferences/Turret Max Acceleration (°_s_s)",
     "type": "double",
-    "value": 100.0,
+    "value": 3600.0,
     "properties": {
       "persistent": true
     }
@@ -322,7 +282,7 @@
   {
     "name": "/Preferences/Hood Max Soft Limit (°)",
     "type": "double",
-    "value": 40.0,
+    "value": 37.5,
     "properties": {
       "persistent": true
     }
@@ -330,7 +290,7 @@
   {
     "name": "/Preferences/Hood Zero Power (V)",
     "type": "double",
-    "value": 3.0,
+    "value": 1.5,
     "properties": {
       "persistent": true
     }
@@ -338,7 +298,7 @@
   {
     "name": "/Preferences/Hood Zero Current Threshold (A)",
     "type": "double",
-    "value": 30.0,
+    "value": 10.0,
     "properties": {
       "persistent": true
     }
@@ -346,7 +306,7 @@
   {
     "name": "/Preferences/Hood Zero Time (s)",
     "type": "double",
-    "value": 0.5,
+    "value": 0.25,
     "properties": {
       "persistent": true
     }
@@ -362,7 +322,7 @@
   {
     "name": "/Preferences/Hood Deadzone Position (°)",
     "type": "double",
-    "value": 0.0,
+    "value": 1.5,
     "properties": {
       "persistent": true
     }
@@ -394,7 +354,7 @@
   {
     "name": "/momentum-tuners/Turret Absolute Position/kP",
     "type": "double",
-    "value": 0.0,
+    "value": 0.001,
     "properties": {
       "persistent": true
     }
@@ -450,7 +410,7 @@
   {
     "name": "/momentum-tuners/Turret Relative Alignment/i_zone",
     "type": "double",
-    "value": 0.0,
+    "value": 2.5,
     "properties": {
       "persistent": true
     }
@@ -458,7 +418,7 @@
   {
     "name": "/momentum-tuners/Turret Relative Alignment/kP",
     "type": "double",
-    "value": 0.0,
+    "value": 0.08,
     "properties": {
       "persistent": true
     }
@@ -474,7 +434,7 @@
   {
     "name": "/momentum-tuners/Turret Relative Alignment/kI",
     "type": "double",
-    "value": 0.0,
+    "value": 0.2,
     "properties": {
       "persistent": true
     }
@@ -707,14 +667,6 @@
     "name": "/momentum-tuners/Hood PID/tolerance",
     "type": "double",
     "value": 0.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Turret Encoder Scale (et_R)",
-    "type": "double",
-    "value": 31.875,
     "properties": {
       "persistent": true
     }

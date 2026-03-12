@@ -67,9 +67,10 @@ public class HoodSubsystem extends SubsystemBase {
 
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
-        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        motorConfig = new TalonFXConfiguration();
+        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions, motorConfig);
 
-        motorConfig = new TalonFXConfiguration()
+        motorConfig
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withInverted(InvertedValue.CounterClockwise_Positive))
@@ -112,7 +113,7 @@ public class HoodSubsystem extends SubsystemBase {
                 },
                 true);
 
-        pid = new MoTalonFxProfilePID<>(motor, encoder.getInternalEncoderUnits());
+        pid = new MoTalonFxProfilePID<>(motor, encoder.getInternalEncoderUnits(), motorConfig);
 
         TunerUtils.forMoTalonFxProfile(pid, "Hood PID");
 

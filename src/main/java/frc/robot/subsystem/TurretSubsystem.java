@@ -155,9 +155,10 @@ public class TurretSubsystem extends SubsystemBase {
 
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
-        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Rotations);
+        this.turretMotorConfig = new TalonFXConfiguration();
+        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Rotations, turretMotorConfig);
 
-        this.turretMotorConfig = new TalonFXConfiguration()
+        turretMotorConfig
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withInverted(InvertedValue.CounterClockwise_Positive))
@@ -236,12 +237,12 @@ public class TurretSubsystem extends SubsystemBase {
                 MoPrefs.turretMaxAcceleration,
                 (maxVel, maxAcc) -> {
                     this.profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
-                            maxVel.in(Units.RadiansPerSecond), maxAcc.in(Units.RadiansPerSecondPerSecond)));
+                            maxVel.in(Units.DegreesPerSecond), maxAcc.in(Units.DegreesPerSecondPerSecond)));
                 },
                 true);
 
         this.turretAbsolutePid = new MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit>(
-                turretMotor, turretEncoder.getInternalEncoderUnits());
+                turretMotor, turretEncoder.getInternalEncoderUnits(), turretMotorConfig);
         TunerUtils.forMoTalonFxProfile(turretAbsolutePid, "Turret Absolute Position");
 
         this.targetingHelper = new LimelightTargetingHelper(Constants.TURRET_LIMELIGHT_NAME);
@@ -360,14 +361,14 @@ public class TurretSubsystem extends SubsystemBase {
         targetInRange.set(true);
 
         State currentState =
-                new State(getTurretYaw().in(Units.Radians), getTurretYawRate().in(Units.RadiansPerSecond));
-        State goalState = new State(moduloGoalAngle.in(Units.Radians), goalVelocity.in(Units.RadiansPerSecond));
+                new State(getTurretYaw().in(Units.Degrees), getTurretYawRate().in(Units.DegreesPerSecond));
+        State goalState = new State(moduloGoalAngle.in(Units.Degrees), goalVelocity.in(Units.DegreesPerSecond));
         State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
 
-        this.goalAngle.mut_replace(setpoint.position, Units.Radians);
-        this.goalVelocity.mut_replace(setpoint.velocity, Units.RadiansPerSecond);
-
+        this.goalAngle.mut_replace(setpoint.position, Units.Degrees);
+        this.goalVelocity.mut_replace(setpoint.velocity, Units.DegreesPerSecond);
         this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
+
     }
 
     public boolean relativeTargetIsVisible() {
@@ -430,6 +431,13 @@ public class TurretSubsystem extends SubsystemBase {
                     }
                 })
                 .withName("TurretTestCommand");
+
+        /*return run( () -> {
+            double spd = -1 * testController.getLeftY();
+            var spd2 = MoPrefs.turretMaxVelocity.get().times(spd);
+            this.turretAbsolutePid.setReference(getTurretYaw(), spd2);
+        }).withName("TurretTestCommand");
+        */
     }
 
     @Override
