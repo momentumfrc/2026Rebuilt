@@ -15,6 +15,8 @@ public interface MoInput {
 
     public abstract boolean getRunIntake();
 
+    public abstract boolean getAgitate();
+
     public abstract boolean getExtendIntake();
 
     public abstract boolean getRetractIntake();

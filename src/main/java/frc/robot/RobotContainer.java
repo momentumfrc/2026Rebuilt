@@ -80,6 +80,7 @@ public class RobotContainer {
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
+    private final Command agitateIntakeCommand = WristCommands.agitatingCommand(intakeWristSubsystem);
     private final Command retractIntakeWristCommend = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
@@ -88,6 +89,7 @@ public class RobotContainer {
     private Trigger resetFieldOrientedFwd;
 
     private Trigger runIntakeTrigger;
+    private Trigger agitateIntakeTrigger;
     private Trigger extendIntakeTrigger;
     private Trigger retractIntakeTrigger;
 
@@ -136,6 +138,7 @@ public class RobotContainer {
 
         // Intake Triggers
         runIntakeTrigger = new Trigger(() -> getInput().getRunIntake());
+        agitateIntakeTrigger = new Trigger(() -> getInput().getAgitate());
         extendIntakeTrigger = new Trigger(() -> getInput().getExtendIntake());
         retractIntakeTrigger = new Trigger(() -> getInput().getRetractIntake());
 
@@ -154,6 +157,7 @@ public class RobotContainer {
 
         // Intake Trigger Bindings
         runIntakeTrigger.whileTrue(runRollerCommand);
+        agitateIntakeTrigger.whileTrue(agitateIntakeCommand);
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
 
@@ -167,7 +171,7 @@ public class RobotContainer {
 
         runIntakeTrigger.whileTrue(runKickerCommand);
 
-        // (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
+        (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
