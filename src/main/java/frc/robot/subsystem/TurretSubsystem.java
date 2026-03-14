@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -114,6 +115,9 @@ public class TurretSubsystem extends SubsystemBase {
 
     private final MutAngle goalAngle = Units.Rotations.mutable(0);
     private final MutAngularVelocity goalVelocity = Units.RPM.mutable(0);
+    private Rotation2d lastOORAngle = null;
+    private final LinearFilter turretOORVelocityFilter =
+            LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
 
     private final LimelightTargetingHelper targetingHelper;
     private final DoublePublisher relativeEncoderPublisher;
@@ -338,6 +342,17 @@ public class TurretSubsystem extends SubsystemBase {
         alignAbsolute(setpoint.goalAngle(), setpoint.goalVelocity());
     }
 
+    private double calculateOutOfRangeVelocity(Rotation2d angle) {
+        if (lastOORAngle == null) {
+            turretOORVelocityFilter.reset();
+            lastOORAngle = angle;
+        }
+        double velocity =
+                turretOORVelocityFilter.calculate(angle.minus(lastOORAngle).getDegrees() / Constants.LOOP_PERIOD);
+        lastOORAngle = angle;
+        return velocity;
+    }
+
     /**
      * Align to a specified goalAngle and goalVelocity in robot coordinates.
      */
@@ -350,25 +365,24 @@ public class TurretSubsystem extends SubsystemBase {
             return;
         }
 
-        Angle moduloGoalAngle = angleHelper.turretAngleModulus(goalAngle);
-        if (moduloGoalAngle == null) {
-            // desired angle is outside the turret's range of motion
-            turretMotor.stopMotor();
-            targetInRange.set(false);
-            return;
-        }
-
-        targetInRange.set(true);
+        TurretAngleHelper.Result result = angleHelper.turretAngleModulus(goalAngle);
+        targetInRange.set(result.inRange());
 
         State currentState =
                 new State(getTurretYaw().in(Units.Degrees), getTurretYawRate().in(Units.DegreesPerSecond));
-        State goalState = new State(moduloGoalAngle.in(Units.Degrees), goalVelocity.in(Units.DegreesPerSecond));
+
+        State goalState;
+        if (result.inRange()) {
+            goalState = new State(result.angle().getDegrees(), goalVelocity.in(Units.DegreesPerSecond));
+            lastOORAngle = null;
+        } else {
+            goalState = new State(result.angle().getDegrees(), calculateOutOfRangeVelocity(result.angle()));
+        }
         State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
 
         this.goalAngle.mut_replace(setpoint.position, Units.Degrees);
         this.goalVelocity.mut_replace(setpoint.velocity, Units.DegreesPerSecond);
         this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
-
     }
 
     public boolean relativeTargetIsVisible() {

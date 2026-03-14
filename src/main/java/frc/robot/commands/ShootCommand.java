@@ -52,22 +52,19 @@ public class ShootCommand extends Command {
         addRequirements(kicker, turret, shooter, hood);
     }
 
-    private void outOfRange() {
-        kicker.stop();
-        turret.stop();
-        shooter.stop();
-        hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
-        targetOutOfRange.set(true);
-    }
-
     @Override
     public void execute() {
         var targetingMode = modeChooser.getSelected();
         if (targetingMode == TargetingMode.FALLBACK) {
             var targetAngle = MoPrefs.turretFallbackSetpoint.get();
             var moduloAngle = turret.getAngleHelper().turretAngleModulus(targetAngle);
-            if (moduloAngle == null) {
-                outOfRange();
+            if (moduloAngle.inRange() == false) {
+                targetOutOfRange.set(true);
+
+                kicker.stop();
+                shooter.stop();
+                hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
+                turret.stop();
                 return;
             }
 
@@ -85,8 +82,13 @@ public class ShootCommand extends Command {
                         default -> throw new IllegalArgumentException("Unexpected value: " + targetingMode);
                     };
             var moduloAngle = turret.getAngleHelper().turretAngleModulus(firingSolution.goalAngle());
-            if (moduloAngle == null) {
-                outOfRange();
+            if (moduloAngle.inRange() == false) {
+                targetOutOfRange.set(true);
+
+                kicker.stop();
+                shooter.stop();
+                hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
+                turret.align(firingSolution);
                 return;
             }
 

@@ -14,9 +14,27 @@ public class TurretAngleHelper {
 
     private MutAngle mutAngle = Units.Radians.mutable(0);
 
+    public static class Result {
+        private Rotation2d angle;
+        private boolean inRange;
+
+        public Rotation2d angle() {
+            return angle;
+        }
+
+        public boolean inRange() {
+            return inRange;
+        }
+    }
+
+    private Result result = new Result();
+
     public TurretAngleHelper(Rotation2d minAngle, Rotation2d maxAngle) {
         if (maxAngle.getRadians() <= minAngle.getRadians()) {
             throw new IllegalArgumentException("max angle must be greater than min angle");
+        }
+        if (maxAngle.minus(minAngle).getRadians() >= 2 * Math.PI) {
+            throw new IllegalArgumentException("this class only supports range < 360°");
         }
 
         this.minAngle = minAngle;
@@ -26,37 +44,33 @@ public class TurretAngleHelper {
     /**
      * Limits values to within [minAngle, maxAngle]. Returns null if a value is out of range.
      */
-    public Rotation2d turretAngleModulus(Rotation2d angle) {
-        double result = turretAngleModulusRads(angle.getRadians());
-        if (Double.isNaN(result)) {
-            return null;
-        }
-        return Rotation2d.fromRadians(result);
+    public Result turretAngleModulus(Rotation2d angle) {
+        return turretAngleModulusRads(angle.getRadians());
     }
 
-    public Angle turretAngleModulus(Angle angle) {
-        double result = turretAngleModulusRads(angle.in(Units.Radians));
-        if (Double.isNaN(result)) {
-            return null;
-        }
-        return mutAngle.mut_replace(result, Units.Radians);
+    public Result turretAngleModulus(Angle angle) {
+        return turretAngleModulusRads(angle.in(Units.Radians));
     }
 
-    private double turretAngleModulusRads(double rads) {
-        double min = minAngle.getRadians();
-        double max = maxAngle.getRadians();
+    private Result turretAngleModulusRads(double rads) {
+        double minRad = minAngle.getRadians();
+        double maxRad = maxAngle.getRadians();
 
-        if (rads < min) {
-            rads = MathUtil.inputModulus(rads, min, min + 2 * Math.PI);
-        }
-        if (rads > max) {
-            rads = MathUtil.inputModulus(rads, max - 2 * Math.PI, max);
+        double value = MathUtil.inputModulus(rads - minRad, 0, 2 * Math.PI);
+        if (value == 2 * Math.PI) {
+            value = 0;
         }
 
-        if (min - rads > FLOAT_DELTA || rads - max > FLOAT_DELTA) {
-            return Double.NaN;
+        if (value <= maxRad - minRad) {
+            result.inRange = true;
+            result.angle = Rotation2d.fromRadians(minRad + value);
+        } else {
+            result.inRange = false;
+            value = MathUtil.interpolate(
+                    maxRad - minRad, 0, MathUtil.inverseInterpolate(maxRad - minRad, 2 * Math.PI, value));
+            result.angle = Rotation2d.fromRadians(minRad + value);
         }
 
-        return rads;
+        return result;
     }
 }
