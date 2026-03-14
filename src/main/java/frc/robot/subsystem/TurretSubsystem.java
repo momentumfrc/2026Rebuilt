@@ -1,7 +1,5 @@
 package frc.robot.subsystem;
 
-import static edu.wpi.first.math.util.Units.degreesToRadians;
-
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
@@ -14,8 +12,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.BooleanEntry;
@@ -63,9 +61,9 @@ public class TurretSubsystem extends SubsystemBase {
     private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
     private static final int ENCODER_2_GEAR_TOOTH_COUNT = 12;
 
-    public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
-    public static final Transform3d turretToCamera =
-            new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
+    public static final Transform2d robotToTurret =
+            new Transform2d(new Translation2d(-0.144780, -0.031750), Rotation2d.kZero);
+    public static final Transform2d turretToCamera = new Transform2d(new Translation2d(0.181301, 0), Rotation2d.kZero);
 
     private enum TurretAlignMode {
         ODOMETRY,

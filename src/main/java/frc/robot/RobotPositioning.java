@@ -5,11 +5,10 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
@@ -53,10 +52,10 @@ public class RobotPositioning {
     private MutAngularVelocity turretAngularVelocity = Units.RPM.mutable(0);
 
     private final StructLogEntry<Pose2d> robotPoseLogger;
-    private final StructLogEntry<Pose3d> turretLLAprilTagsLogger;
-    private final StructLogEntry<Pose3d> turretLLCalculatedPositionLogger;
+    private final StructLogEntry<Pose2d> turretLLAprilTagsLogger;
+    private final StructLogEntry<Pose2d> turretLLCalculatedPositionLogger;
     private final DoubleArrayLogEntry turretLLTimestampLogger;
-    private final StructLogEntry<Pose3d> stationaryLLAprilTagsLogger;
+    private final StructLogEntry<Pose2d> stationaryLLAprilTagsLogger;
     private final DoubleArrayLogEntry stationaryLLTimestampLogger;
     private final DoubleArrayLogEntry turretPosLogger;
     private final DoubleLogEntry turretPosLatencyLogger;
@@ -77,16 +76,19 @@ public class RobotPositioning {
 
         // Disable limelight to robot transform on turret camera; we will do this ourselves with a more accurate turret
         // pose estimation
-        LimelightHelpers.setCameraPose_RobotSpace(Constants.TURRET_LIMELIGHT_NAME, 0, 0, 0, 0, 0, 0);
+        LimelightHelpers.setCameraPose_RobotSpace(Constants.TURRET_LIMELIGHT_NAME, 0, 0, 0.541193, 0, 15, 0);
+
+        LimelightHelpers.setCameraPose_RobotSpace(
+                Constants.STATIONARY_LIMELIGHT_NAME, -0.328071, 0.031750, 0.295345, 0, 10, 0);
 
         var log = DataLogManager.getLog();
         robotPoseLogger = StructLogEntry.create(log, "positioning/robot pose", Pose2d.struct);
-        turretLLAprilTagsLogger = StructLogEntry.create(log, "positioning/turret limelight tags", Pose3d.struct);
+        turretLLAprilTagsLogger = StructLogEntry.create(log, "positioning/turret limelight tags", Pose2d.struct);
         turretLLTimestampLogger = new DoubleArrayLogEntry(log, "positioning/turret limelight pose timestamp");
         turretLLCalculatedPositionLogger =
-                StructLogEntry.create(log, "positioning/turret limelight calculated position", Pose3d.struct);
+                StructLogEntry.create(log, "positioning/turret limelight calculated position", Pose2d.struct);
         stationaryLLAprilTagsLogger =
-                StructLogEntry.create(log, "positioning/stationary limelight tags", Pose3d.struct);
+                StructLogEntry.create(log, "positioning/stationary limelight tags", Pose2d.struct);
         stationaryLLTimestampLogger = new DoubleArrayLogEntry(log, "positioning/stationary limelight pose timestamp");
         turretPosLogger = new DoubleArrayLogEntry(log, "positioning/turret position measurements");
         turretPosLatencyLogger = new DoubleLogEntry(log, "positioning/turret position measure latency");
@@ -168,13 +170,13 @@ public class RobotPositioning {
      * Adapted from
      * https://www.chiefdelphi.com/t/frc-6328-mechanical-advantage-2026-build-thread/509595/272#p-3831134-getting-dizzy-3
      */
-    private Transform3d getTurretLimelightToRobot(double timestampSeconds) {
+    private Transform2d getTurretLimelightToRobot(double timestampSeconds) {
         var sample = turretYawBuffer.getSample(timestampSeconds);
         if (sample.isEmpty()) {
             return null;
         }
         var robotToLimelight = TurretSubsystem.robotToTurret
-                .plus(new Transform3d(Translation3d.kZero, new Rotation3d(sample.get())))
+                .plus(new Transform2d(Translation2d.kZero, sample.get()))
                 .plus(TurretSubsystem.turretToCamera);
 
         return robotToLimelight.inverse();
@@ -235,7 +237,7 @@ public class RobotPositioning {
 
         var robotPose = poseEstimate.pose.transformBy(turretLimelightTransform);
 
-        addVisionMeasurement(robotPose.toPose2d(), poseEstimate.timestampSeconds, visionStdDevs);
+        addVisionMeasurement(robotPose, poseEstimate.timestampSeconds, visionStdDevs);
 
         turretLLCalculatedPositionLogger.append(robotPose);
     }
@@ -273,7 +275,7 @@ public class RobotPositioning {
         timestampMs -= LimelightHelpers.getLatency_Capture(Constants.STATIONARY_LIMELIGHT_NAME)
                 + LimelightHelpers.getLatency_Pipeline(Constants.STATIONARY_LIMELIGHT_NAME);
 
-        addVisionMeasurement(poseEstimate.pose.toPose2d(), timestampMs / 1000.0, visionStdDevs);
+        addVisionMeasurement(poseEstimate.pose, timestampMs / 1000.0, visionStdDevs);
 
         stationaryLLTimestampLogger.append(
                 new double[] {timestampMs / 1000.0, Timer.getTimestamp() - (timestampMs / 1000.0)});

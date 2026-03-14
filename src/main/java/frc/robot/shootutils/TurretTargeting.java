@@ -3,7 +3,6 @@ package frc.robot.shootutils;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,10 +28,6 @@ import frc.robot.subsystem.TurretSubsystem;
  */
 public final class TurretTargeting {
     private static final int NUM_LOOKAHEAD_ESTIMATION_ITERATIONS = 20;
-
-    private static final Transform2d robotToTurret = new Transform2d(
-            TurretSubsystem.robotToTurret.getTranslation().toTranslation2d(),
-            TurretSubsystem.robotToTurret.getRotation().toRotation2d());
 
     private final RobotPositioning positioning;
 
@@ -109,13 +104,15 @@ public final class TurretTargeting {
     private double calculateTurretVelocityX(ChassisSpeeds robotVelocity, double robotAngle) {
         return robotVelocity.vxMetersPerSecond
                 + robotVelocity.omegaRadiansPerSecond
-                        * (robotToTurret.getY() * Math.cos(robotAngle) - robotToTurret.getX() * Math.sin(robotAngle));
+                        * (TurretSubsystem.robotToTurret.getY() * Math.cos(robotAngle)
+                                - TurretSubsystem.robotToTurret.getX() * Math.sin(robotAngle));
     }
 
     private double calculateTurretVelocityY(ChassisSpeeds robotVelocity, double robotAngle) {
         return robotVelocity.vyMetersPerSecond
                 + robotVelocity.omegaRadiansPerSecond
-                        * (robotToTurret.getX() * Math.cos(robotAngle) - robotToTurret.getY() * Math.sin(robotAngle));
+                        * (TurretSubsystem.robotToTurret.getX() * Math.cos(robotAngle)
+                                - TurretSubsystem.robotToTurret.getY() * Math.sin(robotAngle));
     }
 
     private final MutDistance distanceToTargetForTOFEstimation =
@@ -166,7 +163,7 @@ public final class TurretTargeting {
 
     private Pose2d getSOTMTurretPose(Translation2d target) {
         Pose2d estimatedPose = getEstimatedPoseAfterPhaseDelay();
-        var turretPosition = estimatedPose.transformBy(robotToTurret);
+        var turretPosition = estimatedPose.transformBy(TurretSubsystem.robotToTurret);
         turretPositionLogger.append(turretPosition);
 
         ChassisSpeeds robotVelocity = positioning.getFieldVelocity();
@@ -177,7 +174,7 @@ public final class TurretTargeting {
 
     private Pose2d getStationaryTurretPose() {
         var robotPose = getEstimatedPoseAfterPhaseDelay();
-        var turretPosition = robotPose.transformBy(robotToTurret);
+        var turretPosition = robotPose.transformBy(TurretSubsystem.robotToTurret);
         turretPositionLogger.append(turretPosition);
 
         return turretPosition;
