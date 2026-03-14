@@ -167,7 +167,7 @@ public class RobotContainer {
 
         runIntakeTrigger.whileTrue(runKickerCommand);
 
-        //(shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
+        // (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);

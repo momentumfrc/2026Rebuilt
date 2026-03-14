@@ -65,7 +65,7 @@ public class LimelightTargetingHelper {
             }
         }
 
-        if(nearestFiducial == null) {
+        if (nearestFiducial == null) {
             return;
         }
 
