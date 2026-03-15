@@ -226,15 +226,11 @@ public class RobotPositioning {
             return;
         }
 
-        double timeStampMs = poseEstimate.timestampSeconds * 1000.0;
-        timeStampMs -= LimelightHelpers.getLatency_Capture(Constants.TURRET_LIMELIGHT_NAME)
-                + LimelightHelpers.getLatency_Pipeline(Constants.TURRET_LIMELIGHT_NAME);
-
         turretLLTimestampPublisher.set(
-                new double[] {timeStampMs / 1000.0, Timer.getTimestamp() - (timeStampMs / 1000.0)});
+                new double[] {poseEstimate.timestampSeconds, Timer.getTimestamp() - poseEstimate.timestampSeconds});
         turretLLAprilTagsPublisher.set(poseEstimate.pose);
 
-        var turretLimelightTransform = getTurretLimelightToRobot(timeStampMs / 1000.0);
+        var turretLimelightTransform = getTurretLimelightToRobot(poseEstimate.timestampSeconds);
         if (turretLimelightTransform == null) {
             return;
         }
@@ -275,14 +271,10 @@ public class RobotPositioning {
             return;
         }
 
-        double timestampMs = poseEstimate.timestampSeconds * 1000.0;
-        timestampMs -= LimelightHelpers.getLatency_Capture(Constants.STATIONARY_LIMELIGHT_NAME)
-                + LimelightHelpers.getLatency_Pipeline(Constants.STATIONARY_LIMELIGHT_NAME);
-
-        addVisionMeasurement(poseEstimate.pose, timestampMs / 1000.0, visionStdDevs);
+        addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds, visionStdDevs);
 
         stationaryLLTimestampPublisher.set(
-                new double[] {timestampMs / 1000.0, Timer.getTimestamp() - (timestampMs / 1000.0)});
+                new double[] {poseEstimate.timestampSeconds, Timer.getTimestamp() - poseEstimate.timestampSeconds});
         stationaryLLAprilTagsPublisher.set(poseEstimate.pose);
     }
 
