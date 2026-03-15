@@ -13,13 +13,12 @@ import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.util.datalog.StructLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -51,14 +50,14 @@ public class RobotPositioning {
 
     private MutAngularVelocity turretAngularVelocity = Units.RPM.mutable(0);
 
-    private final StructLogEntry<Pose2d> robotPoseLogger;
-    private final StructLogEntry<Pose2d> turretLLAprilTagsLogger;
-    private final StructLogEntry<Pose2d> turretLLCalculatedPositionLogger;
-    private final DoubleArrayLogEntry turretLLTimestampLogger;
-    private final StructLogEntry<Pose2d> stationaryLLAprilTagsLogger;
-    private final DoubleArrayLogEntry stationaryLLTimestampLogger;
-    private final DoubleArrayLogEntry turretPosLogger;
-    private final DoubleLogEntry turretPosLatencyLogger;
+    private final StructPublisher<Pose2d> robotPosePublisher;
+    private final StructPublisher<Pose2d> turretLLAprilTagsPublisher;
+    private final StructPublisher<Pose2d> turretLLCalculatedPositionPublisher;
+    private final DoubleArrayPublisher turretLLTimestampPublisher;
+    private final StructPublisher<Pose2d> stationaryLLAprilTagsPublisher;
+    private final DoubleArrayPublisher stationaryLLTimestampPublisher;
+    private final DoubleArrayPublisher turretPosPublisher;
+    private final DoublePublisher turretPosLatencyPublisher;
 
     public RobotPositioning(
             SwerveDrive swerveDrive,
@@ -81,17 +80,22 @@ public class RobotPositioning {
         LimelightHelpers.setCameraPose_RobotSpace(
                 Constants.STATIONARY_LIMELIGHT_NAME, -0.328071, 0.031750, 0.295345, 0, 10, 0);
 
-        var log = DataLogManager.getLog();
-        robotPoseLogger = StructLogEntry.create(log, "positioning/robot pose", Pose2d.struct);
-        turretLLAprilTagsLogger = StructLogEntry.create(log, "positioning/turret limelight tags", Pose2d.struct);
-        turretLLTimestampLogger = new DoubleArrayLogEntry(log, "positioning/turret limelight pose timestamp");
-        turretLLCalculatedPositionLogger =
-                StructLogEntry.create(log, "positioning/turret limelight calculated position", Pose2d.struct);
-        stationaryLLAprilTagsLogger =
-                StructLogEntry.create(log, "positioning/stationary limelight tags", Pose2d.struct);
-        stationaryLLTimestampLogger = new DoubleArrayLogEntry(log, "positioning/stationary limelight pose timestamp");
-        turretPosLogger = new DoubleArrayLogEntry(log, "positioning/turret position measurements");
-        turretPosLatencyLogger = new DoubleLogEntry(log, "positioning/turret position measure latency");
+        robotPosePublisher = table.getStructTopic("robot pose", Pose2d.struct).publish();
+        turretLLAprilTagsPublisher =
+                table.getStructTopic("turret limelight tags", Pose2d.struct).publish();
+        turretLLTimestampPublisher =
+                table.getDoubleArrayTopic("turret limelight pose timestamp").publish();
+        turretLLCalculatedPositionPublisher = table.getStructTopic(
+                        "turret limelight calculated position", Pose2d.struct)
+                .publish();
+        stationaryLLAprilTagsPublisher =
+                table.getStructTopic("stationary limelight tags", Pose2d.struct).publish();
+        stationaryLLTimestampPublisher =
+                table.getDoubleArrayTopic("stationary limelight pose timestamp").publish();
+        turretPosPublisher =
+                table.getDoubleArrayTopic("turret position measurements").publish();
+        turretPosLatencyPublisher =
+                table.getDoubleTopic("turret position measure latency").publish();
 
         swerveDrive.stopOdometryThread();
     }
@@ -226,9 +230,9 @@ public class RobotPositioning {
         timeStampMs -= LimelightHelpers.getLatency_Capture(Constants.TURRET_LIMELIGHT_NAME)
                 + LimelightHelpers.getLatency_Pipeline(Constants.TURRET_LIMELIGHT_NAME);
 
-        turretLLTimestampLogger.append(
+        turretLLTimestampPublisher.set(
                 new double[] {timeStampMs / 1000.0, Timer.getTimestamp() - (timeStampMs / 1000.0)});
-        turretLLAprilTagsLogger.append(poseEstimate.pose);
+        turretLLAprilTagsPublisher.set(poseEstimate.pose);
 
         var turretLimelightTransform = getTurretLimelightToRobot(timeStampMs / 1000.0);
         if (turretLimelightTransform == null) {
@@ -239,7 +243,7 @@ public class RobotPositioning {
 
         addVisionMeasurement(robotPose, poseEstimate.timestampSeconds, visionStdDevs);
 
-        turretLLCalculatedPositionLogger.append(robotPose);
+        turretLLCalculatedPositionPublisher.set(robotPose);
     }
 
     private void addStationaryVisionMeasurements() {
@@ -277,9 +281,9 @@ public class RobotPositioning {
 
         addVisionMeasurement(poseEstimate.pose, timestampMs / 1000.0, visionStdDevs);
 
-        stationaryLLTimestampLogger.append(
+        stationaryLLTimestampPublisher.set(
                 new double[] {timestampMs / 1000.0, Timer.getTimestamp() - (timestampMs / 1000.0)});
-        stationaryLLAprilTagsLogger.append(poseEstimate.pose);
+        stationaryLLAprilTagsPublisher.set(poseEstimate.pose);
     }
 
     private void addVisionMeasurements() {
@@ -298,12 +302,12 @@ public class RobotPositioning {
         turretYawBuffer.addSample(
                 encoderReading.timestamp(),
                 Rotation2d.fromRadians(encoderReading.value().in(Units.Radians)));
-        turretPosLogger.append(new double[] {encoderReading.value().in(Units.Degrees), encoderReading.timestamp()});
-        turretPosLatencyLogger.append(Timer.getTimestamp() - encoderReading.timestamp());
+        turretPosPublisher.set(new double[] {encoderReading.value().in(Units.Degrees), encoderReading.timestamp()});
+        turretPosLatencyPublisher.set(Timer.getTimestamp() - encoderReading.timestamp());
 
         swerveDrive.updateOdometry();
         addVisionMeasurements();
 
-        robotPoseLogger.append(getRobotPose());
+        robotPosePublisher.set(getRobotPose());
     }
 }
