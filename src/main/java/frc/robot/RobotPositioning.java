@@ -204,14 +204,6 @@ public class RobotPositioning {
             return;
         }
 
-        var turretPosition = swerveDrive
-                .getOdometryHeading()
-                .plus(Rotation2d.fromRadians(turretYawSupplier.get().value().in(Units.Radians)));
-        var turretVelocity = turretAngularVelocity.mut_replace(
-                swerveDrive.getRobotVelocity().omegaRadiansPerSecond
-                        + turretYawRateSupplier.get().in(Units.RadiansPerSecond),
-                Units.RadiansPerSecond);
-
         LimelightHelpers.PoseEstimate poseEstimate = null;
         Vector<N3> visionStdDevs = null;
 
@@ -288,7 +280,14 @@ public class RobotPositioning {
         double estimatedHeadingDegrees = swerveDrive.getOdometryHeading().getDegrees();
         LimelightHelpers.SetRobotOrientation(
                 Constants.STATIONARY_LIMELIGHT_NAME, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.SetRobotOrientation(Constants.TURRET_LIMELIGHT_NAME, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(
+                Constants.TURRET_LIMELIGHT_NAME,
+                estimatedHeadingDegrees + turretYawSupplier.get().value().in(Units.Degrees),
+                0,
+                0,
+                0,
+                0,
+                0);
 
         var encoderReading = turretYawSupplier.get();
         turretYawBuffer.addSample(
