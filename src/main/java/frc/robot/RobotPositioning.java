@@ -227,7 +227,7 @@ public class RobotPositioning {
         }
 
         turretLLTimestampPublisher.set(
-                new double[] {poseEstimate.timestampSeconds, Timer.getTimestamp() - poseEstimate.timestampSeconds});
+                new double[] {poseEstimate.timestampSeconds, Timer.getFPGATimestamp() - poseEstimate.timestampSeconds});
         turretLLAprilTagsPublisher.set(poseEstimate.pose);
 
         var turretLimelightTransform = getTurretLimelightToRobot(poseEstimate.timestampSeconds);
@@ -274,7 +274,7 @@ public class RobotPositioning {
         addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds, visionStdDevs);
 
         stationaryLLTimestampPublisher.set(
-                new double[] {poseEstimate.timestampSeconds, Timer.getTimestamp() - poseEstimate.timestampSeconds});
+                new double[] {poseEstimate.timestampSeconds, Timer.getFPGATimestamp() - poseEstimate.timestampSeconds});
         stationaryLLAprilTagsPublisher.set(poseEstimate.pose);
     }
 
@@ -295,7 +295,7 @@ public class RobotPositioning {
                 encoderReading.timestamp(),
                 Rotation2d.fromRadians(encoderReading.value().in(Units.Radians)));
         turretPosPublisher.set(new double[] {encoderReading.value().in(Units.Degrees), encoderReading.timestamp()});
-        turretPosLatencyPublisher.set(Timer.getTimestamp() - encoderReading.timestamp());
+        turretPosLatencyPublisher.set(Timer.getFPGATimestamp() - encoderReading.timestamp());
 
         swerveDrive.updateOdometry();
         addVisionMeasurements();
