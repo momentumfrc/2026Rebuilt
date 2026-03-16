@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
@@ -16,8 +17,28 @@ public class NTHelpers {
         return NetworkTableInstance.getDefault().getTable(name);
     }
 
+    /**
+     * Return an entry representing a boolean value on the network tables, with an initial defaultValue set
+     * on robot startup.
+     * <p>
+     * The intention behind this helper is to provide a shortcut for getting an entry and publishing an initial value.
+     * This should for values that will be set on the dashboard and propagated to the robot.
+     */
     public static BooleanEntry getBooleanEntry(NetworkTable table, String name, boolean defaultValue) {
         var entry = table.getBooleanTopic(name).getEntry(defaultValue);
+        entry.set(defaultValue);
+        return entry;
+    }
+
+    /**
+     * Return an entry representing a double value on the network tables, with an initial defaultValue set
+     * on robot startup.
+     * <p>
+     * The intention behind this helper is to provide a shortcut for getting an entry and publishing an initial value.
+     * This should for values that will be set on the dashboard and propagated to the robot.
+     */
+    public static DoubleEntry getDoubleEntry(NetworkTable table, String name, double defaultValue) {
+        var entry = table.getDoubleTopic(name).getEntry(defaultValue);
         entry.set(defaultValue);
         return entry;
     }

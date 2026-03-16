@@ -114,7 +114,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command getTestCommand(XboxController controller) {
         return Commands.startRun(
-                        () -> flywheelSpeedPublisher.set(500),
+                        () -> flywheelTestSetpointEntry.set(500),
                         () -> {
                             if (controller.getRightBumperButton()) {
                                 runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));

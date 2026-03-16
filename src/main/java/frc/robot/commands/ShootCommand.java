@@ -1,6 +1,12 @@
 package frc.robot.commands;
 
+import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -34,6 +40,14 @@ public class ShootCommand extends Command {
     private final SendableChooser<TargetingMode> modeChooser =
             NTHelpers.enumToChooser(TargetingMode.class, TargetingMode.ON_THE_MOVE);
 
+    private final BooleanEntry doOverrideFlywheelSetpoint;
+    private final DoubleEntry overrideFlywheelSetpoint;
+    private final BooleanEntry doOverrideHoodSetpoint;
+    private final DoubleEntry overrideHoodSetpoint;
+
+    private final MutAngle hoodOverridePosition = Units.Degrees.mutable(0);
+    private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
+
     public ShootCommand(
             TurretTargeting targeting,
             KickerSubsystem kicker,
@@ -46,10 +60,27 @@ public class ShootCommand extends Command {
         this.shooter = shooter;
         this.hood = hood;
 
-        var table = NTHelpers.getTable("turret");
-        NTHelpers.publishSendable(table, "Targeting Mode", modeChooser);
+        var turretTable = NTHelpers.getTable("turret");
+        NTHelpers.publishSendable(turretTable, "Targeting Mode", modeChooser);
+
+        var shooterFlywheelTable = NTHelpers.getTable("shooter-flywheel");
+        doOverrideFlywheelSetpoint =
+                NTHelpers.getBooleanEntry(shooterFlywheelTable, "Override Flywheel Setpoint?", false);
+        overrideFlywheelSetpoint = NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Test Setpoint (RPM)", 120);
+
+        var shooterHoodTable = NTHelpers.getTable("shooter-hood");
+        doOverrideHoodSetpoint = NTHelpers.getBooleanEntry(shooterHoodTable, "Override Hood Setpoint?", false);
+        overrideHoodSetpoint = NTHelpers.getDoubleEntry(shooterHoodTable, "Hood Test Setpoint (°)", 10);
 
         addRequirements(kicker, turret, shooter, hood);
+    }
+
+    private Angle getHoodOverridePosition() {
+        return hoodOverridePosition.mut_replace(overrideHoodSetpoint.get(), Units.Degrees);
+    }
+
+    private AngularVelocity getFlywheelOverrideSpeed() {
+        return flywheelOverrideSpeed.mut_replace(overrideFlywheelSetpoint.get(), Units.RPM);
     }
 
     @Override
@@ -93,8 +124,16 @@ public class ShootCommand extends Command {
             }
 
             turret.align(firingSolution);
-            hood.setCalculatedPosition(firingSolution.targetDistance());
-            shooter.runAtCalculatedSpeed(firingSolution.targetDistance());
+            if (doOverrideHoodSetpoint.get()) {
+                hood.setPosition(getHoodOverridePosition());
+            } else {
+                hood.setCalculatedPosition(firingSolution.targetDistance());
+            }
+            if (doOverrideFlywheelSetpoint.get()) {
+                shooter.runAtSpeed(getFlywheelOverrideSpeed());
+            } else {
+                shooter.runAtCalculatedSpeed(firingSolution.targetDistance());
+            }
         }
 
         targetOutOfRange.set(false);

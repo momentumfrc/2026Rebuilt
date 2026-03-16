@@ -65,7 +65,7 @@ public final class TurretTargeting {
     public TurretTargeting(RobotPositioning positioning) {
         this.positioning = positioning;
 
-        var table = NTHelpers.getTable("sotf-targeting");
+        var table = NTHelpers.getTable("turret-targeting");
         targetPublisher = table.getStructTopic("target", Translation2d.struct).publish();
         phaseDelayEstimatedPosePublisher = table.getStructTopic("phase delay estimated pose", Pose2d.struct)
                 .publish();
