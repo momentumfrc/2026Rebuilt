@@ -98,6 +98,10 @@ public class RobotPositioning {
         return swerveDrive.getPose();
     }
 
+    public boolean hasInitialPosition() {
+        return hasInitialPosition.get();
+    }
+
     /**
      * Get the field-relative velocity of the robot.
      */

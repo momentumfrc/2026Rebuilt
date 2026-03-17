@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.LEDCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.intake.RollerCommands;
@@ -23,6 +24,7 @@ import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.IntakeRollerSubsystem;
 import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
+import frc.robot.subsystem.LEDSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.SysIdUtil;
@@ -38,6 +40,7 @@ public class RobotContainer {
     private final HoodSubsystem hood = new HoodSubsystem();
     private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
     private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
+    private final LEDSubsystem leds = new LEDSubsystem();
 
     // **** UTILITIES ****
     public final RobotPositioning robotPositioning = new RobotPositioning(
@@ -90,6 +93,8 @@ public class RobotContainer {
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
 
+    private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
+
     // **** TRIGGERS ****
     private Trigger resetFieldOrientedFwd;
 
@@ -124,6 +129,7 @@ public class RobotContainer {
         turret.setDefaultCommand(passiveTargetingCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
+        leds.setDefaultCommand(ledCommand);
     }
 
     private void addSubsystemsToDashboard() {
@@ -136,6 +142,7 @@ public class RobotContainer {
         NTHelpers.publishSendable(table, hood);
         NTHelpers.publishSendable(table, intakeRollerSubsystem);
         NTHelpers.publishSendable(table, intakeWristSubsystem);
+        NTHelpers.publishSendable(table, leds);
     }
 
     private void configureBindings() {

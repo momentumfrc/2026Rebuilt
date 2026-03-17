@@ -10,6 +10,7 @@ import frc.robot.molib.MoUnits;
 import frc.robot.molib.prefs.AngleUnitPref;
 import frc.robot.molib.prefs.AngularAccelerationUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
+import frc.robot.molib.prefs.DimensionlessUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
 import frc.robot.molib.prefs.MoPrefsBase;
 import frc.robot.molib.prefs.Pref;
@@ -149,4 +150,7 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final AngularVelocityUnitPref flywheelClearSpeed = rpmPref("Flywheel Clear Speed", Units.RPM.of(300));
     public static final TimeUnitPref shooterClearTime = secondsPref("Shooter Clear Time", Units.Seconds.of(0.25));
+
+    // **** LEDS ****
+    public static final DimensionlessUnitPref ledBrightness = percentPref("LED Brightness", Units.Percent.of(40));
 }

@@ -111,7 +111,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final BooleanPublisher hitReverseSoftLimit;
     private final DoublePublisher goalAnglePublisher;
     private final DoublePublisher goalVelocityPublisher;
-    private final BooleanPublisher targetInRange;
+    private final BooleanEntry targetInRange;
 
     private final BooleanEntry passiveTrackingEntry;
     private final BooleanEntry coastMotorEntry;
@@ -130,7 +130,8 @@ public class TurretSubsystem extends SubsystemBase {
         hitReverseSoftLimit = table.getBooleanTopic("Reverse Soft Limit").publish();
         goalAnglePublisher = table.getDoubleTopic("Goal Angle (degs)").publish();
         goalVelocityPublisher = table.getDoubleTopic("Goal Speed (degs_s)").publish();
-        targetInRange = table.getBooleanTopic("Target In Range").publish();
+
+        targetInRange = table.getBooleanTopic("Target In Range").getEntry(false);
 
         passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
@@ -320,6 +321,10 @@ public class TurretSubsystem extends SubsystemBase {
                 turretOORVelocityFilter.calculate(angle.minus(lastOORAngle).getDegrees() / Constants.LOOP_PERIOD);
         lastOORAngle = angle;
         return velocity;
+    }
+
+    public boolean targetInRange() {
+        return targetInRange.get();
     }
 
     /**
