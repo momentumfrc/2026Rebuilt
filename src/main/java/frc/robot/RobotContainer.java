@@ -40,9 +40,8 @@ public class RobotContainer {
 
     // **** UTILITIES ****
     public final RobotPositioning robotPositioning = new RobotPositioning(
-            driveSubsystem.getSwerveDrive(),
-            () -> getTurretSubsystem().getTimestampedTurretYaw(),
-            () -> getTurretSubsystem().getTurretYawRate());
+            driveSubsystem.getSwerveDrive(), () -> getTurretSubsystem().getTurretYaw(), () -> getTurretSubsystem()
+                    .getTurretYawRate());
 
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
@@ -56,7 +55,8 @@ public class RobotContainer {
     // **** COMMANDS ****
     private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
 
-    private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, indexer, kicker, turret, shooter, hood);
+    private final ShootCommand shootCommand =
+            new ShootCommand(turretTargetingHelper, indexer, kicker, turret, shooter, hood);
 
     private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
 
@@ -171,7 +171,10 @@ public class RobotContainer {
 
         runIntakeTrigger.whileTrue(runKickerCommand);
 
-        runIntakeTrigger.and(reverseIndexerTrigger.negate()).and(shootTrigger.negate()).whileTrue(runIndexerCommand);
+        runIntakeTrigger
+                .and(reverseIndexerTrigger.negate())
+                .and(shootTrigger.negate())
+                .whileTrue(runIndexerCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);

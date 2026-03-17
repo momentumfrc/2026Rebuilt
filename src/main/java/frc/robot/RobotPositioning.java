@@ -14,11 +14,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -31,7 +30,7 @@ public class RobotPositioning {
     private static final double TURRET_ANGLE_BUFFER_TIME = 2.0; // seconds
 
     private final SwerveDrive swerveDrive;
-    private final Supplier<TurretSubsystem.TimestampedEncoderReading> turretYawSupplier;
+    private final Supplier<Angle> turretYawSupplier;
     private final Supplier<AngularVelocity> turretYawRateSupplier;
 
     private final BooleanEntry useMT2;
@@ -48,8 +47,6 @@ public class RobotPositioning {
     private static final Vector<N3> MT1_VISION_STDDEVS = VecBuilder.fill(0.7, 0.7, 9999999);
     private static final Vector<N3> MT2_VISION_STDDEVS = VecBuilder.fill(0.5, 0.5, 9999999);
 
-    private MutAngularVelocity turretAngularVelocity = Units.RPM.mutable(0);
-
     private final StructPublisher<Pose2d> robotPosePublisher;
     private final StructPublisher<Pose2d> turretLLAprilTagsPublisher;
     private final StructPublisher<Pose2d> turretLLCalculatedPositionPublisher;
@@ -57,11 +54,10 @@ public class RobotPositioning {
     private final StructPublisher<Pose2d> stationaryLLAprilTagsPublisher;
     private final DoubleArrayPublisher stationaryLLTimestampPublisher;
     private final DoubleArrayPublisher turretPosPublisher;
-    private final DoublePublisher turretPosLatencyPublisher;
 
     public RobotPositioning(
             SwerveDrive swerveDrive,
-            Supplier<TurretSubsystem.TimestampedEncoderReading> turretYawSupplier,
+            Supplier<Angle> turretYawSupplier,
             Supplier<AngularVelocity> turretYawRateSupplier) {
         this.swerveDrive = swerveDrive;
         this.turretYawSupplier = turretYawSupplier;
@@ -94,8 +90,6 @@ public class RobotPositioning {
                 table.getDoubleArrayTopic("stationary limelight pose timestamp").publish();
         turretPosPublisher =
                 table.getDoubleArrayTopic("turret position measurements").publish();
-        turretPosLatencyPublisher =
-                table.getDoubleTopic("turret position measure latency").publish();
 
         swerveDrive.stopOdometryThread();
     }
@@ -276,25 +270,17 @@ public class RobotPositioning {
     }
 
     public void update() {
+        var turretYaw = turretYawSupplier.get();
 
         double estimatedHeadingDegrees = swerveDrive.getOdometryHeading().getDegrees();
         LimelightHelpers.SetRobotOrientation(
                 Constants.STATIONARY_LIMELIGHT_NAME, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
         LimelightHelpers.SetRobotOrientation(
-                Constants.TURRET_LIMELIGHT_NAME,
-                estimatedHeadingDegrees + turretYawSupplier.get().value().in(Units.Degrees),
-                0,
-                0,
-                0,
-                0,
-                0);
+                Constants.TURRET_LIMELIGHT_NAME, estimatedHeadingDegrees + turretYaw.in(Units.Degrees), 0, 0, 0, 0, 0);
 
-        var encoderReading = turretYawSupplier.get();
-        turretYawBuffer.addSample(
-                Timer.getFPGATimestamp(),
-                Rotation2d.fromRadians(encoderReading.value().in(Units.Radians)));
-        turretPosPublisher.set(new double[] {encoderReading.value().in(Units.Degrees), encoderReading.timestamp()});
-        turretPosLatencyPublisher.set(Timer.getFPGATimestamp() - encoderReading.timestamp());
+        var timestamp = Timer.getFPGATimestamp();
+        turretYawBuffer.addSample(Timer.getFPGATimestamp(), Rotation2d.fromRadians(turretYaw.in(Units.Radians)));
+        turretPosPublisher.set(new double[] {turretYaw.in(Units.Degrees), timestamp});
 
         swerveDrive.updateOdometry();
         addVisionMeasurements();

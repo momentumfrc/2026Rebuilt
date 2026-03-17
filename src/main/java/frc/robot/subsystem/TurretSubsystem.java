@@ -32,7 +32,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -75,21 +74,6 @@ public class TurretSubsystem extends SubsystemBase {
     private final TalonFX turretMotor;
     private final TalonFXConfiguration turretMotorConfig;
     private final MoRotationEncoder turretEncoder;
-
-    public static class TimestampedEncoderReading {
-        private MutAngle value = Units.Radians.mutable(0);
-        private double timestamp;
-
-        public Angle value() {
-            return value;
-        }
-
-        public double timestamp() {
-            return timestamp;
-        }
-    }
-
-    private TimestampedEncoderReading timestampedTurretYaw = new TimestampedEncoderReading();
 
     /*
      * Notes about the encoders.
@@ -290,19 +274,6 @@ public class TurretSubsystem extends SubsystemBase {
      */
     public Angle getTurretYaw() {
         return turretEncoder.getPosition();
-    }
-
-    public TimestampedEncoderReading getTimestampedTurretYaw() {
-        var encoderReading = turretMotor.getPosition();
-        var timestamp = encoderReading.getTimestamp();
-        if (timestamp.isValid()) {
-            timestampedTurretYaw.timestamp = timestamp.getTime();
-        } else {
-            timestampedTurretYaw.timestamp = Timer.getTimestamp();
-        }
-        timestampedTurretYaw.value.mut_replace(
-                encoderReading.getValueAsDouble(), turretEncoder.getInternalEncoderUnits());
-        return timestampedTurretYaw;
     }
 
     /**
