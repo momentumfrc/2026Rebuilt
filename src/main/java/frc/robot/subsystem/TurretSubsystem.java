@@ -135,7 +135,7 @@ public class TurretSubsystem extends SubsystemBase {
         passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
         hasZero = NTHelpers.getBooleanEntry(table, "Has Zero", false);
-        rezeroEveryLoop = NTHelpers.getBooleanEntry(table, "Rezero Every Loop", true);
+        rezeroEveryLoop = NTHelpers.getBooleanEntry(table, "Rezero Every Loop", false);
 
         NTHelpers.publishSendable(table, "Align Mode", alignModeChooser);
 
