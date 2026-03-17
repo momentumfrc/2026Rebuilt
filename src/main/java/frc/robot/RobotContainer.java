@@ -64,8 +64,7 @@ public class RobotContainer {
     private final Command idleIndexerCommand = indexer.run(indexer::stop).withName("IdleIndexerCommand");
     private final Command idleKickerCommand = kicker.run(kicker::stop).withName("IdleKickerCommand");
     private final Command idleShooterCommand = shooter.run(shooter::stop).withName("IdleShooterCommand");
-    private final Command idleHoodCommand =
-            hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get())).withName("IdleHoodCommand");
+    private final Command idleHoodCommand = hood.run(hood::goToRest).withName("IdleHoodCommand");
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 

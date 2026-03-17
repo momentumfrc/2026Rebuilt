@@ -137,8 +137,14 @@ public class HoodSubsystem extends SubsystemBase {
 
     private MutAngularVelocity mutVelocityReference = Units.RadiansPerSecond.mutable(0);
 
+    public void goToRest() {
+        setPosition(MoPrefs.hoodDeadzonePosition.get(), Units.DegreesPerSecond.zero());
+        lastHoodAngle = Double.NaN;
+    }
+
     public void setPosition(Angle position) {
         if (Double.isNaN(lastHoodAngle)) {
+            hoodAngleFilter.reset();
             lastHoodAngle = position.in(Units.Radians);
         }
 

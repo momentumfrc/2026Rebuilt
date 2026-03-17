@@ -100,7 +100,7 @@ public class ShootCommand extends Command {
                 indexer.stop();
                 kicker.stop();
                 shooter.stop();
-                hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
+                hood.goToRest();
                 turret.stop();
                 return;
             }
@@ -125,7 +125,7 @@ public class ShootCommand extends Command {
                 indexer.stop();
                 kicker.stop();
                 shooter.stop();
-                hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
+                hood.goToRest();
                 turret.align(firingSolution);
                 return;
             }
