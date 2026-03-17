@@ -47,7 +47,17 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getRunIntake() {
-        return operatorController.getYButton();
+        return operatorController.getRightBumperButton();
+    }
+
+    @Override
+    public boolean getAgitate() {
+        return operatorController.getLeftBumperButton();
+    }
+
+    @Override
+    public boolean getClearShooter() {
+        return operatorController.getBButton();
     }
 
     @Override

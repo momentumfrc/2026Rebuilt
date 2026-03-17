@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -93,11 +94,14 @@ public class SysIdUtil {
 
     public static SysIdRoutine.Mechanism sysIdMechanismForTalonFx(
             Subsystem subsystem, String motorName, TalonFX talon, MoRotationEncoder encoder) {
-        final VoltageOut controlRequest = new VoltageOut(0);
         final AngularAccelerationUnit encoderOmegaUnits =
                 encoder.getInternalEncoderUnits().per(Units.Second).per(Units.Second);
         return new SysIdRoutine.Mechanism(
-                v -> talon.setControl(controlRequest.withOutput(v)),
+                v -> {
+                    var request = new VoltageOut(v);
+                    talon.setControl(request);
+                    System.out.println(request.Output);
+                },
                 log -> log.motor(motorName)
                         .voltage(talon.getMotorVoltage().getValue())
                         .value(

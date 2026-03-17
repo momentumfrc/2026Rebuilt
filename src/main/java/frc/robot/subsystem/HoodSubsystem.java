@@ -31,12 +31,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxProfilePID;
 import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
-import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 
 public class HoodSubsystem extends SubsystemBase {
@@ -67,9 +67,10 @@ public class HoodSubsystem extends SubsystemBase {
 
     public HoodSubsystem() {
         motor = new TalonFX(Constants.HOOD_PORT.address());
-        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions);
+        motorConfig = new TalonFXConfiguration();
+        encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions, motorConfig);
 
-        motorConfig = new TalonFXConfiguration()
+        motorConfig
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withInverted(InvertedValue.CounterClockwise_Positive))
@@ -112,7 +113,7 @@ public class HoodSubsystem extends SubsystemBase {
                 },
                 true);
 
-        pid = new MoTalonFxProfilePID<>(motor, encoder.getInternalEncoderUnits());
+        pid = new MoTalonFxProfilePID<>(motor, encoder.getInternalEncoderUnits(), motorConfig);
 
         TunerUtils.forMoTalonFxProfile(pid, "Hood PID");
 
@@ -136,8 +137,14 @@ public class HoodSubsystem extends SubsystemBase {
 
     private MutAngularVelocity mutVelocityReference = Units.RadiansPerSecond.mutable(0);
 
+    public void goToRest() {
+        setPosition(MoPrefs.hoodDeadzonePosition.get(), Units.DegreesPerSecond.zero());
+        lastHoodAngle = Double.NaN;
+    }
+
     public void setPosition(Angle position) {
         if (Double.isNaN(lastHoodAngle)) {
+            hoodAngleFilter.reset();
             lastHoodAngle = position.in(Units.Radians);
         }
 

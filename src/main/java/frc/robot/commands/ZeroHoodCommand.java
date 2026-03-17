@@ -26,9 +26,9 @@ public class ZeroHoodCommand extends Command {
 
     @Override
     public void execute() {
-        hood.setVoltage((Voltage) MoPrefs.hoodZeroPower.get());
+        hood.setVoltage((Voltage) MoPrefs.hoodZeroPower.get().unaryMinus());
 
-        if (hood.getCurrent().gte((Current) MoPrefs.hoodCurrentLimit.get())) {
+        if (hood.getCurrent().gte((Current) MoPrefs.hoodZeroCurrentThreshold.get())) {
             if (timer.hasElapsed(MoPrefs.hoodZeroTime.get())) {
                 hood.zeroEncoder();
             }

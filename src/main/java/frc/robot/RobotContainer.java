@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.LEDCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.auto.AutoChooser;
@@ -14,6 +15,8 @@ import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
+import frc.robot.molib.NTHelpers;
+import frc.robot.molib.Utils;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
@@ -21,9 +24,9 @@ import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.IntakeRollerSubsystem;
 import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
+import frc.robot.subsystem.LEDSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
-import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 import java.util.List;
 
@@ -37,18 +40,17 @@ public class RobotContainer {
     private final HoodSubsystem hood = new HoodSubsystem();
     private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
     private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
+    private final LEDSubsystem leds = new LEDSubsystem();
 
     // **** UTILITIES ****
     public final RobotPositioning robotPositioning = new RobotPositioning(
-            driveSubsystem.getSwerveDrive(),
-            () -> getTurretSubsystem().getTimestampedTurretYaw(),
-            () -> getTurretSubsystem().getTurretYawRate());
+            driveSubsystem.getSwerveDrive(), () -> getTurretSubsystem().getTurretYaw(), () -> getTurretSubsystem()
+                    .getTurretYawRate());
 
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
     private final ControllerInput controllerInput = new ControllerInput();
     private final SysIdUtil sysId = new SysIdUtil(List.of(
-            indexer.getSysIdMechanism(),
             kicker.getSysIdMechanism(),
             turret.getSysIdMechanism(),
             shooter.getSysIdMechanism(),
@@ -57,15 +59,15 @@ public class RobotContainer {
     // **** COMMANDS ****
     private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
 
-    private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
+    private final ShootCommand shootCommand =
+            new ShootCommand(turretTargetingHelper, indexer, kicker, turret, shooter, hood);
 
     private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
 
     private final Command idleIndexerCommand = indexer.run(indexer::stop).withName("IdleIndexerCommand");
     private final Command idleKickerCommand = kicker.run(kicker::stop).withName("IdleKickerCommand");
     private final Command idleShooterCommand = shooter.run(shooter::stop).withName("IdleShooterCommand");
-    private final Command idleHoodCommand =
-            hood.run(() -> hood.setPosition(MoPrefs.hoodDeadzonePosition.get())).withName("IdleHoodCommand");
+    private final Command idleHoodCommand = hood.run(hood::goToRest).withName("IdleHoodCommand");
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
@@ -77,21 +79,33 @@ public class RobotContainer {
     private final Command idleTurretCommand = turret.run(turret::stop);
     private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
 
+    private final Command runKickerCommand = kicker.run(kicker::run);
+
+    private final Command clearShooterKickerCommand = Commands.parallel(
+            shooter.run(
+                    () -> shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
+            kicker.run(() -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
+
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
+    private final Command agitateIntakeCommand = WristCommands.agitatingCommand(intakeWristSubsystem);
     private final Command retractIntakeWristCommend = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
+
+    private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
 
     // **** TRIGGERS ****
     private Trigger resetFieldOrientedFwd;
 
     private Trigger runIntakeTrigger;
+    private Trigger agitateIntakeTrigger;
     private Trigger extendIntakeTrigger;
     private Trigger retractIntakeTrigger;
 
     private Trigger reverseIndexerTrigger;
 
+    private Trigger clearShooterTrigger;
     private Trigger shootTrigger;
 
     private Trigger zeroHoodTrigger;
@@ -128,9 +142,10 @@ public class RobotContainer {
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);
         shooter.setDefaultCommand(idleShooterCommand);
-        turret.setDefaultCommand(idleTurretCommand);
+        turret.setDefaultCommand(passiveTargetingCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
+        leds.setDefaultCommand(ledCommand);
     }
 
     private void addSubsystemsToDashboard() {
@@ -143,6 +158,7 @@ public class RobotContainer {
         NTHelpers.publishSendable(table, hood);
         NTHelpers.publishSendable(table, intakeRollerSubsystem);
         NTHelpers.publishSendable(table, intakeWristSubsystem);
+        NTHelpers.publishSendable(table, leds);
     }
 
     private void configureBindings() {
@@ -151,9 +167,11 @@ public class RobotContainer {
 
         // Intake Triggers
         runIntakeTrigger = new Trigger(() -> getInput().getRunIntake());
+        agitateIntakeTrigger = new Trigger(() -> getInput().getAgitate());
         extendIntakeTrigger = new Trigger(() -> getInput().getExtendIntake());
         retractIntakeTrigger = new Trigger(() -> getInput().getRetractIntake());
 
+        clearShooterTrigger = new Trigger(() -> getInput().getClearShooter());
         shootTrigger = new Trigger(() -> getInput().getShootRequest());
 
         zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
@@ -169,10 +187,14 @@ public class RobotContainer {
 
         // Intake Trigger Bindings
         runIntakeTrigger.whileTrue(runRollerCommand);
+        agitateIntakeTrigger.whileTrue(agitateIntakeCommand);
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
 
-        shootTrigger.whileTrue(shootCommand.alongWith(WristCommands.agitatingCommand(intakeWristSubsystem)));
+        shootTrigger.whileTrue(Utils.withTimeoutPref(clearShooterKickerCommand, MoPrefs.shooterClearTime::get)
+                .andThen(shootCommand));
+
+        clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearShooterKickerCommand);
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 
@@ -180,7 +202,12 @@ public class RobotContainer {
 
         lockTrigger.whileTrue(driveSubsystem.lockPose());
 
-        (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
+        runIntakeTrigger.whileTrue(runKickerCommand);
+
+        runIntakeTrigger
+                .and(reverseIndexerTrigger.negate())
+                .and(shootTrigger.negate())
+                .whileTrue(runIndexerCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);

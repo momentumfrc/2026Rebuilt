@@ -1,20 +1,16 @@
 package frc.robot.subsystem;
 
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
+import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.molib.motune.TunerUtils;
-import frc.robot.molib.pid.MoSparkMaxPID;
 
 public class IndexerSubsystem extends SubsystemBase {
 
@@ -23,7 +19,8 @@ public class IndexerSubsystem extends SubsystemBase {
 
     private final MoRotationEncoder encoder;
 
-    private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> pid;
+    private final DoublePublisher indexerEncoderPosition;
+    private final DoublePublisher indexerEncoderSpeed;
 
     public IndexerSubsystem() {
         motor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
@@ -39,36 +36,28 @@ public class IndexerSubsystem extends SubsystemBase {
         encoder = MoRotationEncoder.forSparkRelative(motor, Units.Revolutions);
         MoPrefs.indexerEncoderScale.subscribe(encoder::setConversionFactor, true);
 
-        pid = new MoSparkMaxPID<>(MoSparkMaxPID.Type.VELOCITY, motor, ClosedLoopSlot.kSlot0, encoder, config);
+        var table = NTHelpers.getTable("Indexer");
 
-        TunerUtils.forMoSparkMax(pid, "Indexer PID");
+        indexerEncoderPosition =
+                table.getDoubleTopic("Indexer Encoder Position").publish();
+        indexerEncoderSpeed = table.getDoubleTopic("Indexer Encoder Speed").publish();
     }
 
     public void run() {
-        pid.setVelocityReference(MoPrefs.indexerRunSpeed.get());
+        motor.setVoltage(MoPrefs.indexerRunPower.get().in(Units.Volts));
     }
 
     public void stop() {
-        pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
+        motor.stopMotor();
     }
 
     public void runReverse() {
-        pid.setVelocityReference(MoPrefs.indexerRunSpeed.get().unaryMinus());
+        motor.setVoltage(-1 * MoPrefs.indexerRunPower.get().in(Units.Volts));
     }
 
-    public SysIdRoutine.Mechanism getSysIdMechanism() {
-        return new SysIdRoutine.Mechanism(
-                motor::setVoltage,
-                log -> log.motor("indexer")
-                        .voltage(Units.Volts.of(motor.getBusVoltage() * motor.get()))
-                        .value(
-                                "position",
-                                encoder.getPositionInEncoderUnits(),
-                                encoder.getInternalEncoderUnits().name())
-                        .value(
-                                "velocity",
-                                encoder.getVelocityInEncoderUnits(),
-                                encoder.getInternalEncoderVelocityUnits().name()),
-                this);
+    @Override
+    public void periodic() {
+        indexerEncoderPosition.set(encoder.getPosition().in(Units.Revolutions));
+        indexerEncoderSpeed.set(encoder.getVelocity().in(Units.RevolutionsPerSecond));
     }
 }

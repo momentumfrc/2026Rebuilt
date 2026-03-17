@@ -10,6 +10,7 @@ import frc.robot.molib.MoUnits;
 import frc.robot.molib.prefs.AngleUnitPref;
 import frc.robot.molib.prefs.AngularAccelerationUnitPref;
 import frc.robot.molib.prefs.AngularVelocityUnitPref;
+import frc.robot.molib.prefs.DimensionlessUnitPref;
 import frc.robot.molib.prefs.LinearVelocityUnitPref;
 import frc.robot.molib.prefs.MoPrefsBase;
 import frc.robot.molib.prefs.Pref;
@@ -32,20 +33,27 @@ public class MoPrefs extends MoPrefsBase {
     public static final Pref<Boolean> enableHeadingCorrection = booleanPref("Swerve heading correction", true);
 
     // **** INTAKE WRIST ****
-    public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
-    public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
-            voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
 
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
             ampsPref("Intake Wrist Smart Current Limit", Units.Amps.of(20));
 
-    public static final TimeUnitPref intakeHighCurrentWristTime =
-            secondsPref("Intake High Current Wrist Time", Units.Seconds.one());
-
     public static final TimeUnitPref intakeRampTime = secondsPref("Intake Ramp Time", Units.Seconds.of(0.5));
 
-    public static final TimeUnitPref intakeAgitationTimeoutTime =
-            secondsPref("Intake Agitation Timeout Time", Units.Seconds.of(0.5));
+    public static final UnitPref<CurrentUnit> intakeWristCurrentThresh =
+            ampsPref("Intake Wrist Current Thresh", Units.Amps.of(20));
+    public static final TimeUnitPref intakeWristCurrentTime =
+            secondsPref("Intake Wrist Current Time", Units.Seconds.of(0.5));
+
+    public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
+    public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
+            voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
+
+    public static final AngleUnitPref intakeAgitateLowPos =
+            rotationsPref("Intake Wrist Agitate Low", Units.Rotations.of(0.45));
+    public static final AngleUnitPref intakeAgitateHighPos =
+            rotationsPref("Intake Wrist Agitate High", Units.Rotations.of(0.25));
+    public static final TimeUnitPref intakeAgitateTimeout =
+            secondsPref("Intake Wrist Agitate Timeout", Units.Seconds.of(0.5));
 
     // **** INTAKE ROLLERS ****
     public static final UnitPref<VoltageUnit> intakeRollerVoltage = voltsPref("Intake Roller Power", Units.Volts.of(5));
@@ -53,22 +61,20 @@ public class MoPrefs extends MoPrefsBase {
             ampsPref("Intake Rollers Current Limit", Units.Amps.of(20));
 
     // **** HOPPER / INDEXER ****
-    public static final AngularVelocityUnitPref indexerRunSpeed =
-            rotationsPerSecPref("Indexer Run Speed", Units.RevolutionsPerSecond.of(1500));
+    public static final UnitPref<VoltageUnit> indexerRunPower = voltsPref("Indexer Run Power", Units.Volts.of(12));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> indexerEncoderScale =
-            encoderTicksPerRotationPref("Indexer Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(32));
+            encoderTicksPerRotationPref("Indexer Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(4));
     public static final UnitPref<CurrentUnit> indexerRollerSmartCurrentLimit =
             ampsPref("Indexer Current Limit", Units.Amps.of(40));
 
     // **** KICKER ****
-    public static final AngularVelocityUnitPref kickerRunSpeed =
-            rotationsPerSecPref("Kicker Run Speed", Units.RevolutionsPerSecond.of(1500));
+    public static final AngularVelocityUnitPref kickerRunSpeed = rpmPref("Kicker Run Speed", Units.RPM.of(1000));
     public static final UnitPref<CurrentUnit> kickerCurrentLimit = ampsPref("Kicker Current Limit", Units.Amps.of(40));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> kickerEncoderScale =
-            encoderTicksPerRotationPref("Kicker Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(32));
+            encoderTicksPerRotationPref("Kicker Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(4));
+    public static final AngularVelocityUnitPref kickerClearSpeed = rpmPref("Kicker Clear Speed", Units.RPM.of(300));
 
     // **** TURRET ****
-
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> turretRelativeEncoderScale =
             encoderTicksPerRotationPref(
                     "Turret Relative Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(255.0 / 8.0));
@@ -141,6 +147,12 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final AngularVelocityUnitPref flywheelFallbackSetpoint =
             rpmPref("Flywheel Fallback Setpoint", Units.RPM.of(3000));
+
+    public static final AngularVelocityUnitPref flywheelClearSpeed = rpmPref("Flywheel Clear Speed", Units.RPM.of(300));
+    public static final TimeUnitPref shooterClearTime = secondsPref("Shooter Clear Time", Units.Seconds.of(0.25));
+
+    // **** LEDS ****
+    public static final DimensionlessUnitPref ledBrightness = percentPref("LED Brightness", Units.Percent.of(40));
 
     // **** AUTO ****
     // TODO: Find auto preferences

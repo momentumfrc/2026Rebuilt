@@ -18,17 +18,16 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
-import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -66,7 +65,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         motor2.setControl(new Follower(Constants.SHOOTER_1_ADDRESS.address(), MotorAlignmentValue.Opposed));
 
-        encoder = MoRotationEncoder.forTalonFx(motor1, Units.Revolutions);
+        encoder = MoRotationEncoder.forTalonFx(motor1, Units.Revolutions, motor1Config);
         pid = new MoTalonFxPID<>(Type.VELOCITY, motor1, encoder.getInternalEncoderUnits());
 
         TunerUtils.forMoTalonFx(pid, "Shooter PID");
@@ -75,8 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
         flywheelCurrentPublisher = table.getDoubleTopic("Flywheel Current").publish();
         flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed (RPM)").publish();
 
-        flywheelTestSetpointEntry =
-                table.getDoubleTopic("Flywheel Test Setpoint").getEntry(500);
+        flywheelTestSetpointEntry = NTHelpers.getDoubleEntry(table, "Flywheel Test Setpoint (RPM)", 500);
 
         calculatedFlywheelSpeedPublisher =
                 table.getDoubleTopic("Calculated Flywheel Speed (RPM)").publish();
@@ -113,16 +111,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command getTestCommand(XboxController controller) {
-        return Commands.startRun(
-                        () -> flywheelSpeedPublisher.set(500),
-                        () -> {
-                            if (controller.getRightBumperButton()) {
-                                runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
-                            } else {
-                                stop();
-                            }
-                        },
-                        this)
+        return run(() -> {
+                    if (controller.getBButton()) {
+                        runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
+                    } else {
+                        stop();
+                    }
+                })
                 .withName("ShooterTestCommand");
     }
 

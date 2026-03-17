@@ -3,10 +3,11 @@ package frc.robot.shootutils;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -14,12 +15,10 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutDistance;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.util.datalog.StructLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
+import frc.robot.molib.NTHelpers;
 import frc.robot.subsystem.TurretSubsystem;
 
 /**
@@ -29,10 +28,6 @@ import frc.robot.subsystem.TurretSubsystem;
  */
 public final class TurretTargeting {
     private static final int NUM_LOOKAHEAD_ESTIMATION_ITERATIONS = 20;
-
-    private static final Transform2d robotToTurret = new Transform2d(
-            TurretSubsystem.robotToTurret.getTranslation().toTranslation2d(),
-            TurretSubsystem.robotToTurret.getRotation().toRotation2d());
 
     private final RobotPositioning positioning;
 
@@ -59,27 +54,31 @@ public final class TurretTargeting {
     private Rotation2d lastGoalAngle = null;
     private LinearFilter turretAngleVelocityFilter = LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
 
-    private final StructLogEntry<Translation2d> targetLogger;
-    private final StructLogEntry<Pose2d> phaseDelayEstimatedPoseLogger;
-    private final StructLogEntry<Pose2d> lookaheadPoseLogger;
-    private final StructLogEntry<Pose2d> turretPositionLogger;
-    private final StructLogEntry<Rotation2d> outputGoalAngleLogger;
-    private final DoubleLogEntry outputOmegaLogger;
-    private final DoubleLogEntry outputDistanceToTargetLogger;
+    private final StructPublisher<Translation2d> targetPublisher;
+    private final StructPublisher<Pose2d> phaseDelayEstimatedPosePublisher;
+    private final StructPublisher<Pose2d> lookaheadPosePublisher;
+    private final StructPublisher<Pose2d> turretPositionPublisher;
+    private final StructPublisher<Rotation2d> outputGoalAnglePublisher;
+    private final DoublePublisher outputOmegaPublisher;
+    private final DoublePublisher outputDistanceToTargetPublisher;
 
     public TurretTargeting(RobotPositioning positioning) {
         this.positioning = positioning;
 
-        var log = DataLogManager.getLog();
-        final String logPrefix = "sotf-targeting/";
-        targetLogger = StructLogEntry.create(log, logPrefix + "target", Translation2d.struct);
-        phaseDelayEstimatedPoseLogger =
-                StructLogEntry.create(log, logPrefix + "phase delay estimated pose", Pose2d.struct);
-        lookaheadPoseLogger = StructLogEntry.create(log, logPrefix + "lookahead pose", Pose2d.struct);
-        turretPositionLogger = StructLogEntry.create(log, logPrefix + "turret position", Pose2d.struct);
-        outputGoalAngleLogger = StructLogEntry.create(log, logPrefix + "output goal angle", Rotation2d.struct);
-        outputOmegaLogger = new DoubleLogEntry(log, logPrefix + "output goal angular velocity");
-        outputDistanceToTargetLogger = new DoubleLogEntry(log, logPrefix + "output distance to target");
+        var table = NTHelpers.getTable("turret-targeting");
+        targetPublisher = table.getStructTopic("target", Translation2d.struct).publish();
+        phaseDelayEstimatedPosePublisher = table.getStructTopic("phase delay estimated pose", Pose2d.struct)
+                .publish();
+        lookaheadPosePublisher =
+                table.getStructTopic("lookahead pose", Pose2d.struct).publish();
+        turretPositionPublisher =
+                table.getStructTopic("turret position", Pose2d.struct).publish();
+        outputGoalAnglePublisher =
+                table.getStructTopic("output goal angle", Rotation2d.struct).publish();
+        outputOmegaPublisher =
+                table.getDoubleTopic("output goal angular velocity").publish();
+        outputDistanceToTargetPublisher =
+                table.getDoubleTopic("output distance to target").publish();
     }
 
     /**
@@ -102,20 +101,22 @@ public final class TurretTargeting {
                 robotRelativeVelocity.vyMetersPerSecond * phaseDelaySeconds,
                 robotRelativeVelocity.omegaRadiansPerSecond * phaseDelaySeconds));
 
-        phaseDelayEstimatedPoseLogger.append(estimatedPose);
+        phaseDelayEstimatedPosePublisher.set(estimatedPose);
         return estimatedPose;
     }
 
     private double calculateTurretVelocityX(ChassisSpeeds robotVelocity, double robotAngle) {
         return robotVelocity.vxMetersPerSecond
                 + robotVelocity.omegaRadiansPerSecond
-                        * (robotToTurret.getY() * Math.cos(robotAngle) - robotToTurret.getX() * Math.sin(robotAngle));
+                        * (TurretSubsystem.robotToTurret.getY() * Math.cos(robotAngle)
+                                - TurretSubsystem.robotToTurret.getX() * Math.sin(robotAngle));
     }
 
     private double calculateTurretVelocityY(ChassisSpeeds robotVelocity, double robotAngle) {
         return robotVelocity.vyMetersPerSecond
                 + robotVelocity.omegaRadiansPerSecond
-                        * (robotToTurret.getX() * Math.cos(robotAngle) - robotToTurret.getY() * Math.sin(robotAngle));
+                        * (TurretSubsystem.robotToTurret.getX() * Math.cos(robotAngle)
+                                - TurretSubsystem.robotToTurret.getY() * Math.sin(robotAngle));
     }
 
     private final MutDistance distanceToTargetForTOFEstimation =
@@ -149,7 +150,7 @@ public final class TurretTargeting {
             lookaheadTurretToTargetDistance = target.getDistance(lookaheadPose.getTranslation());
         }
 
-        lookaheadPoseLogger.append(lookaheadPose);
+        lookaheadPosePublisher.set(lookaheadPose);
         return lookaheadPose;
     }
 
@@ -166,8 +167,8 @@ public final class TurretTargeting {
 
     private Pose2d getSOTMTurretPose(Translation2d target) {
         Pose2d estimatedPose = getEstimatedPoseAfterPhaseDelay();
-        var turretPosition = estimatedPose.transformBy(robotToTurret);
-        turretPositionLogger.append(turretPosition);
+        var turretPosition = estimatedPose.transformBy(TurretSubsystem.robotToTurret);
+        turretPositionPublisher.set(turretPosition);
 
         ChassisSpeeds robotVelocity = positioning.getFieldVelocity();
         Rotation2d robotAngle = estimatedPose.getRotation();
@@ -177,14 +178,14 @@ public final class TurretTargeting {
 
     private Pose2d getStationaryTurretPose() {
         var robotPose = getEstimatedPoseAfterPhaseDelay();
-        var turretPosition = robotPose.transformBy(robotToTurret);
-        turretPositionLogger.append(turretPosition);
+        var turretPosition = robotPose.transformBy(TurretSubsystem.robotToTurret);
+        turretPositionPublisher.set(turretPosition);
 
         return turretPosition;
     }
 
     private TurretSetpoint targetPosition(Translation2d target, Pose2d turretPose) {
-        targetLogger.append(target);
+        targetPublisher.set(target);
 
         Rotation2d goalAngle = target.minus(turretPose.getTranslation()).getAngle();
         double goalVelocity = calculateGoalVelocity(goalAngle);
@@ -198,9 +199,9 @@ public final class TurretTargeting {
         outputSetpoint.goalVelocity.mut_replace(robotRelativeGoalVelocity, Units.RadiansPerSecond);
         outputSetpoint.targetDistance.mut_replace(turretToTargetDistance, Units.Meters);
 
-        outputGoalAngleLogger.append(robotRelativeGoalAngle);
-        outputOmegaLogger.append(robotRelativeGoalVelocity);
-        outputDistanceToTargetLogger.append(turretToTargetDistance);
+        outputGoalAnglePublisher.set(robotRelativeGoalAngle);
+        outputOmegaPublisher.set(robotRelativeGoalVelocity);
+        outputDistanceToTargetPublisher.set(turretToTargetDistance);
 
         return outputSetpoint;
     }

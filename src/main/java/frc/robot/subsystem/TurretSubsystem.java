@@ -1,7 +1,5 @@
 package frc.robot.subsystem;
 
-import static edu.wpi.first.math.util.Units.degreesToRadians;
-
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
@@ -12,9 +10,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.BooleanEntry;
@@ -33,7 +32,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.DIOAbsEncoder;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.encoder.absolute.MoAbsoluteEncoder;
@@ -52,7 +51,6 @@ import frc.robot.molib.prefs.MoPrefsUtils;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.shootutils.TurretTargeting.TurretSetpoint;
 import frc.robot.util.LimelightTargetingHelper;
-import frc.robot.util.NTHelpers;
 import frc.robot.util.OdometryTargetingHelper;
 import frc.robot.util.SysIdUtil;
 import frc.robot.util.TurretAngleHelper;
@@ -62,9 +60,9 @@ public class TurretSubsystem extends SubsystemBase {
     private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
     private static final int ENCODER_2_GEAR_TOOTH_COUNT = 12;
 
-    public static final Transform3d robotToTurret = new Transform3d(-0.154305, -0.031750, 0.381, Rotation3d.kZero);
-    public static final Transform3d turretToCamera =
-            new Transform3d(0.181656, 0, 0.146352, new Rotation3d(0, degreesToRadians(15), 0));
+    public static final Transform2d robotToTurret =
+            new Transform2d(new Translation2d(-0.144780, -0.031750), Rotation2d.kZero);
+    public static final Transform2d turretToCamera = new Transform2d(new Translation2d(0.181301, 0), Rotation2d.kZero);
 
     private enum TurretAlignMode {
         ODOMETRY,
@@ -76,21 +74,6 @@ public class TurretSubsystem extends SubsystemBase {
     private final TalonFX turretMotor;
     private final TalonFXConfiguration turretMotorConfig;
     private final MoRotationEncoder turretEncoder;
-
-    public static class TimestampedEncoderReading {
-        private MutAngle value = Units.Radians.mutable(0);
-        private double timestamp;
-
-        public Angle value() {
-            return value;
-        }
-
-        public double timestamp() {
-            return timestamp;
-        }
-    }
-
-    private TimestampedEncoderReading timestampedTurretYaw = new TimestampedEncoderReading();
 
     /*
      * Notes about the encoders.
@@ -114,6 +97,9 @@ public class TurretSubsystem extends SubsystemBase {
 
     private final MutAngle goalAngle = Units.Rotations.mutable(0);
     private final MutAngularVelocity goalVelocity = Units.RPM.mutable(0);
+    private Rotation2d lastOORAngle = null;
+    private final LinearFilter turretOORVelocityFilter =
+            LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
 
     private final LimelightTargetingHelper targetingHelper;
     private final DoublePublisher relativeEncoderPublisher;
@@ -123,6 +109,9 @@ public class TurretSubsystem extends SubsystemBase {
     private final IntegerPublisher targetTagPublisher;
     private final BooleanPublisher hitForwardSoftLimit;
     private final BooleanPublisher hitReverseSoftLimit;
+    private final DoublePublisher goalAnglePublisher;
+    private final DoublePublisher goalVelocityPublisher;
+    private final BooleanEntry targetInRange;
 
     private final BooleanEntry passiveTrackingEntry;
     private final BooleanEntry coastMotorEntry;
@@ -139,19 +128,24 @@ public class TurretSubsystem extends SubsystemBase {
         targetTagPublisher = table.getIntegerTopic("Target Tag ID").publish();
         hitForwardSoftLimit = table.getBooleanTopic("Forward Soft Limit").publish();
         hitReverseSoftLimit = table.getBooleanTopic("Reverse Soft Limit").publish();
+        goalAnglePublisher = table.getDoubleTopic("Goal Angle (degs)").publish();
+        goalVelocityPublisher = table.getDoubleTopic("Goal Speed (degs_s)").publish();
+
+        targetInRange = table.getBooleanTopic("Target In Range").getEntry(false);
 
         passiveTrackingEntry = NTHelpers.getBooleanEntry(table, "Passive Tracking", true);
         coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
         hasZero = NTHelpers.getBooleanEntry(table, "Has Zero", false);
-        rezeroEveryLoop = NTHelpers.getBooleanEntry(table, "Rezero Every Loop", true);
+        rezeroEveryLoop = NTHelpers.getBooleanEntry(table, "Rezero Every Loop", false);
 
         NTHelpers.publishSendable(table, "Align Mode", alignModeChooser);
 
         /* ==== MOTOR SETUP === */
         this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
-        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Rotations);
+        this.turretMotorConfig = new TalonFXConfiguration();
+        this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Rotations, turretMotorConfig);
 
-        this.turretMotorConfig = new TalonFXConfiguration()
+        turretMotorConfig
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withInverted(InvertedValue.CounterClockwise_Positive))
@@ -164,7 +158,8 @@ public class TurretSubsystem extends SubsystemBase {
                         .withForwardSoftLimitEnable(true))
                 .withVoltage(new VoltageConfigs()
                         .withPeakForwardVoltage((Voltage) MoPrefs.turretMaxPower.get())
-                        .withPeakReverseVoltage((Voltage) MoPrefs.turretMaxPower.get()))
+                        .withPeakReverseVoltage(
+                                (Voltage) MoPrefs.turretMaxPower.get().unaryMinus()))
                 .withClosedLoopRamps(
                         new ClosedLoopRampsConfigs().withVoltageClosedLoopRampPeriod(MoPrefs.turretVoltRampRate.get()))
                 .withOpenLoopRamps(
@@ -229,12 +224,12 @@ public class TurretSubsystem extends SubsystemBase {
                 MoPrefs.turretMaxAcceleration,
                 (maxVel, maxAcc) -> {
                     this.profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
-                            maxVel.in(Units.RadiansPerSecond), maxAcc.in(Units.RadiansPerSecondPerSecond)));
+                            maxVel.in(Units.DegreesPerSecond), maxAcc.in(Units.DegreesPerSecondPerSecond)));
                 },
                 true);
 
         this.turretAbsolutePid = new MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit>(
-                turretMotor, turretEncoder.getInternalEncoderUnits());
+                turretMotor, turretEncoder.getInternalEncoderUnits(), turretMotorConfig);
         TunerUtils.forMoTalonFxProfile(turretAbsolutePid, "Turret Absolute Position");
 
         this.targetingHelper = new LimelightTargetingHelper(Constants.TURRET_LIMELIGHT_NAME);
@@ -282,19 +277,6 @@ public class TurretSubsystem extends SubsystemBase {
         return turretEncoder.getPosition();
     }
 
-    public TimestampedEncoderReading getTimestampedTurretYaw() {
-        var encoderReading = turretMotor.getPosition();
-        var timestamp = encoderReading.getTimestamp();
-        if (timestamp.isValid()) {
-            timestampedTurretYaw.timestamp = timestamp.getTime();
-        } else {
-            timestampedTurretYaw.timestamp = Timer.getTimestamp();
-        }
-        timestampedTurretYaw.value.mut_replace(
-                encoderReading.getValueAsDouble(), turretEncoder.getInternalEncoderUnits());
-        return timestampedTurretYaw;
-    }
-
     /**
      * Get the current angular velocity of the turret about its axis of rotation.
      */
@@ -330,30 +312,50 @@ public class TurretSubsystem extends SubsystemBase {
         alignAbsolute(setpoint.goalAngle(), setpoint.goalVelocity());
     }
 
+    private double calculateOutOfRangeVelocity(Rotation2d angle) {
+        if (lastOORAngle == null) {
+            turretOORVelocityFilter.reset();
+            lastOORAngle = angle;
+        }
+        double velocity =
+                turretOORVelocityFilter.calculate(angle.minus(lastOORAngle).getDegrees() / Constants.LOOP_PERIOD);
+        lastOORAngle = angle;
+        return velocity;
+    }
+
+    public boolean targetInRange() {
+        return targetInRange.get();
+    }
+
     /**
      * Align to a specified goalAngle and goalVelocity in robot coordinates.
      */
     public void alignAbsolute(Angle goalAngle, AngularVelocity goalVelocity) {
+        goalAnglePublisher.set(goalAngle.in(Units.Degrees));
+        goalVelocityPublisher.set(goalVelocity.in(Units.DegreesPerSecond));
+
         if (hasZero.get() == false) {
             stop();
             return;
         }
 
-        Angle moduloGoalAngle = angleHelper.turretAngleModulus(goalAngle);
-        if (moduloGoalAngle == null) {
-            // desired angle is outside the turret's range of motion
-            turretMotor.stopMotor();
-            return;
-        }
+        TurretAngleHelper.Result result = angleHelper.turretAngleModulus(goalAngle);
+        targetInRange.set(result.inRange());
 
         State currentState =
-                new State(getTurretYaw().in(Units.Radians), getTurretYawRate().in(Units.RadiansPerSecond));
-        State goalState = new State(moduloGoalAngle.in(Units.Radians), goalVelocity.in(Units.RadiansPerSecond));
+                new State(getTurretYaw().in(Units.Degrees), getTurretYawRate().in(Units.DegreesPerSecond));
+
+        State goalState;
+        if (result.inRange()) {
+            goalState = new State(result.angle().getDegrees(), goalVelocity.in(Units.DegreesPerSecond));
+            lastOORAngle = null;
+        } else {
+            goalState = new State(result.angle().getDegrees(), calculateOutOfRangeVelocity(result.angle()));
+        }
         State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
 
-        this.goalAngle.mut_replace(setpoint.position, Units.Radians);
-        this.goalVelocity.mut_replace(setpoint.velocity, Units.RadiansPerSecond);
-
+        this.goalAngle.mut_replace(setpoint.position, Units.Degrees);
+        this.goalVelocity.mut_replace(setpoint.velocity, Units.DegreesPerSecond);
         this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
     }
 
@@ -374,8 +376,11 @@ public class TurretSubsystem extends SubsystemBase {
         if (relativeTargetIsVisible() == false) {
             // No target visible
             stop();
+            targetInRange.set(false);
             return;
         }
+
+        targetInRange.set(true);
 
         double result = turretRelativePid.calculate(targetingHelper.getTx(), 0);
         turretMotor.setVoltage(result);
@@ -414,6 +419,13 @@ public class TurretSubsystem extends SubsystemBase {
                     }
                 })
                 .withName("TurretTestCommand");
+
+        /*return run( () -> {
+            double spd = -1 * testController.getLeftY();
+            var spd2 = MoPrefs.turretMaxVelocity.get().times(spd);
+            this.turretAbsolutePid.setReference(getTurretYaw(), spd2);
+        }).withName("TurretTestCommand");
+        */
     }
 
     @Override
