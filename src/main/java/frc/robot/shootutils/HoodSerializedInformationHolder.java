@@ -30,7 +30,7 @@ import java.util.List;
 public class HoodSerializedInformationHolder {
     private static final File DATA_FILE = new File(Filesystem.getDeployDirectory(), "shooter-data.json");
 
-    public static final DistanceUnit DISTANCE_STORE_UNIT = Units.Inches;
+    public static final DistanceUnit DISTANCE_STORE_UNIT = Units.Meters;
     public static final AngleUnit HOOD_ANGLE_STORE_UNIT = Units.Degrees;
     public static final AngularVelocityUnit FLYWHEEL_SPEED_STORE_UNIT = Units.RPM;
     public static final TimeUnit TIME_OF_FLIGHT_STORE_UNIT = Units.Seconds;

@@ -56,7 +56,7 @@ public class RobotContainer {
     // **** COMMANDS ****
     private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
 
-    private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
+    private final ShootCommand shootCommand = new ShootCommand(turretTargetingHelper, indexer, kicker, turret, shooter, hood);
 
     private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
 
@@ -171,7 +171,7 @@ public class RobotContainer {
 
         runIntakeTrigger.whileTrue(runKickerCommand);
 
-        (shootTrigger.or(runIntakeTrigger)).and(reverseIndexerTrigger.negate()).whileTrue(runIndexerCommand);
+        runIntakeTrigger.and(reverseIndexerTrigger.negate()).and(shootTrigger.negate()).whileTrue(runIndexerCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);

@@ -78,7 +78,7 @@ public class RobotPositioning {
         LimelightHelpers.setCameraPose_RobotSpace(Constants.TURRET_LIMELIGHT_NAME, 0, 0, 0.541193, 0, 15, 0);
 
         LimelightHelpers.setCameraPose_RobotSpace(
-                Constants.STATIONARY_LIMELIGHT_NAME, -0.328071, 0.031750, 0.295345, 0, 10, 0);
+                Constants.STATIONARY_LIMELIGHT_NAME, -0.328071, 0.031750, 0.295345, 0, 10, 180);
 
         robotPosePublisher = table.getStructTopic("robot pose", Pose2d.struct).publish();
         turretLLAprilTagsPublisher =
@@ -291,7 +291,7 @@ public class RobotPositioning {
 
         var encoderReading = turretYawSupplier.get();
         turretYawBuffer.addSample(
-                encoderReading.timestamp(),
+                Timer.getFPGATimestamp(),
                 Rotation2d.fromRadians(encoderReading.value().in(Units.Radians)));
         turretPosPublisher.set(new double[] {encoderReading.value().in(Units.Degrees), encoderReading.timestamp()});
         turretPosLatencyPublisher.set(Timer.getFPGATimestamp() - encoderReading.timestamp());

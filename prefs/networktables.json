@@ -58,7 +58,7 @@
   {
     "name": "/Preferences/Intake Wrist Power (V)",
     "type": "double",
-    "value": 6.0,
+    "value": 8.0,
     "properties": {
       "persistent": true
     }
@@ -66,7 +66,7 @@
   {
     "name": "/Preferences/Intake Wrist Hold Power (V)",
     "type": "double",
-    "value": 1.0,
+    "value": 0.125,
     "properties": {
       "persistent": true
     }
@@ -74,15 +74,7 @@
   {
     "name": "/Preferences/Intake Wrist Smart Current Limit (A)",
     "type": "double",
-    "value": 20.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake High Current Wrist Time (s)",
-    "type": "double",
-    "value": 2.0,
+    "value": 25.0,
     "properties": {
       "persistent": true
     }
@@ -90,15 +82,7 @@
   {
     "name": "/Preferences/Intake Ramp Time (s)",
     "type": "double",
-    "value": 0.5,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake Agitation Timeout Time (s)",
-    "type": "double",
-    "value": 0.5,
+    "value": 1.0,
     "properties": {
       "persistent": true
     }
@@ -194,7 +178,7 @@
   {
     "name": "/Preferences/Turret Max Soft Limit (°)",
     "type": "double",
-    "value": 90.0,
+    "value": 154.0,
     "properties": {
       "persistent": true
     }
@@ -234,7 +218,7 @@
   {
     "name": "/Preferences/Turret Max Acceleration (°_s_s)",
     "type": "double",
-    "value": 3600.0,
+    "value": 1800.0,
     "properties": {
       "persistent": true
     }
@@ -258,7 +242,7 @@
   {
     "name": "/Preferences/Hood Max Velocity (°_s)",
     "type": "double",
-    "value": 1000.0000000000001,
+    "value": 2400.0,
     "properties": {
       "persistent": true
     }
@@ -266,7 +250,7 @@
   {
     "name": "/Preferences/Hood Max Acceleration (°_s_s)",
     "type": "double",
-    "value": 1000.0000000000001,
+    "value": 1200.0,
     "properties": {
       "persistent": true
     }
@@ -282,7 +266,7 @@
   {
     "name": "/Preferences/Hood Max Soft Limit (°)",
     "type": "double",
-    "value": 37.5,
+    "value": 35.0,
     "properties": {
       "persistent": true
     }
@@ -402,7 +386,7 @@
   {
     "name": "/momentum-tuners/Turret Absolute Position/tolerance",
     "type": "double",
-    "value": 0.0,
+    "value": 0.02,
     "properties": {
       "persistent": true
     }
@@ -562,7 +546,7 @@
   {
     "name": "/momentum-tuners/Shooter PID/kP",
     "type": "double",
-    "value": 0.0,
+    "value": 0.17019,
     "properties": {
       "persistent": true
     }
@@ -570,7 +554,7 @@
   {
     "name": "/momentum-tuners/Shooter PID/ff_kV",
     "type": "double",
-    "value": 0.0,
+    "value": 0.11544,
     "properties": {
       "persistent": true
     }
@@ -578,7 +562,7 @@
   {
     "name": "/momentum-tuners/Shooter PID/ff_kA",
     "type": "double",
-    "value": 0.0,
+    "value": 0.0078639,
     "properties": {
       "persistent": true
     }
@@ -594,7 +578,7 @@
   {
     "name": "/momentum-tuners/Shooter PID/ff_kS",
     "type": "double",
-    "value": 0.0,
+    "value": 0.11794,
     "properties": {
       "persistent": true
     }
@@ -610,7 +594,7 @@
   {
     "name": "/momentum-tuners/Shooter PID/tolerance",
     "type": "double",
-    "value": 0.0,
+    "value": 10.0,
     "properties": {
       "persistent": true
     }
@@ -618,7 +602,7 @@
   {
     "name": "/momentum-tuners/Hood PID/kP",
     "type": "double",
-    "value": 0.0,
+    "value": 0.001,
     "properties": {
       "persistent": true
     }
@@ -626,7 +610,7 @@
   {
     "name": "/momentum-tuners/Hood PID/ff_kV",
     "type": "double",
-    "value": 0.0,
+    "value": 1.2042,
     "properties": {
       "persistent": true
     }
@@ -650,7 +634,7 @@
   {
     "name": "/momentum-tuners/Hood PID/ff_kS",
     "type": "double",
-    "value": 0.0,
+    "value": 0.38968,
     "properties": {
       "persistent": true
     }
@@ -666,7 +650,7 @@
   {
     "name": "/momentum-tuners/Hood PID/tolerance",
     "type": "double",
-    "value": 0.0,
+    "value": 0.005,
     "properties": {
       "persistent": true
     }
@@ -699,6 +683,46 @@
     "name": "/Preferences/Kicker Run Speed (R_min)",
     "type": "double",
     "value": 1500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Current Thresh (A)",
+    "type": "double",
+    "value": 17.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Current Time (s)",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Agitate Low (R)",
+    "type": "double",
+    "value": 0.45,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Agitate High (R)",
+    "type": "double",
+    "value": 0.25,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Agitate Timeout (s)",
+    "type": "double",
+    "value": 0.5,
     "properties": {
       "persistent": true
     }

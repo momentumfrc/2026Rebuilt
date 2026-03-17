@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
+import frc.robot.molib.MoUnits;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.util.NTHelpers;
 
@@ -55,6 +56,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
                 config.openLoopRampRate(rampTime.in(Units.Seconds)).closedLoopRampRate(rampTime.in(Units.Seconds))));
 
         wristEncoder = MoRotationEncoder.forSparkRelative(intakeWrist, Units.Rotations);
+        wristEncoder.setConversionFactor(MoUnits.EncoderTicksPerRotation.ofNative(72));
 
         var table = NTHelpers.getTable("Intake Wrist");
         wristCurrentPublisher = table.getDoubleTopic("Intake Wrist Current").publish();
@@ -80,10 +82,6 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public void zeroEncoder() {
-        if (hasZeroEntry.get()) {
-            return;
-        }
-
         wristEncoder.setPosition(Units.Rotations.zero());
         hasZeroEntry.set(true);
     }
@@ -94,7 +92,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        wristCurrentPublisher.set(intakeWristCurrent.in(Units.Amps));
+        wristCurrentPublisher.set(getIntakeWristCurrent().in(Units.Amps));
         positionPublisher.set(intakeWrist.getEncoder().getPosition());
 
         wristVoltagePublisher.set(intakeWrist.getAppliedOutput() * intakeWrist.getBusVoltage());

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.MoPrefs;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.HoodSubsystem;
+import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
@@ -26,6 +27,7 @@ public class ShootCommand extends Command {
     private final TurretSubsystem turret;
     private final ShooterSubsystem shooter;
     private final HoodSubsystem hood;
+    private final IndexerSubsystem indexer;
 
     private final TurretTargeting targeting;
 
@@ -50,11 +52,13 @@ public class ShootCommand extends Command {
 
     public ShootCommand(
             TurretTargeting targeting,
+            IndexerSubsystem indexer,
             KickerSubsystem kicker,
             TurretSubsystem turret,
             ShooterSubsystem shooter,
             HoodSubsystem hood) {
         this.targeting = targeting;
+        this.indexer = indexer;
         this.kicker = kicker;
         this.turret = turret;
         this.shooter = shooter;
@@ -66,11 +70,11 @@ public class ShootCommand extends Command {
         var shooterFlywheelTable = NTHelpers.getTable("shooter-flywheel");
         doOverrideFlywheelSetpoint =
                 NTHelpers.getBooleanEntry(shooterFlywheelTable, "Override Flywheel Setpoint?", false);
-        overrideFlywheelSetpoint = NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Test Setpoint (RPM)", 120);
+        overrideFlywheelSetpoint = NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Override Setpoint (RPM)", 120);
 
         var shooterHoodTable = NTHelpers.getTable("shooter-hood");
         doOverrideHoodSetpoint = NTHelpers.getBooleanEntry(shooterHoodTable, "Override Hood Setpoint?", false);
-        overrideHoodSetpoint = NTHelpers.getDoubleEntry(shooterHoodTable, "Hood Test Setpoint (°)", 10);
+        overrideHoodSetpoint = NTHelpers.getDoubleEntry(shooterHoodTable, "Hood Override Setpoint (°)", 10);
 
         addRequirements(kicker, turret, shooter, hood);
     }
@@ -92,6 +96,7 @@ public class ShootCommand extends Command {
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
 
+                indexer.stop();
                 kicker.stop();
                 shooter.stop();
                 hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
@@ -116,6 +121,7 @@ public class ShootCommand extends Command {
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
 
+                indexer.stop();
                 kicker.stop();
                 shooter.stop();
                 hood.setPosition(MoPrefs.hoodDeadzonePosition.get());
@@ -139,8 +145,10 @@ public class ShootCommand extends Command {
         targetOutOfRange.set(false);
 
         if (turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed()) {
+            indexer.run();
             kicker.run();
         } else {
+            indexer.stop();
             kicker.stop();
         }
     }

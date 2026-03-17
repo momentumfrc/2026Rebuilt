@@ -1,40 +1,21 @@
 {
   "entries": [
     {
-      "distance": 26,
-      "hoodAngle": 3.9,
-      "flywheelSpeed": 2500,
-      "timeOfFlight": 0.962
-    }, {
-      "distance": 32,
-      "hoodAngle": 7,
-      "flywheelSpeed": 2300,
-      "timeOfFlight": 0.893
-    },{
-      "distance": 40,
-      "hoodAngle": 11,
-      "flywheelSpeed": 2375,
-      "timeOfFlight": 0.963
-    }, {
-      "distance": 60,
+        "distance": 1.066,
+        "hoodAngle": 2,
+        "flywheelSpeed": 3000,
+        "timeOfFlight": 1.29
+    },
+    {
+      "distance": 2.30,
       "hoodAngle": 17,
-      "flywheelSpeed": 2300,
-      "timeOfFlight": 0.844
+      "flywheelSpeed": 2750,
+      "timeOfFlight": 1.0
     }, {
-      "distance": 120,
-      "hoodAngle": 28,
-      "flywheelSpeed": 2575,
-      "timeOfFlight": 1.01
-    }, {
-      "distance": 200,
-      "hoodAngle": 30,
-      "flywheelSpeed": 3300,
-      "timeOfFlight": 1.351
-    }, {
-      "distance": 240,
-      "hoodAngle": 35,
-      "flywheelSpeed": 3400,
-      "timeOfFlight": 1.384
+        "distance": 4.394,
+        "hoodAngle": 18,
+        "flywheelSpeed": 3600,
+        "timeOfFlight": 1.42
     }
   ]
 }

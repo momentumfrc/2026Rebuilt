@@ -76,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
         flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed (RPM)").publish();
 
         flywheelTestSetpointEntry =
-                table.getDoubleTopic("Flywheel Test Setpoint").getEntry(500);
+                NTHelpers.getDoubleEntry(table, "Flywheel Test Setpoint", 500);
 
         calculatedFlywheelSpeedPublisher =
                 table.getDoubleTopic("Calculated Flywheel Speed (RPM)").publish();
@@ -113,16 +113,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command getTestCommand(XboxController controller) {
-        return Commands.startRun(
-                        () -> flywheelTestSetpointEntry.set(500),
-                        () -> {
-                            if (controller.getRightBumperButton()) {
+        return run(() -> {
+                            if (controller.getBButton()) {
                                 runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
                             } else {
                                 stop();
                             }
-                        },
-                        this)
+                        })
                 .withName("ShooterTestCommand");
     }
 
