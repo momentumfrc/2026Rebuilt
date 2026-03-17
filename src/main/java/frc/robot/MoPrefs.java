@@ -71,6 +71,7 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<CurrentUnit> kickerCurrentLimit = ampsPref("Kicker Current Limit", Units.Amps.of(40));
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> kickerEncoderScale =
             encoderTicksPerRotationPref("Kicker Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(4));
+    public static final AngularVelocityUnitPref kickerClearSpeed = rpmPref("Kicker Clear Speed", Units.RPM.of(300));
 
     // **** TURRET ****
     public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> turretRelativeEncoderScale =
@@ -145,4 +146,7 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final AngularVelocityUnitPref flywheelFallbackSetpoint =
             rpmPref("Flywheel Fallback Setpoint", Units.RPM.of(3000));
+
+    public static final AngularVelocityUnitPref flywheelClearSpeed = rpmPref("Flywheel Clear Speed", Units.RPM.of(300));
+    public static final TimeUnitPref shooterClearTime = secondsPref("Shooter Clear Time", Units.Seconds.of(0.25));
 }

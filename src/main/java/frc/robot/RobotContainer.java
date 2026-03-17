@@ -14,6 +14,7 @@ import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
+import frc.robot.molib.Utils;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
@@ -77,6 +78,11 @@ public class RobotContainer {
     private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
 
     private final Command runKickerCommand = kicker.run(kicker::run);
+
+    private final Command clearShooterKickerCommand = Commands.parallel(
+            shooter.run(
+                    () -> shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
+            kicker.run(() -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
@@ -161,7 +167,8 @@ public class RobotContainer {
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
         retractIntakeTrigger.onTrue(retractIntakeWristCommend);
 
-        shootTrigger.whileTrue(shootCommand);
+        shootTrigger.whileTrue(Utils.withTimeoutPref(clearShooterKickerCommand, MoPrefs.shooterClearTime::get)
+                .andThen(shootCommand));
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 

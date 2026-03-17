@@ -7,6 +7,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -43,6 +44,10 @@ public class KickerSubsystem extends SubsystemBase {
         pid = new MoSparkMaxPID<>(MoSparkMaxPID.Type.VELOCITY, motor, ClosedLoopSlot.kSlot0, encoder, config);
 
         TunerUtils.forMoSparkMax(pid, "Kicker PID");
+    }
+
+    public void runAtSpeed(AngularVelocity speed) {
+        pid.setVelocityReference(speed);
     }
 
     public void run() {
