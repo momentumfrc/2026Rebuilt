@@ -56,6 +56,11 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
+    public boolean getClearShooter() {
+        return operatorController.getBButton();
+    }
+
+    @Override
     public boolean getExtendIntake() {
         return driveController.getLeftBumperButton();
     }

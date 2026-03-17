@@ -101,6 +101,7 @@ public class RobotContainer {
 
     private Trigger reverseIndexerTrigger;
 
+    private Trigger clearShooterTrigger;
     private Trigger shootTrigger;
 
     private Trigger zeroHoodTrigger;
@@ -148,6 +149,7 @@ public class RobotContainer {
         extendIntakeTrigger = new Trigger(() -> getInput().getExtendIntake());
         retractIntakeTrigger = new Trigger(() -> getInput().getRetractIntake());
 
+        clearShooterTrigger = new Trigger(() -> getInput().getClearShooter());
         shootTrigger = new Trigger(() -> getInput().getShootRequest());
 
         zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
@@ -169,6 +171,8 @@ public class RobotContainer {
 
         shootTrigger.whileTrue(Utils.withTimeoutPref(clearShooterKickerCommand, MoPrefs.shooterClearTime::get)
                 .andThen(shootCommand));
+
+        clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearShooterKickerCommand);
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
 
