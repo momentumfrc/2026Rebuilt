@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -75,8 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
         flywheelCurrentPublisher = table.getDoubleTopic("Flywheel Current").publish();
         flywheelSpeedPublisher = table.getDoubleTopic("Flywheel Speed (RPM)").publish();
 
-        flywheelTestSetpointEntry =
-                NTHelpers.getDoubleEntry(table, "Flywheel Test Setpoint", 500);
+        flywheelTestSetpointEntry = NTHelpers.getDoubleEntry(table, "Flywheel Test Setpoint (RPM)", 500);
 
         calculatedFlywheelSpeedPublisher =
                 table.getDoubleTopic("Calculated Flywheel Speed (RPM)").publish();
@@ -114,12 +112,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command getTestCommand(XboxController controller) {
         return run(() -> {
-                            if (controller.getBButton()) {
-                                runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
-                            } else {
-                                stop();
-                            }
-                        })
+                    if (controller.getBButton()) {
+                        runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
+                    } else {
+                        stop();
+                    }
+                })
                 .withName("ShooterTestCommand");
     }
 

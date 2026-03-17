@@ -70,7 +70,8 @@ public class ShootCommand extends Command {
         var shooterFlywheelTable = NTHelpers.getTable("shooter-flywheel");
         doOverrideFlywheelSetpoint =
                 NTHelpers.getBooleanEntry(shooterFlywheelTable, "Override Flywheel Setpoint?", false);
-        overrideFlywheelSetpoint = NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Override Setpoint (RPM)", 120);
+        overrideFlywheelSetpoint =
+                NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Override Setpoint (RPM)", 120);
 
         var shooterHoodTable = NTHelpers.getTable("shooter-hood");
         doOverrideHoodSetpoint = NTHelpers.getBooleanEntry(shooterHoodTable, "Override Hood Setpoint?", false);
