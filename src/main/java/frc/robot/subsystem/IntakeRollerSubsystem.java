@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
-import frc.robot.util.NTHelpers;
+import frc.robot.molib.NTHelpers;
 
 public class IntakeRollerSubsystem extends SubsystemBase {
     private final SparkFlex intakeRoller;

@@ -22,12 +22,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
+import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.TunerUtils;
 import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
-import frc.robot.util.NTHelpers;
 import frc.robot.util.SysIdUtil;
 
 public class ShooterSubsystem extends SubsystemBase {

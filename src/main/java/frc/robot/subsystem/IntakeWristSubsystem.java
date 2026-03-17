@@ -15,8 +15,8 @@ import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.MoSparkConfigurator;
 import frc.robot.molib.MoUnits;
+import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.util.NTHelpers;
 
 public class IntakeWristSubsystem extends SubsystemBase {
 

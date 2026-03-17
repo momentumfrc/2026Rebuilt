@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.MoPrefs;
+import frc.robot.molib.NTHelpers;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
-import frc.robot.util.NTHelpers;
 import frc.robot.util.OdometryTargetingHelper;
 
 public class ShootCommand extends Command {
