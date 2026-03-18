@@ -11,6 +11,7 @@ import frc.robot.commands.ShootCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.commands.intake.WristCommands.Direction;
+import frc.robot.molib.NTHelpers;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
@@ -19,7 +20,6 @@ import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
-import frc.robot.util.NTHelpers;
 
 public class AutoChooser {
     private enum AutoChoices {
