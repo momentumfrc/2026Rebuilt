@@ -71,7 +71,8 @@ public class RobotContainer {
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
-    private final Command runIndexerCommand = indexer.run(indexer::run).withName("RunIndexerCommand");
+    private final Command runIndexerToShootCommand = indexer.run(indexer::run).withName("RunIndexerToShootCommand");
+    private final Command runIndexerWithIntakeCommand = indexer.run(indexer::run).withName("RunIndexerWithIntakeCommand");
     private final Command runIndexerReverseCommand =
             indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
 
@@ -177,6 +178,7 @@ public class RobotContainer {
 
         shootTrigger.whileTrue(Utils.withTimeoutPref(clearShooterKickerCommand, MoPrefs.shooterClearTime::get)
                 .andThen(shootCommand));
+        shootTrigger.and(reverseIndexerTrigger.negate()).whileTrue(Commands.waitUntil(shootCommand::readyToShoot).andThen(runIndexerToShootCommand));
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearShooterKickerCommand);
 
@@ -187,11 +189,11 @@ public class RobotContainer {
         lockTrigger.whileTrue(driveSubsystem.lockPose());
 
         runIntakeTrigger.whileTrue(runKickerCommand);
-
+        
         runIntakeTrigger
                 .and(reverseIndexerTrigger.negate())
                 .and(shootTrigger.negate())
-                .whileTrue(runIndexerCommand);
+                .whileTrue(runIndexerWithIntakeCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
