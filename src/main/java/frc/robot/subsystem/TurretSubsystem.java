@@ -113,6 +113,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final BooleanPublisher hitForwardSoftLimit;
     private final BooleanPublisher hitReverseSoftLimit;
     private final DoublePublisher goalAnglePublisher;
+    private final DoublePublisher adjustedGoalAnglePublisher;
     private final DoublePublisher goalVelocityPublisher;
     private final BooleanEntry targetInRange;
 
@@ -132,6 +133,8 @@ public class TurretSubsystem extends SubsystemBase {
         hitForwardSoftLimit = table.getBooleanTopic("Forward Soft Limit").publish();
         hitReverseSoftLimit = table.getBooleanTopic("Reverse Soft Limit").publish();
         goalAnglePublisher = table.getDoubleTopic("Goal Angle (degs)").publish();
+        adjustedGoalAnglePublisher =
+                table.getDoubleTopic("Adjusted Goal Angle (degs)").publish();
         goalVelocityPublisher = table.getDoubleTopic("Goal Speed (degs_s)").publish();
 
         targetInRange = table.getBooleanTopic("Target In Range").getEntry(false);
@@ -334,33 +337,42 @@ public class TurretSubsystem extends SubsystemBase {
      * Align to a specified goalAngle and goalVelocity in robot coordinates.
      */
     public void alignAbsolute(Angle goalAngle, AngularVelocity goalVelocity) {
-        goalAnglePublisher.set(goalAngle.in(Units.Degrees));
-        goalVelocityPublisher.set(goalVelocity.in(Units.DegreesPerSecond));
+        double goalAngleDegrees = goalAngle.in(Units.Degrees);
+        double goalVelDegsPerSec = goalVelocity.in(Units.DegreesPerSecond);
 
-        if (hasZero.get() == false) {
-            stop();
-            return;
-        }
-
-        TurretAngleHelper.Result result = angleHelper.turretAngleModulus(goalAngle);
-        targetInRange.set(result.inRange());
-
-        State currentState =
-                new State(getTurretYaw().in(Units.Degrees), getTurretYawRate().in(Units.DegreesPerSecond));
-
-        State goalState;
-        if (result.inRange()) {
-            goalState = new State(result.angle().getDegrees(), goalVelocity.in(Units.DegreesPerSecond));
-            lastOORAngle = null;
-        } else {
-            goalState = new State(result.angle().getDegrees(), calculateOutOfRangeVelocity(result.angle()));
-        }
+        goalAnglePublisher.set(goalAngleDegrees);
+        goalVelocityPublisher.set(goalVelDegsPerSec);
 
         if (Math.abs(absoluteSetpoint.position - turretEncoder.getPosition().in(Units.Degrees))
                 > TRAPEZOID_STATE_RESET_CUTOFF) {
             absoluteSetpoint = new State(
                     turretEncoder.getPosition().in(Units.Degrees),
                     turretEncoder.getVelocity().in(Units.DegreesPerSecond));
+        }
+
+        double adjustedGoalAngleDegrees = goalAngleDegrees;
+        for (int i = 0; i < 10; i++) {
+            profile.calculate(
+                    Constants.LOOP_PERIOD, absoluteSetpoint, new State(adjustedGoalAngleDegrees, goalVelDegsPerSec));
+            adjustedGoalAngleDegrees = goalAngleDegrees + (goalVelDegsPerSec * profile.totalTime());
+        }
+
+        adjustedGoalAnglePublisher.set(adjustedGoalAngleDegrees);
+
+        if (hasZero.get() == false) {
+            stop();
+            return;
+        }
+
+        TurretAngleHelper.Result result = angleHelper.turretAngleModulusDegrees(adjustedGoalAngleDegrees);
+        targetInRange.set(result.inRange());
+
+        State goalState;
+        if (result.inRange()) {
+            goalState = new State(result.angle().getDegrees(), goalVelDegsPerSec);
+            lastOORAngle = null;
+        } else {
+            goalState = new State(result.angle().getDegrees(), calculateOutOfRangeVelocity(result.angle()));
         }
 
         absoluteSetpoint = profile.calculate(Constants.LOOP_PERIOD, absoluteSetpoint, goalState);

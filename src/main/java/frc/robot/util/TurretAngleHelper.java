@@ -52,6 +52,10 @@ public class TurretAngleHelper {
         return turretAngleModulusRads(angle.in(Units.Radians));
     }
 
+    public Result turretAngleModulusDegrees(double degrees) {
+        return turretAngleModulusRads(Math.toRadians(degrees));
+    }
+
     public Result turretAngleModulusRads(double rads) {
         double minRad = minAngle.getRadians();
         double maxRad = maxAngle.getRadians();
