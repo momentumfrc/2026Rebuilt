@@ -60,6 +60,8 @@ public class TurretSubsystem extends SubsystemBase {
     private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
     private static final int ENCODER_2_GEAR_TOOTH_COUNT = 12;
 
+    private static final int TRAPEZOID_STATE_RESET_CUTOFF = 30;
+
     public static final Transform2d robotToTurret =
             new Transform2d(new Translation2d(-0.144780, -0.031750), Rotation2d.kZero);
     public static final Transform2d turretToCamera = new Transform2d(new Translation2d(0.181301, 0), Rotation2d.kZero);
@@ -92,6 +94,7 @@ public class TurretSubsystem extends SubsystemBase {
     private TurretAngleHelper angleHelper;
 
     private TrapezoidProfile profile;
+    private TrapezoidProfile.State absoluteSetpoint = new TrapezoidProfile.State();
     private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private final PIDController turretRelativePid;
 
@@ -352,10 +355,18 @@ public class TurretSubsystem extends SubsystemBase {
         } else {
             goalState = new State(result.angle().getDegrees(), calculateOutOfRangeVelocity(result.angle()));
         }
-        State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
 
-        this.goalAngle.mut_replace(setpoint.position, Units.Degrees);
-        this.goalVelocity.mut_replace(setpoint.velocity, Units.DegreesPerSecond);
+        if (Math.abs(absoluteSetpoint.position - turretEncoder.getPosition().in(Units.Degrees))
+                > TRAPEZOID_STATE_RESET_CUTOFF) {
+            absoluteSetpoint = new State(
+                    turretEncoder.getPosition().in(Units.Degrees),
+                    turretEncoder.getVelocity().in(Units.DegreesPerSecond));
+        }
+
+        absoluteSetpoint = profile.calculate(Constants.LOOP_PERIOD, absoluteSetpoint, goalState);
+
+        this.goalAngle.mut_replace(absoluteSetpoint.position, Units.Degrees);
+        this.goalVelocity.mut_replace(absoluteSetpoint.velocity, Units.DegreesPerSecond);
         this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
     }
 
