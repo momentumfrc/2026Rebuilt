@@ -426,7 +426,12 @@ public class TurretSubsystem extends SubsystemBase {
                     if (Math.hypot(x, y) < 0.05) {
                         stop();
                     } else {
-                        alignAbsolute(Units.Radians.of(Math.atan2(y, x)), Units.RadiansPerSecond.of(0));
+                        double goalRadians = Math.atan2(y, x);
+                        var result = angleHelper.turretAngleModulusRads(goalRadians);
+                        targetInRange.set(result.inRange());
+
+                        goalAngle.mut_replace(result.angle().getRadians(), Units.Radians);
+                        this.turretAbsolutePid.setReference(this.goalAngle, Units.RadiansPerSecond.zero());
                     }
                 })
                 .withName("TurretTestCommand");
