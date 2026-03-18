@@ -46,6 +46,7 @@ public class ShootCommand extends Command {
     private final DoubleEntry overrideFlywheelSetpoint;
     private final BooleanEntry doOverrideHoodSetpoint;
     private final DoubleEntry overrideHoodSetpoint;
+    private final BooleanEntry currentlyShooting;
 
     private final MutAngle hoodOverridePosition = Units.Degrees.mutable(0);
     private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
@@ -73,6 +74,8 @@ public class ShootCommand extends Command {
         overrideFlywheelSetpoint =
                 NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Override Setpoint (RPM)", 120);
 
+        currentlyShooting = shooterFlywheelTable.getBooleanTopic("Currently Shooting?").getEntry(false);
+
         var shooterHoodTable = NTHelpers.getTable("shooter-hood");
         doOverrideHoodSetpoint = NTHelpers.getBooleanEntry(shooterHoodTable, "Override Hood Setpoint?", false);
         overrideHoodSetpoint = NTHelpers.getDoubleEntry(shooterHoodTable, "Hood Override Setpoint (°)", 10);
@@ -86,6 +89,10 @@ public class ShootCommand extends Command {
 
     private AngularVelocity getFlywheelOverrideSpeed() {
         return flywheelOverrideSpeed.mut_replace(overrideFlywheelSetpoint.get(), Units.RPM);
+    }
+
+    public boolean currentlyShooting() {
+        return currentlyShooting.get();
     }
 
     @Override
@@ -108,6 +115,7 @@ public class ShootCommand extends Command {
             turret.alignAbsolute(targetAngle, Units.DegreesPerSecond.zero());
             hood.setPosition(MoPrefs.hoodFallbackSetpoint.get());
             shooter.runAtSpeed(MoPrefs.flywheelFallbackSetpoint.get());
+
         } else {
             var target = OdometryTargetingHelper.getTarget(
                     DriverStation.getAlliance().orElse(Alliance.Red));
@@ -148,9 +156,13 @@ public class ShootCommand extends Command {
         if (turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed()) {
             indexer.run();
             kicker.run();
+
+            currentlyShooting.set(true);
         } else {
             indexer.stop();
             kicker.stop();
+
+            currentlyShooting.set(true);
         }
     }
 

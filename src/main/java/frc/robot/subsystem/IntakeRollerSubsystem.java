@@ -3,6 +3,8 @@ package frc.robot.subsystem;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.units.Units;
@@ -16,6 +18,7 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     private final SparkFlex intakeRoller;
 
     private final DoublePublisher speedPublisher;
+    private final BooleanEntry runningRollers;
     private final MoSparkConfigurator intakeRollerConfig;
 
     public IntakeRollerSubsystem() {
@@ -32,18 +35,25 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         NetworkTable table = NTHelpers.getTable("intake");
 
         speedPublisher = table.getDoubleTopic("Intake Roller Speed (RPM)").publish();
+        runningRollers = table.getBooleanTopic("Running Intake Rollers?").getEntry(false);
     }
 
     public void rollerExtake() {
         intakeRoller.setVoltage(-MoPrefs.intakeRollerVoltage.get().in(Units.Volts));
+        runningRollers.set(true);
     }
 
     public void rollerIntake() {
         intakeRoller.setVoltage(MoPrefs.intakeRollerVoltage.get().in(Units.Volts));
+        runningRollers.set(true);
     }
 
     public void stopRollerMotor() {
         intakeRoller.setVoltage(0);
+    }
+
+    public boolean runningRollers() {
+        return runningRollers.get();
     }
 
     @Override
