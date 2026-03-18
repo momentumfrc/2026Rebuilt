@@ -26,7 +26,7 @@ public class LEDCommand extends Command {
             LEDPattern.solid(Color.kBlue).blink(Units.Seconds.of(0.5));
 
     private static final LEDPattern shootingPattern =
-            LEDPattern.solid(Color.kOrange).blink(Units.Seconds.of(0.5));
+            LEDPattern.solid(Color.kPurple).blink(Units.Seconds.of(0.5));
 
     private static final LEDPattern noInitialPositionPattern = LEDPattern.solid(Color.kOrange);
 
@@ -52,19 +52,22 @@ public class LEDCommand extends Command {
             return;
         }
 
+        if (turret.targetInRange()) {
+            leds.applyPattern(inRangePattern);
+            return;
+        }
+
         if (rollerSubsystem.runningRollers()) {
             leds.applyPattern(runIntakePattern);
+            return;
         }
 
         if (shootCommand.currentlyShooting()) {
             leds.applyPattern(shootingPattern);
+            return;
         }
 
-        if (turret.targetInRange()) {
-            leds.applyPattern(inRangePattern);
-        } else {
-            leds.applyPattern(outOfRangePattern);
-        }
+        leds.applyPattern(outOfRangePattern);
     }
 
     @Override
