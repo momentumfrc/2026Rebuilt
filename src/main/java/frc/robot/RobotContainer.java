@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -14,7 +15,9 @@ import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.input.ControllerInput;
+import frc.robot.input.InputTransformer;
 import frc.robot.input.MoInput;
+import frc.robot.input.SingleControllerInput;
 import frc.robot.molib.NTHelpers;
 import frc.robot.molib.Utils;
 import frc.robot.shootutils.TurretTargeting;
@@ -50,6 +53,9 @@ public class RobotContainer {
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
     private final ControllerInput controllerInput = new ControllerInput();
+    private final SingleControllerInput singleControllerInput = new SingleControllerInput();
+    private MoInput input;
+
     private final SysIdUtil sysId = new SysIdUtil(List.of(
             kicker.getSysIdMechanism(),
             turret.getSysIdMechanism(),
@@ -118,6 +124,7 @@ public class RobotContainer {
         configureBindings();
         setDefaultCommands();
         addSubsystemsToDashboard();
+        addInputChooserToDashboard();
     }
 
     private void setDefaultCommands() {
@@ -143,6 +150,14 @@ public class RobotContainer {
         NTHelpers.publishSendable(table, intakeRollerSubsystem);
         NTHelpers.publishSendable(table, intakeWristSubsystem);
         NTHelpers.publishSendable(table, leds);
+    }
+
+    private void addInputChooserToDashboard() {
+        SendableChooser<MoInput> inputChooser = new SendableChooser<>();
+        inputChooser.setDefaultOption("2 Controller Input", controllerInput);
+        inputChooser.addOption("1 Controller Input", singleControllerInput);
+
+        input = new InputTransformer(inputChooser::getSelected);
     }
 
     private void configureBindings() {
@@ -204,7 +219,7 @@ public class RobotContainer {
     }
 
     private MoInput getInput() {
-        return controllerInput;
+        return input;
     }
 
     private TurretSubsystem getTurretSubsystem() {
