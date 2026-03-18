@@ -2,14 +2,14 @@ package frc.robot.input;
 
 import java.util.function.Supplier;
 
-public class InputTransformer implements MoInput{
+public class InputTransformer implements MoInput {
     private final Supplier<MoInput> inputSupplier;
 
     public InputTransformer(Supplier<MoInput> inputSupplier) {
         this.inputSupplier = inputSupplier;
     }
 
-     @Override
+    @Override
     public double getDriveMoveXRequest() {
         return inputSupplier.get().getDriveMoveXRequest();
     }

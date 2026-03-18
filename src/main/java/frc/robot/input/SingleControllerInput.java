@@ -3,7 +3,7 @@ package frc.robot.input;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 
-public class SingleControllerInput implements MoInput{
+public class SingleControllerInput implements MoInput {
     private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
 
     public XboxController getDriveController() {
