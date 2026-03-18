@@ -93,7 +93,7 @@ public class RobotContainer {
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
 
-    private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
+    private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret, intakeRollerSubsystem, shootCommand);
 
     // **** TRIGGERS ****
     private Trigger resetFieldOrientedFwd;
