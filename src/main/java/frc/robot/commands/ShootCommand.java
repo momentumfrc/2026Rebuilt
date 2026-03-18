@@ -74,7 +74,8 @@ public class ShootCommand extends Command {
         overrideFlywheelSetpoint =
                 NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Override Setpoint (RPM)", 120);
 
-        currentlyShooting = shooterFlywheelTable.getBooleanTopic("Currently Shooting?").getEntry(false);
+        currentlyShooting =
+                shooterFlywheelTable.getBooleanTopic("Currently Shooting?").getEntry(false);
 
         var shooterHoodTable = NTHelpers.getTable("shooter-hood");
         doOverrideHoodSetpoint = NTHelpers.getBooleanEntry(shooterHoodTable, "Override Hood Setpoint?", false);

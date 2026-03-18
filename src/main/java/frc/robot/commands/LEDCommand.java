@@ -22,13 +22,20 @@ public class LEDCommand extends Command {
     private static final LEDPattern outOfRangePattern =
             LEDPattern.solid(Color.kRed).blink(Units.Seconds.of(0.5));
 
-    private static final LEDPattern runIntakePattern = LEDPattern.solid(Color.kBlue).blink(Units.Seconds.of(0.5));
+    private static final LEDPattern runIntakePattern =
+            LEDPattern.solid(Color.kBlue).blink(Units.Seconds.of(0.5));
 
-    private static final LEDPattern shootingPattern = LEDPattern.solid(Color.kOrange).blink(Units.Seconds.of(0.5));
+    private static final LEDPattern shootingPattern =
+            LEDPattern.solid(Color.kOrange).blink(Units.Seconds.of(0.5));
 
     private static final LEDPattern noInitialPositionPattern = LEDPattern.solid(Color.kOrange);
 
-    public LEDCommand(LEDSubsystem leds, RobotPositioning positioning, TurretSubsystem turret, IntakeRollerSubsystem rollerSubsystem, ShootCommand shootCommand) {
+    public LEDCommand(
+            LEDSubsystem leds,
+            RobotPositioning positioning,
+            TurretSubsystem turret,
+            IntakeRollerSubsystem rollerSubsystem,
+            ShootCommand shootCommand) {
         this.leds = leds;
         this.positioning = positioning;
         this.turret = turret;
@@ -58,7 +65,6 @@ public class LEDCommand extends Command {
         } else {
             leds.applyPattern(outOfRangePattern);
         }
-
     }
 
     @Override
