@@ -28,7 +28,6 @@ import frc.robot.subsystem.LEDSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.SysIdUtil;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -74,7 +73,8 @@ public class RobotContainer {
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
     private final Command runIndexerToShootCommand = indexer.run(indexer::run).withName("RunIndexerToShootCommand");
-    private final Command runIndexerWithIntakeCommand = indexer.run(indexer::run).withName("RunIndexerWithIntakeCommand");
+    private final Command runIndexerWithIntakeCommand =
+            indexer.run(indexer::run).withName("RunIndexerWithIntakeCommand");
     private final Command runIndexerReverseCommand =
             indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
 
@@ -175,7 +175,10 @@ public class RobotContainer {
 
         shootTrigger.whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
                 .andThen(shootCommand));
-        shootTrigger.and(reverseIndexerTrigger.negate()).whileTrue(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet()).andThen(runIndexerToShootCommand));
+        shootTrigger
+                .and(reverseIndexerTrigger.negate())
+                .whileTrue(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet())
+                        .andThen(runIndexerToShootCommand));
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 
@@ -210,8 +213,9 @@ public class RobotContainer {
 
     private Command clearKickerShooterCommand() {
         return Commands.parallel(
-            shooter.run(
-                    () -> shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
-            kicker.run(() -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
+                shooter.run(() ->
+                        shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
+                kicker.run(
+                        () -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
     }
 }

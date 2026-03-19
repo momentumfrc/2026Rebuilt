@@ -41,7 +41,7 @@ public class MoveIntakeWristCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        if(startupTimer.hasElapsed(MoPrefs.intakeWristMoveMinTime.get()) == false) {
+        if (startupTimer.hasElapsed(MoPrefs.intakeWristMoveMinTime.get()) == false) {
             currentSenseTimer.restart();
             return false;
         }
