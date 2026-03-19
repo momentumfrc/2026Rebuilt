@@ -170,7 +170,7 @@
   {
     "name": "/Preferences/Turret Min Soft Limit (°)",
     "type": "double",
-    "value": 1.0,
+    "value": -1.0,
     "properties": {
       "persistent": true
     }
@@ -178,7 +178,7 @@
   {
     "name": "/Preferences/Turret Max Soft Limit (°)",
     "type": "double",
-    "value": 154.0,
+    "value": 181.0,
     "properties": {
       "persistent": true
     }
@@ -338,7 +338,7 @@
   {
     "name": "/momentum-tuners/Turret Absolute Position/kP",
     "type": "double",
-    "value": 0.001,
+    "value": 50.0,
     "properties": {
       "persistent": true
     }
@@ -723,6 +723,38 @@
     "name": "/Preferences/Intake Wrist Agitate Timeout (s)",
     "type": "double",
     "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Kicker Clear Speed (R_min)",
+    "type": "double",
+    "value": 300.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Flywheel Clear Speed (R_min)",
+    "type": "double",
+    "value": 300.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Shooter Clear Time (s)",
+    "type": "double",
+    "value": 0.25,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/LED Brightness (%)",
+    "type": "double",
+    "value": 40.0,
     "properties": {
       "persistent": true
     }

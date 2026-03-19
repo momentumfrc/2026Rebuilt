@@ -43,6 +43,7 @@ public class MoPrefs extends MoPrefsBase {
             ampsPref("Intake Wrist Current Thresh", Units.Amps.of(20));
     public static final TimeUnitPref intakeWristCurrentTime =
             secondsPref("Intake Wrist Current Time", Units.Seconds.of(0.5));
+    public static final TimeUnitPref intakeWristMoveMinTime = secondsPref("Intake Wrist Move Min Time", Units.Seconds.of(0.75));
 
     public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
     public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =

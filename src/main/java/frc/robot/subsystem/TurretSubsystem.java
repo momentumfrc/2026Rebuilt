@@ -345,9 +345,6 @@ public class TurretSubsystem extends SubsystemBase {
         TurretAngleHelper.Result result = angleHelper.turretAngleModulus(goalAngle);
         targetInRange.set(result.inRange());
 
-        State currentState =
-                new State(getTurretYaw().in(Units.Degrees), getTurretYawRate().in(Units.DegreesPerSecond));
-
         State goalState;
         if (result.inRange()) {
             goalState = new State(result.angle().getDegrees(), goalVelocity.in(Units.DegreesPerSecond));
