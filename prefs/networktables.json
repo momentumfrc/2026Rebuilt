@@ -58,7 +58,7 @@
   {
     "name": "/Preferences/Intake Wrist Power (V)",
     "type": "double",
-    "value": 8.0,
+    "value": 6.0,
     "properties": {
       "persistent": true
     }
@@ -74,7 +74,7 @@
   {
     "name": "/Preferences/Intake Wrist Smart Current Limit (A)",
     "type": "double",
-    "value": 25.0,
+    "value": 20.0,
     "properties": {
       "persistent": true
     }
@@ -82,7 +82,7 @@
   {
     "name": "/Preferences/Intake Ramp Time (s)",
     "type": "double",
-    "value": 1.0,
+    "value": 0.25,
     "properties": {
       "persistent": true
     }
@@ -602,7 +602,7 @@
   {
     "name": "/momentum-tuners/Hood PID/kP",
     "type": "double",
-    "value": 0.001,
+    "value": 180.0,
     "properties": {
       "persistent": true
     }
@@ -690,7 +690,7 @@
   {
     "name": "/Preferences/Intake Wrist Current Thresh (A)",
     "type": "double",
-    "value": 17.0,
+    "value": 18.0,
     "properties": {
       "persistent": true
     }
@@ -698,7 +698,7 @@
   {
     "name": "/Preferences/Intake Wrist Current Time (s)",
     "type": "double",
-    "value": 0.5,
+    "value": 0.75,
     "properties": {
       "persistent": true
     }
