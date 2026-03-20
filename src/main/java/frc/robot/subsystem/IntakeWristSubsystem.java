@@ -90,7 +90,10 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public void moveVoltage(Voltage voltage) {
-        double ff = wristPid.calculateFF(Units.RadiansPerSecond.zero());
+        double ff = 0;
+        if (hasZeroEntry.get()) {
+            ff = wristPid.calculateFF(Units.RadiansPerSecond.zero());
+        }
         intakeWrist.setVoltage(voltage.in(Units.Volts) + ff);
     }
 
@@ -128,6 +131,10 @@ public class IntakeWristSubsystem extends SubsystemBase {
     public void zeroEncoder() {
         wristEncoder.setPosition(Units.Rotations.zero());
         hasZeroEntry.set(true);
+    }
+
+    public boolean hasZero() {
+        return hasZeroEntry.get();
     }
 
     public Command testCommand(XboxController testController) {

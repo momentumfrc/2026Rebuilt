@@ -13,6 +13,7 @@ import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
+import frc.robot.commands.intake.ZeroIntakeWristCommand;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
 import frc.robot.molib.NTHelpers;
@@ -90,6 +91,7 @@ public class RobotContainer {
     private final Command retractIntakeWristCommand = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
+    private final Command zeroIntakeWristCommand = new ZeroIntakeWristCommand(intakeWristSubsystem);
 
     private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
 
@@ -107,6 +109,7 @@ public class RobotContainer {
     private Trigger shootTrigger;
 
     private Trigger zeroHoodTrigger;
+    private Trigger zeroIntakeWristTrigger;
 
     private Trigger runSysIdTrigger;
 
@@ -157,6 +160,7 @@ public class RobotContainer {
         shootTrigger = new Trigger(() -> getInput().getShootRequest());
 
         zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
+        zeroIntakeWristTrigger = new Trigger(() -> intakeWristSubsystem.hasZero() == false);
 
         runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
 
@@ -169,9 +173,11 @@ public class RobotContainer {
 
         // Intake Trigger Bindings
         runIntakeTrigger.whileTrue(runRollerCommand);
-        agitateIntakeTrigger.onTrue(retractIntakeWristCommand);
-        extendIntakeTrigger.onTrue(extendIntakeWristCommand);
-        retractIntakeTrigger.onTrue(retractIntakeWristCommand);
+        retractIntakeTrigger
+                .or(agitateIntakeTrigger)
+                .and(zeroIntakeWristTrigger.negate())
+                .onTrue(retractIntakeWristCommand);
+        extendIntakeTrigger.and(zeroIntakeWristTrigger.negate()).onTrue(extendIntakeWristCommand);
 
         shootTrigger.whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
                 .andThen(shootCommand));
@@ -183,6 +189,7 @@ public class RobotContainer {
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 
         zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
+        zeroIntakeWristTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroIntakeWristCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 

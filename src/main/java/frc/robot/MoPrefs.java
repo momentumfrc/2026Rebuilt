@@ -47,6 +47,12 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngleUnitPref intakeWristRetractPosition =
             rotationsPref("Intake Wrist Retract Position", Units.Rotations.of(0.05));
 
+    public static final UnitPref<VoltageUnit> intakeWristZeroVoltage =
+            voltsPref("Intake Wrist Zero Voltage", Units.Volts.of(8));
+    public static final UnitPref<CurrentUnit> intakeWristZeroThresh =
+            ampsPref("Intake Wrist Zero Current Thresh", Units.Amps.of(18));
+    public static final TimeUnitPref intakeWristZeroTime = secondsPref("Intake Wrist Zero Time", Units.Seconds.of(0.5));
+
     public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
             voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
 
