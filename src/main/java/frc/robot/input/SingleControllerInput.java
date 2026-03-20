@@ -75,9 +75,10 @@ public class SingleControllerInput implements MoInput {
         return driveController.getYButton();
     }
 
+    // use operator controller if you need this
     @Override
     public boolean getRunSysId() {
-        return driveController.getStartButton();
+        return false;
     }
 
     @Override
