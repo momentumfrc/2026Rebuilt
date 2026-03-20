@@ -39,19 +39,16 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final TimeUnitPref intakeRampTime = secondsPref("Intake Ramp Time", Units.Seconds.of(0.5));
 
-    public static final UnitPref<CurrentUnit> intakeWristCurrentThresh =
-            ampsPref("Intake Wrist Current Thresh", Units.Amps.of(20));
-    public static final TimeUnitPref intakeWristCurrentTime =
-            secondsPref("Intake Wrist Current Time", Units.Seconds.of(0.5));
-    public static final TimeUnitPref intakeWristMoveMinTime =
-            secondsPref("Intake Wrist Move Min Time", Units.Seconds.of(0.75));
+    public static final TimeUnitPref intakeWristMoveTimeout =
+            secondsPref("Intake Wrist Move Timeout", Units.Seconds.of(5));
 
-    public static final UnitPref<VoltageUnit> intakeWristVoltage = voltsPref("Intake Wrist Power", Units.Volts.of(5));
+    public static final AngleUnitPref intakeWristDeployPosition =
+            rotationsPref("Intake Wrist Deploy Position", Units.Rotations.of(0.5));
+    public static final AngleUnitPref intakeWristRetractPosition =
+            rotationsPref("Intake Wrist Retract Position", Units.Rotations.of(0.05));
+
     public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
             voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
-
-    public static final TimeUnitPref intakeAgitateTimeout =
-            secondsPref("Intake Wrist Agitate Timeout", Units.Seconds.of(0.5));
 
     public static final AngularVelocityUnitPref intakeWristMaxVelocity =
             degreesPerSecPref("Intake Wrist Max Velocity", Units.DegreesPerSecond.of(360));

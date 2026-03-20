@@ -87,8 +87,7 @@ public class RobotContainer {
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
     private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
-    private final Command agitateIntakeCommand = WristCommands.agitatingCommand(intakeWristSubsystem);
-    private final Command retractIntakeWristCommend = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
+    private final Command retractIntakeWristCommand = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
 
@@ -170,9 +169,9 @@ public class RobotContainer {
 
         // Intake Trigger Bindings
         runIntakeTrigger.whileTrue(runRollerCommand);
-        agitateIntakeTrigger.whileTrue(agitateIntakeCommand);
+        agitateIntakeTrigger.onTrue(retractIntakeWristCommand);
         extendIntakeTrigger.onTrue(extendIntakeWristCommand);
-        retractIntakeTrigger.onTrue(retractIntakeWristCommend);
+        retractIntakeTrigger.onTrue(retractIntakeWristCommand);
 
         shootTrigger.whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
                 .andThen(shootCommand));

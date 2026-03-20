@@ -87,7 +87,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public void moveVoltage(Voltage voltage) {
-        intakeWrist.setVoltage(voltage.in(Units.Volts));
+        double ff = wristPid.calculateFF(Units.RadiansPerSecond.zero());
+        intakeWrist.setVoltage(voltage.in(Units.Volts) + ff);
     }
 
     public void movePosition(Angle position) {
