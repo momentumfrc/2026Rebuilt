@@ -44,12 +44,6 @@ public class WristCommands {
         return retractIntakeWristCommand(wrist).withName("DefaultRetractIntakeCommand");
     }
 
-    public static Command agitatingCommand(IntakeWristSubsystem wrist) {
-        return moveToPositionCommand(wrist, MoPrefs.intakeAgitateLowPos::get)
-                .andThen(moveToPositionCommand(wrist, MoPrefs.intakeAgitateHighPos::get))
-                .repeatedly();
-    }
-
     private WristCommands() {
         throw new UnsupportedOperationException("IntakeCommands is a static class");
     }

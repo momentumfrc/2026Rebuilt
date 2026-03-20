@@ -6,10 +6,10 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.Voltage;
@@ -22,17 +22,15 @@ import frc.robot.molib.MoUnits;
 import frc.robot.molib.NTHelpers;
 import frc.robot.molib.encoder.MoRotationEncoder;
 import frc.robot.molib.motune.MoTuner;
-import frc.robot.molib.pid.MoSparkMaxPID;
+import frc.robot.molib.pid.MoSparkMaxArmProfilePID;
 
 public class IntakeWristSubsystem extends SubsystemBase {
     private static final double POSITION_TOLERANCE = 0.05;
 
     private final SparkFlex intakeWrist;
 
-    // Note: the built-in Spark kCos arm feedforward assumes the internal encoder is setup
-    // so that the zero position is perfectly horizontal
     private final MoRotationEncoder wristEncoder;
-    private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> wristPid;
+    private final MoSparkMaxArmProfilePID wristPid;
 
     private final MoSparkConfigurator intakeWristConfig;
 
@@ -63,20 +61,22 @@ public class IntakeWristSubsystem extends SubsystemBase {
         wristEncoder = MoRotationEncoder.forSparkRelative(intakeWrist, Units.Rotations);
         wristEncoder.setConversionFactor(MoUnits.EncoderTicksPerRotation.ofNative(72));
 
-        wristPid = new MoSparkMaxPID<>(
-                MoSparkMaxPID.Type.POSITION, intakeWrist, ClosedLoopSlot.kSlot0, wristEncoder, intakeWristConfig);
+        wristPid = new MoSparkMaxArmProfilePID(intakeWrist, ClosedLoopSlot.kSlot0, wristEncoder, intakeWristConfig);
 
         MoTuner.builder("Intake Wrist")
                 .pid(wristPid)
                 .motorFF(wristPid)
                 .iZone(wristPid::setIZone)
                 .setpoint(wristPid::getSetpoint)
-                .parameter(
-                        "kG",
-                        kG -> wristPid.setConfigOption((config, slot) -> config.closedLoop.feedForward.kCos(kG, slot)))
+                .parameter("kG", wristPid::setG)
+                .parameter("horizontalOffset", wristPid::setHorizontalOffset)
                 .measurement(wristPid::getLastMeasurement)
+                .stateVariable("lastFF", wristPid::getLastFF)
                 .onPopulateFinished(wristPid)
                 .safeBuild();
+
+        MoPrefs.intakeWristMaxVelocity.subscribe(velocity -> wristPid.setMaxVelocity((AngularVelocity) velocity));
+        MoPrefs.intakeWristMaxAccel.subscribe(accel -> wristPid.setMaxAcceleration((AngularAcceleration) accel));
 
         var table = NTHelpers.getTable("Intake Wrist");
         wristCurrentPublisher = table.getDoubleTopic("Intake Wrist Current").publish();
@@ -122,7 +122,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public void zeroEncoder() {
-        wristEncoder.setPosition(MoPrefs.intakeWristZeroPosition.get());
+        wristEncoder.setPosition(Units.Rotations.zero());
         hasZeroEntry.set(true);
     }
 
