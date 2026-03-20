@@ -15,7 +15,6 @@ import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.input.ControllerInput;
-import frc.robot.input.InputTransformer;
 import frc.robot.input.MoInput;
 import frc.robot.input.SingleControllerInput;
 import frc.robot.molib.NTHelpers;
@@ -54,7 +53,6 @@ public class RobotContainer {
 
     private final ControllerInput controllerInput = new ControllerInput();
     private final SingleControllerInput singleControllerInput = new SingleControllerInput();
-    private MoInput input;
 
     private final SysIdUtil sysId = new SysIdUtil(List.of(
             kicker.getSysIdMechanism(),
@@ -154,10 +152,8 @@ public class RobotContainer {
 
     private void addInputChooserToDashboard() {
         SendableChooser<MoInput> inputChooser = new SendableChooser<>();
-        inputChooser.setDefaultOption("2 Controller Input", controllerInput);
-        inputChooser.addOption("1 Controller Input", singleControllerInput);
-
-        input = new InputTransformer(inputChooser::getSelected);
+        inputChooser.setDefaultOption("Driver + Operator", controllerInput);
+        inputChooser.addOption("Single Driver", singleControllerInput);
     }
 
     private void configureBindings() {
@@ -219,7 +215,7 @@ public class RobotContainer {
     }
 
     private MoInput getInput() {
-        return input;
+        return inputChooser.getSelected();
     }
 
     private TurretSubsystem getTurretSubsystem() {
