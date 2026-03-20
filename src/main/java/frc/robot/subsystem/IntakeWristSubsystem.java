@@ -4,6 +4,7 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
@@ -13,6 +14,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -125,6 +128,17 @@ public class IntakeWristSubsystem extends SubsystemBase {
     public void zeroEncoder() {
         wristEncoder.setPosition(Units.Rotations.zero());
         hasZeroEntry.set(true);
+    }
+
+    public Command testCommand(XboxController testController) {
+        return run(() -> {
+            double y = -1 * testController.getRightY();
+            double setpointRotations = MathUtil.interpolate(
+                    MoPrefs.intakeWristRetractPosition.get().in(Units.Rotations),
+                    MoPrefs.intakeWristDeployPosition.get().in(Units.Rotations),
+                    MathUtil.inverseInterpolate(-1, 1, y));
+            wristPid.setUnprofiledPositionReference(Units.Rotations.of(setpointRotations));
+        });
     }
 
     @Override
