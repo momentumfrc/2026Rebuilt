@@ -54,6 +54,8 @@ public class RobotContainer {
     private final ControllerInput controllerInput = new ControllerInput();
     private final SingleControllerInput singleControllerInput = new SingleControllerInput();
 
+    private final SendableChooser<MoInput> inputChooser = new SendableChooser<>();
+
     private final SysIdUtil sysId = new SysIdUtil(List.of(
             kicker.getSysIdMechanism(),
             turret.getSysIdMechanism(),
@@ -151,7 +153,6 @@ public class RobotContainer {
     }
 
     private void addInputChooserToDashboard() {
-        SendableChooser<MoInput> inputChooser = new SendableChooser<>();
         inputChooser.setDefaultOption("Driver + Operator", controllerInput);
         inputChooser.addOption("Single Driver", singleControllerInput);
     }
