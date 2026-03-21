@@ -29,6 +29,8 @@ public class AutoChooser {
 
     private enum ShootAutoRoutines {
         CENTER_AND_SCORE,
+        LEFT_COLLECT_NEUTRAL_TO_HUB,
+        RIGHT_COLLECT_NEUTRAL_TO_HUB,
         SCORE_LEFT_TO_HUB,
         SCORE_RIGHT_TO_HUB,
         SCORE_LEFT_AND_COLLECT_DEPOT,
@@ -108,6 +110,26 @@ public class AutoChooser {
                         driveSubsystem, robotPositioning, "Center Forward", assumeRobotPose.get()));
     }
 
+    public Command buildLeftCollectAndScoreAuto() {
+        return AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Left Start to Left Neutral Zone", assumeRobotPose.get())
+                .andThen(Commands.deadline(
+                                AutoPathPlannerCommands.getFollowPathCommand(
+                                        driveSubsystem, robotPositioning, "Left Neutral Zone to Left Hub", false),
+                                getIntakeCommand())
+                        .andThen(getShootCommand()));
+    }
+
+    public Command buildRightCollectAndScoreAuto() {
+        return AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Right Start to Right Neutral Zone", assumeRobotPose.get())
+                .andThen(Commands.deadline(
+                                AutoPathPlannerCommands.getFollowPathCommand(
+                                        driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", false),
+                                getIntakeCommand())
+                        .andThen(getShootCommand()));
+    }
+
     // Might need some fixing later
     public Command buildScoreLeftAuto() {
         return AutoPathPlannerCommands.getFollowPathCommand(
@@ -176,6 +198,8 @@ public class AutoChooser {
     public Command getAutoRoutine() {
         return switch (autoRoutinesChooser.getSelected()) {
             case CENTER_AND_SCORE -> buildCenterAuto();
+            case LEFT_COLLECT_NEUTRAL_TO_HUB -> buildLeftCollectAndScoreAuto();
+            case RIGHT_COLLECT_NEUTRAL_TO_HUB -> buildRightCollectAndScoreAuto();
             case SCORE_LEFT_TO_HUB -> buildScoreLeftAuto();
             case SCORE_RIGHT_TO_HUB -> buildScoreRightAuto();
             case SCORE_LEFT_AND_COLLECT_DEPOT -> buildScoreLeftAndDepot();
