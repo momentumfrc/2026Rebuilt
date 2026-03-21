@@ -78,8 +78,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
                 .onPopulateFinished(wristPid)
                 .safeBuild();
 
-        MoPrefs.intakeWristMaxVelocity.subscribe(velocity -> wristPid.setMaxVelocity((AngularVelocity) velocity));
-        MoPrefs.intakeWristMaxAccel.subscribe(accel -> wristPid.setMaxAcceleration((AngularAcceleration) accel));
+        MoPrefs.intakeWristMaxVelocity.subscribe(velocity -> wristPid.setMaxVelocity((AngularVelocity) velocity), true);
+        MoPrefs.intakeWristMaxAccel.subscribe(accel -> wristPid.setMaxAcceleration((AngularAcceleration) accel), true);
 
         var table = NTHelpers.getTable("Intake Wrist");
         wristCurrentPublisher = table.getDoubleTopic("Intake Wrist Current").publish();
@@ -129,6 +129,9 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public void zeroEncoder() {
+        if(hasZeroEntry.get()) {
+            return;
+        }
         wristEncoder.setPosition(Units.Rotations.zero());
         hasZeroEntry.set(true);
     }

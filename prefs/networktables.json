@@ -56,14 +56,6 @@
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Power (V)",
-    "type": "double",
-    "value": 6.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/Intake Wrist Hold Power (V)",
     "type": "double",
     "value": 0.125,
@@ -688,46 +680,6 @@
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Current Thresh (A)",
-    "type": "double",
-    "value": 18.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake Wrist Current Time (s)",
-    "type": "double",
-    "value": 0.75,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake Wrist Agitate Low (R)",
-    "type": "double",
-    "value": 0.45,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake Wrist Agitate High (R)",
-    "type": "double",
-    "value": 0.25,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake Wrist Agitate Timeout (s)",
-    "type": "double",
-    "value": 0.5,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/Kicker Clear Speed (R_min)",
     "type": "double",
     "value": 300.0,
@@ -755,6 +707,142 @@
     "name": "/Preferences/LED Brightness (%)",
     "type": "double",
     "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Move Timeout (s)",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Deploy Position (R)",
+    "type": "double",
+    "value": 0.42,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Retract Position (R)",
+    "type": "double",
+    "value": 0.05,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Zero Voltage (V)",
+    "type": "double",
+    "value": 8.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Zero Current Thresh (A)",
+    "type": "double",
+    "value": 18.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Zero Time (s)",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Max Velocity (°_s)",
+    "type": "double",
+    "value": 720.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Max Acceleration (°_s_s)",
+    "type": "double",
+    "value": 90.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kP",
+    "type": "double",
+    "value": 10.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/ff_kV",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/ff_kA",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/ff_kS",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kG",
+    "type": "double",
+    "value": -0.25,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/horizontalOffset",
+    "type": "double",
+    "value": -0.43563,
     "properties": {
       "persistent": true
     }
