@@ -11,6 +11,7 @@ public class MoveIntakeWristCommand extends Command {
     private final WristCommands.Direction direction;
 
     private final Timer currentSenseTimer = new Timer();
+    private final Timer startupTimer = new Timer();
 
     public MoveIntakeWristCommand(IntakeWristSubsystem wrist, WristCommands.Direction direction) {
         this.wrist = wrist;
@@ -22,6 +23,7 @@ public class MoveIntakeWristCommand extends Command {
     @Override
     public void initialize() {
         currentSenseTimer.restart();
+        startupTimer.restart();
     }
 
     private Voltage getVoltage() {
@@ -39,6 +41,10 @@ public class MoveIntakeWristCommand extends Command {
 
     @Override
     public boolean isFinished() {
+        if (startupTimer.hasElapsed(MoPrefs.intakeWristMoveMinTime.get()) == false) {
+            currentSenseTimer.restart();
+            return false;
+        }
         if (wrist.getIntakeWristCurrent().gte(MoPrefs.intakeWristCurrentThresh.get())) {
             return currentSenseTimer.hasElapsed(MoPrefs.intakeWristCurrentTime.get());
         }

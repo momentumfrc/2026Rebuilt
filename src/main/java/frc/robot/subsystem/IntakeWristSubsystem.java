@@ -35,8 +35,6 @@ public class IntakeWristSubsystem extends SubsystemBase {
     private final DoublePublisher wristVoltagePublisher;
 
     private final BooleanEntry hasZeroEntry;
-    private final BooleanEntry coastMotorEntry;
-    private IdleMode currentIdleMode;
 
     public IntakeWristSubsystem() {
         intakeWrist = new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), MotorType.kBrushless);
@@ -45,9 +43,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
                         (int) MoPrefs.intakeWristSmartCurrentLimit.get().in(Units.Amps))
                 .openLoopRampRate(MoPrefs.intakeRampTime.get().in(Units.Seconds))
                 .closedLoopRampRate(MoPrefs.intakeRampTime.get().in(Units.Seconds))
-                .idleMode(IdleMode.kBrake)
+                .idleMode(IdleMode.kCoast)
                 .inverted(true));
-        currentIdleMode = IdleMode.kBrake;
 
         MoPrefs.intakeWristSmartCurrentLimit.subscribe(
                 limit -> intakeWristConfig.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
@@ -64,7 +61,6 @@ public class IntakeWristSubsystem extends SubsystemBase {
         positionPublisher =
                 table.getDoubleTopic("Intake Wrist Position (rotations)").publish();
         hasZeroEntry = NTHelpers.getBooleanEntry(table, "Has Zero", false);
-        coastMotorEntry = NTHelpers.getBooleanEntry(table, "Coast Motor", false);
     }
 
     public void moveVoltage(Voltage voltage) {
@@ -96,11 +92,5 @@ public class IntakeWristSubsystem extends SubsystemBase {
         positionPublisher.set(intakeWrist.getEncoder().getPosition());
 
         wristVoltagePublisher.set(intakeWrist.getAppliedOutput() * intakeWrist.getBusVoltage());
-
-        var desiredMotorIdleMode = coastMotorEntry.get() ? IdleMode.kCoast : IdleMode.kBrake;
-        if (desiredMotorIdleMode != currentIdleMode) {
-            intakeWristConfig.accept(config -> config.idleMode(desiredMotorIdleMode));
-            currentIdleMode = desiredMotorIdleMode;
-        }
     }
 }

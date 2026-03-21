@@ -27,7 +27,6 @@ public class ShootCommand extends Command {
     private final TurretSubsystem turret;
     private final ShooterSubsystem shooter;
     private final HoodSubsystem hood;
-    private final IndexerSubsystem indexer;
 
     private final TurretTargeting targeting;
 
@@ -59,7 +58,6 @@ public class ShootCommand extends Command {
             ShooterSubsystem shooter,
             HoodSubsystem hood) {
         this.targeting = targeting;
-        this.indexer = indexer;
         this.kicker = kicker;
         this.turret = turret;
         this.shooter = shooter;
@@ -92,6 +90,10 @@ public class ShootCommand extends Command {
         return flywheelOverrideSpeed.mut_replace(overrideFlywheelSetpoint.get(), Units.RPM);
     }
 
+    public boolean readyToShoot() {
+        return turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed();
+    }
+
     public boolean currentlyShooting() {
         return currentlyShooting.get();
     }
@@ -106,7 +108,6 @@ public class ShootCommand extends Command {
                 targetOutOfRange.set(true);
                 currentlyShooting.set(false);
 
-                indexer.stop();
                 kicker.stop();
                 shooter.stop();
                 hood.goToRest();
@@ -133,7 +134,6 @@ public class ShootCommand extends Command {
                 targetOutOfRange.set(true);
                 currentlyShooting.set(false);
 
-                indexer.stop();
                 kicker.stop();
                 shooter.stop();
                 hood.goToRest();
@@ -156,13 +156,11 @@ public class ShootCommand extends Command {
 
         targetOutOfRange.set(false);
 
-        if (turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed()) {
-            indexer.run();
+        if (readyToShoot()) {
             kicker.run();
 
             currentlyShooting.set(true);
         } else {
-            indexer.stop();
             kicker.stop();
 
             currentlyShooting.set(false);

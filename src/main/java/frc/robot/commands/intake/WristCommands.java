@@ -20,18 +20,14 @@ public class WristCommands {
         };
     }
 
-    public static Command moveIntakeWristCommand(IntakeWristSubsystem wrist, Direction direction) {
-        return new MoveIntakeWristCommand(wrist, direction).withTimeout(5);
-    }
-
     public static Command deployIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return moveIntakeWristCommand(wrist, Direction.OUT)
+        return new MoveIntakeWristCommand(wrist, Direction.OUT)
                 .andThen(holdIntakeWristCommand(wrist, Direction.OUT))
                 .withName("DeployIntakeCommand");
     }
 
     public static Command retractIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return moveIntakeWristCommand(wrist, Direction.IN)
+        return new MoveIntakeWristCommand(wrist, Direction.IN)
                 .andThen(wrist.runOnce(wrist::zeroEncoder))
                 .andThen(holdIntakeWristCommand(wrist, Direction.IN))
                 .withName("RetractIntakeCommand");
