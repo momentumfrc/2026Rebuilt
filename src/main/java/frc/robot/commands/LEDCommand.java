@@ -59,7 +59,7 @@ public class LEDCommand extends Command {
                 leds.applyPattern(shootingPattern);
                 return;
             }
-            
+
             return;
         }
 
