@@ -109,20 +109,20 @@ public class AutoChooser {
 
     // Might need some fixing later
     public Command buildScoreLeftAuto() {
-        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+        return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
-                .andThen(getShootCommand()));
+                .andThen(getShootCommand());
     }
 
     public Command buildScoreRightAuto() {
-        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+        return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Start to Right Hub", assumeRobotPose.get())
-                .andThen(getShootCommand()));
+                .andThen(getShootCommand());
     }
 
     // might be redundant, there is probably a better way to write this
     public Command buildScoreLeftAndDepot() {
-        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+        return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
                 .andThen(Commands.deadline(
@@ -131,11 +131,11 @@ public class AutoChooser {
                                 getIntakeCommand())
                         .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Depot to Left Hub", false))
-                        .andThen(getShootCommand())));
+                        .andThen(getShootCommand()));
     }
 
     public Command buildScoreLeftAndNeutral() {
-        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+        return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
@@ -144,11 +144,11 @@ public class AutoChooser {
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Left Neutral Zone to Left Hub", false),
                         getIntakeCommand()))
-                .andThen(getShootCommand()));
+                .andThen(getShootCommand());
     }
 
     public Command buildScoreRightAndNeutral() {
-        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+        return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Start to Right Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
@@ -157,11 +157,11 @@ public class AutoChooser {
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", false),
                         getIntakeCommand()))
-                .andThen(getShootCommand()));
+                .andThen(getShootCommand());
     }
 
     public Command buildScoreRightAndOutpost() {
-        return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+        return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Hub to Outpost", assumeRobotPose.get())
                 .andThen(shootCommand.andThen(AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Outpost to Right Hub", false)
@@ -169,7 +169,7 @@ public class AutoChooser {
                                 MoPrefs.autoOutpostWaitTime.get().in(Units.Seconds)))
                         .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                                         driveSubsystem, robotPositioning, "Outpost to Right Hub", false)
-                                .andThen(shootCommand)))));
+                                .andThen(shootCommand))));
     }
 
     public Command getAutoRoutine() {
