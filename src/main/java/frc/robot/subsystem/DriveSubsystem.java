@@ -110,8 +110,8 @@ public class DriveSubsystem extends SubsystemBase {
                 translationPIDConstants.toImmutable(), rotationPIDConstants.toImmutable());
     }
 
-    public void autoDefaultCommand(double xRequest, double yRequest) {
-        SwerveInputStream.of(swerveDrive, () -> xRequest, () -> yRequest);
+    public void stop() {
+        swerveDrive.drive(new ChassisSpeeds());
     }
 
     public SwerveDrive getSwerveDrive() {

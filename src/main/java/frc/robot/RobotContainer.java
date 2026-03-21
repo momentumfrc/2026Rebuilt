@@ -132,7 +132,7 @@ public class RobotContainer {
     }
 
     public void setAutoDefaultCommnds() {
-        driveSubsystem.autoDefaultCommand(0, 0);
+        driveSubsystem.setDefaultCommand(driveSubsystem.run(driveSubsystem::stop));
     }
 
     public void setDefaultCommands() {
