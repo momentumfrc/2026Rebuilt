@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.MoPrefs;
 import frc.robot.RobotPositioning;
 import frc.robot.commands.ShootCommand;
+import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.molib.NTHelpers;
+import frc.robot.molib.Utils;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
@@ -28,6 +30,7 @@ public class AutoChooser {
     } // probably won't need this, leaving it here just in case we do for whatever reason
 
     private enum ShootAutoRoutines {
+        SHOOT_ONLY,
         CENTER_AND_SCORE,
         LEFT_COLLECT_NEUTRAL_TO_HUB,
         RIGHT_COLLECT_NEUTRAL_TO_HUB,
@@ -50,8 +53,6 @@ public class AutoChooser {
     private final HoodSubsystem hoodSubsystem;
     private final IntakeRollerSubsystem intakeRollerSubsystem;
     private final IntakeWristSubsystem intakeWristSubsystem;
-
-    private final ShootCommand shootCommand;
 
     private final BooleanEntry enableAutoSwitch;
 
@@ -80,8 +81,6 @@ public class AutoChooser {
         this.intakeWristSubsystem = intakeWristSubsystem;
 
         turretTargeting = new TurretTargeting(robotPositioning);
-        shootCommand = new ShootCommand(
-                turretTargeting, indexerSubsystem, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
 
         var autoTable = NTHelpers.getTable("Auto");
         enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", true);
@@ -92,9 +91,15 @@ public class AutoChooser {
     }
 
     public Command getShootCommand() {
-        return shootCommand.alongWith(
+        var shootCommand = new ShootCommand(turretTargeting, indexerSubsystem, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
+
+        var rezeroCommand = Commands.either(Commands.none(), new ZeroHoodCommand(hoodSubsystem), hoodSubsystem::hasZero);
+
+        var command = rezeroCommand.andThen(shootCommand.alongWith(
                 Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet())
-                        .andThen(indexerSubsystem.run(indexerSubsystem::run)));
+                        .andThen(indexerSubsystem.run(indexerSubsystem::run))).withName("AutoShootCommand"));
+
+        return Utils.withTimeoutPref(command, MoPrefs.autoShooterRunTime::get);
     }
 
     public Command getIntakeCommand() {
@@ -142,7 +147,6 @@ public class AutoChooser {
                         driveSubsystem, robotPositioning, "Right Start to Right Hub", assumeRobotPose.get())
                 .andThen(getShootCommand());
     }
-
     // might be redundant, there is probably a better way to write this
     public Command buildScoreLeftAndDepot() {
         return AutoPathPlannerCommands.getFollowPathCommand(
@@ -186,17 +190,18 @@ public class AutoChooser {
     public Command buildScoreRightAndOutpost() {
         return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Hub to Outpost", assumeRobotPose.get())
-                .andThen(shootCommand.andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                .andThen(getShootCommand().andThen(AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Outpost to Right Hub", false)
                         .andThen(Commands.waitSeconds(
                                 MoPrefs.autoOutpostWaitTime.get().in(Units.Seconds)))
                         .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                                         driveSubsystem, robotPositioning, "Outpost to Right Hub", false)
-                                .andThen(shootCommand))));
+                                .andThen(getShootCommand()))));
     }
 
     public Command getAutoRoutine() {
         return switch (autoRoutinesChooser.getSelected()) {
+            case SHOOT_ONLY -> getShootCommand();
             case CENTER_AND_SCORE -> buildCenterAuto();
             case LEFT_COLLECT_NEUTRAL_TO_HUB -> buildLeftCollectAndScoreAuto();
             case RIGHT_COLLECT_NEUTRAL_TO_HUB -> buildRightCollectAndScoreAuto();

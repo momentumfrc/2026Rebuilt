@@ -205,8 +205,8 @@ public class RobotContainer {
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 
-        zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
-        zeroIntakeWristTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroIntakeWristCommand);
+        zeroHoodTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroHoodCommand);
+        zeroIntakeWristTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroIntakeWristCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 

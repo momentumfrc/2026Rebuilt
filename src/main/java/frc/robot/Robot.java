@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +26,11 @@ public class Robot extends TimedRobot {
         DataLogManager.start();
 
         MoPrefsImpl.cleanUpPrefs();
+    }
+
+    @Override
+    public void robotInit() {
+        PathfindingCommand.warmupCommand();
     }
 
     @Override
