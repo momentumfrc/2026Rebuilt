@@ -104,6 +104,7 @@ public class ShootCommand extends Command {
             var moduloAngle = turret.getAngleHelper().turretAngleModulus(targetAngle);
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
+                currentlyShooting.set(false);
 
                 indexer.stop();
                 kicker.stop();
@@ -130,6 +131,7 @@ public class ShootCommand extends Command {
             var moduloAngle = turret.getAngleHelper().turretAngleModulus(firingSolution.goalAngle());
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
+                currentlyShooting.set(false);
 
                 indexer.stop();
                 kicker.stop();
@@ -163,7 +165,7 @@ public class ShootCommand extends Command {
             indexer.stop();
             kicker.stop();
 
-            currentlyShooting.set(true);
+            currentlyShooting.set(false);
         }
     }
 
