@@ -54,16 +54,17 @@ public class LEDCommand extends Command {
 
         if (turret.targetInRange()) {
             leds.applyPattern(inRangePattern);
+
+            if (shootCommand.currentlyShooting()) {
+                leds.applyPattern(shootingPattern);
+                return;
+            }
+            
             return;
         }
 
         if (rollerSubsystem.runningRollers()) {
             leds.applyPattern(runIntakePattern);
-            return;
-        }
-
-        if (shootCommand.currentlyShooting()) {
-            leds.applyPattern(shootingPattern);
             return;
         }
 
