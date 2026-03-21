@@ -63,7 +63,7 @@ public class AutoPathPlannerCommands {
         } catch (Exception e) {
             DriverStation.reportError(
                     "Failed to build and follow PathPlanner command - " + e.getMessage(), e.getStackTrace());
-            return Commands.none();
+            return Commands.print("Failed to load pathplanner config, refusing to follow provided path");
         }
     }
 }
