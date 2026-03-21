@@ -5,7 +5,6 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -59,7 +58,7 @@ public class AutoPathPlannerCommands {
                 return new SequentialCommandGroup(
                         Commands.runOnce(() -> {
                             Pose2d pose;
-                            if(DriverStation.getAlliance().orElse(Alliance.Red) == DriverStation.Alliance.Red) {
+                            if (DriverStation.getAlliance().orElse(Alliance.Red) == DriverStation.Alliance.Red) {
                                 pose = FlippingUtil.flipFieldPose(startPose);
                             } else {
                                 pose = startPose;

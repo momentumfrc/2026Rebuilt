@@ -129,7 +129,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public void zeroEncoder() {
-        if(hasZeroEntry.get()) {
+        if (hasZeroEntry.get()) {
             return;
         }
         wristEncoder.setPosition(Units.Rotations.zero());

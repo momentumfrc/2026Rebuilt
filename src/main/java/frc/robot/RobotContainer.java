@@ -93,7 +93,8 @@ public class RobotContainer {
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
     private final Command zeroIntakeWristCommand = new ZeroIntakeWristCommand(intakeWristSubsystem);
-    private final Command testIntakeWristCommand = intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
+    private final Command testIntakeWristCommand =
+            intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
 
     private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
 
