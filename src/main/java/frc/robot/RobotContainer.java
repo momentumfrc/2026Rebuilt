@@ -122,8 +122,8 @@ public class RobotContainer {
             shooter,
             hood,
             intakeRollerSubsystem,
-            intakeWristSubsystem,
-            shootCommand);
+            intakeWristSubsystem
+            );
 
     public RobotContainer() {
         configureBindings();

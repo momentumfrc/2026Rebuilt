@@ -12,6 +12,7 @@ import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.commands.intake.WristCommands.Direction;
 import frc.robot.molib.NTHelpers;
+import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IndexerSubsystem;
@@ -35,6 +36,8 @@ public class AutoChooser {
         SCORE_RIGHT_AND_COLLECT_NEUTRAL_ZONE,
         SCORE_RIGHT_AND_COLLECT_OUTPOST
     } // edit with more choices once auto routines are defined
+
+    private final TurretTargeting turretTargeting;
 
     private final RobotPositioning robotPositioning;
     private final DriveSubsystem driveSubsystem;
@@ -63,8 +66,7 @@ public class AutoChooser {
             ShooterSubsystem shooterSubsystem,
             HoodSubsystem hoodSubsystem,
             IntakeRollerSubsystem intakeRollerSubsystem,
-            IntakeWristSubsystem intakeWristSubsystem,
-            ShootCommand shootCommand) {
+            IntakeWristSubsystem intakeWristSubsystem) {
         this.robotPositioning = robotPositioning;
         this.driveSubsystem = driveSubsystem;
         this.turretSubsystem = turretSubsystem;
@@ -75,7 +77,8 @@ public class AutoChooser {
         this.intakeRollerSubsystem = intakeRollerSubsystem;
         this.intakeWristSubsystem = intakeWristSubsystem;
 
-        this.shootCommand = shootCommand;
+        turretTargeting = new TurretTargeting(robotPositioning);
+        shootCommand = new ShootCommand(turretTargeting, indexerSubsystem, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
 
         var autoTable = NTHelpers.getTable("Auto");
         enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", true);
