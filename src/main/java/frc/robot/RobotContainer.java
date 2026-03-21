@@ -64,7 +64,9 @@ public class RobotContainer {
     private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
 
     private final ShootCommand shootCommand =
-            new ShootCommand(turretTargetingHelper, indexer, kicker, turret, shooter, hood);
+            ShootCommand.getHubShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
+    private final ShootCommand shuttleCommand =
+            ShootCommand.getShuttleShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
 
     private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
 
@@ -110,6 +112,7 @@ public class RobotContainer {
 
     private Trigger clearShooterTrigger;
     private Trigger shootTrigger;
+    private Trigger shuttleTrigger;
 
     private Trigger zeroHoodTrigger;
     private Trigger zeroIntakeWristTrigger;
@@ -176,6 +179,7 @@ public class RobotContainer {
 
         clearShooterTrigger = new Trigger(() -> getInput().getClearShooter());
         shootTrigger = new Trigger(() -> getInput().getShootRequest());
+        shuttleTrigger = new Trigger(() -> getInput().getShuttleRequest());
 
         zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
         zeroIntakeWristTrigger = new Trigger(() -> intakeWristSubsystem.hasZero() == false);
@@ -203,6 +207,17 @@ public class RobotContainer {
                 .and(reverseIndexerTrigger.negate())
                 .whileTrue(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet())
                         .andThen(runIndexerToShootCommand));
+
+        shuttleTrigger
+                .and(shootTrigger.negate())
+                .whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
+                        .andThen(shuttleCommand));
+        shuttleTrigger
+                .and(shootTrigger.negate())
+                .and(reverseIndexerTrigger.negate())
+                .whileTrue(
+                        Commands.defer(() -> Commands.waitUntil(shuttleCommand::readyToShoot), Collections.emptySet())
+                                .andThen(runIndexerToShootCommand));
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 

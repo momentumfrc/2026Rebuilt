@@ -76,6 +76,11 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
+    public boolean getShuttleRequest() {
+        return operatorController.getYButton();
+    }
+
+    @Override
     public boolean getReverseIndexerRequest() {
         return operatorController.getXButton();
     }

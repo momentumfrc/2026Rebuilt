@@ -25,6 +25,8 @@ public interface MoInput {
 
     public abstract boolean getShootRequest();
 
+    public abstract boolean getShuttleRequest();
+
     public abstract boolean getReverseIndexerRequest();
 
     public abstract boolean getRunSysId();
