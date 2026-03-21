@@ -1,5 +1,7 @@
 package frc.robot.commands.auto;
 
+import java.util.Collections;
+
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -89,9 +91,7 @@ public class AutoChooser {
     }
 
     public Command getShootCommand() {
-        return Commands.deadline(
-                shootCommand.withTimeout(MoPrefs.autoShooterRunTime.get().in(Units.Seconds)),
-                indexerSubsystem.run(indexerSubsystem::run));
+        return shootCommand.alongWith(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet()).andThen(indexerSubsystem.run(indexerSubsystem::run)));
     }
 
     public Command getIntakeCommand() {
