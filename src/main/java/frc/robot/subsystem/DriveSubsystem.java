@@ -1,5 +1,7 @@
 package frc.robot.subsystem;
 
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -15,6 +17,7 @@ import frc.robot.MoPrefs;
 import frc.robot.input.MoInput;
 import frc.robot.molib.NTHelpers;
 import frc.robot.molib.prefs.MoPrefsUtils;
+import frc.robot.util.MutablePIDConstants;
 import java.io.File;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
@@ -26,6 +29,9 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class DriveSubsystem extends SubsystemBase {
     private final File directory = new File(Filesystem.getDeployDirectory(), "swerve");
     private final SwerveDrive swerveDrive;
+
+    private final MutablePIDConstants translationPIDConstants = new MutablePIDConstants();
+    private final MutablePIDConstants rotationPIDConstants = new MutablePIDConstants();
 
     private enum DriveMode {
         VELOCITY_HEADING,
@@ -64,6 +70,9 @@ public class DriveSubsystem extends SubsystemBase {
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
         omegaSpeed = table.getDoubleTopic("Gyro Speed (rad_s)").publish();
+
+        translationPIDConstants.getTuner("PathPlanner Translation PID").safeBuild();
+        rotationPIDConstants.getTuner("PathPlanner Rotation PID").safeBuild();
     }
 
     public void driveFieldOriented(ChassisSpeeds velocity) {
@@ -87,6 +96,22 @@ public class DriveSubsystem extends SubsystemBase {
         return run(() -> {
             swerveDrive.driveFieldOriented(inputSupplier.get().get());
         });
+    }
+
+    public void driveRobotRelativeSpeeds(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
+        swerveDrive.drive(
+                chassisSpeeds,
+                swerveDrive.kinematics.toSwerveModuleStates(chassisSpeeds),
+                driveFeedforwards.linearForces());
+    }
+
+    public PPHolonomicDriveController driveController() {
+        return new PPHolonomicDriveController(
+                translationPIDConstants.toImmutable(), rotationPIDConstants.toImmutable());
+    }
+
+    public void stop() {
+        swerveDrive.drive(new ChassisSpeeds());
     }
 
     public SwerveDrive getSwerveDrive() {
