@@ -95,11 +95,8 @@ public class AutoChooser {
     }
 
     public Command getIntakeCommand() {
-        return WristCommands.moveIntakeWristCommand(intakeWristSubsystem, Direction.OUT)
-                .andThen(Commands.parallel(
-                                WristCommands.holdIntakeWristCommand(intakeWristSubsystem, Direction.OUT),
-                                RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem))
-                        .withTimeout(MoPrefs.autoIntakeRunTime.get().in(Units.Seconds)));
+        return WristCommands.deployIntakeWristCommand(intakeWristSubsystem)
+                .andThen(RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem));
     }
 
     // We shoot the fuel, and then we move out of the way in case another alliance member needs to move there (unlikely
@@ -128,7 +125,7 @@ public class AutoChooser {
         return Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
-                .andThen(Commands.parallel(
+                .andThen(Commands.deadline(
                                 AutoPathPlannerCommands.getFollowPathCommand(
                                         driveSubsystem, robotPositioning, "Left Hub to Depot", false),
                                 getIntakeCommand())
@@ -143,7 +140,7 @@ public class AutoChooser {
                 .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Hub to Left Neutral Zone", false))
-                .andThen(Commands.parallel(
+                .andThen(Commands.deadline(
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Left Neutral Zone to Left Hub", false),
                         getIntakeCommand()))
@@ -156,7 +153,7 @@ public class AutoChooser {
                 .andThen(getShootCommand())
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Hub to Right Neutral Zone", false))
-                .andThen(Commands.parallel(
+                .andThen(Commands.deadline(
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", false),
                         getIntakeCommand()))
