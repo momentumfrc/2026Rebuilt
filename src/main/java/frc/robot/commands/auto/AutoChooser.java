@@ -1,7 +1,5 @@
 package frc.robot.commands.auto;
 
-import java.util.Collections;
-
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,7 +10,6 @@ import frc.robot.RobotPositioning;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
-import frc.robot.commands.intake.WristCommands.Direction;
 import frc.robot.molib.NTHelpers;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.DriveSubsystem;
@@ -23,6 +20,7 @@ import frc.robot.subsystem.IntakeWristSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
+import java.util.Collections;
 
 public class AutoChooser {
     private enum AutoChoices {
@@ -80,7 +78,8 @@ public class AutoChooser {
         this.intakeWristSubsystem = intakeWristSubsystem;
 
         turretTargeting = new TurretTargeting(robotPositioning);
-        shootCommand = new ShootCommand(turretTargeting, indexerSubsystem, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
+        shootCommand = new ShootCommand(
+                turretTargeting, indexerSubsystem, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
 
         var autoTable = NTHelpers.getTable("Auto");
         enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", true);
@@ -91,7 +90,9 @@ public class AutoChooser {
     }
 
     public Command getShootCommand() {
-        return shootCommand.alongWith(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet()).andThen(indexerSubsystem.run(indexerSubsystem::run)));
+        return shootCommand.alongWith(
+                Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet())
+                        .andThen(indexerSubsystem.run(indexerSubsystem::run)));
     }
 
     public Command getIntakeCommand() {
