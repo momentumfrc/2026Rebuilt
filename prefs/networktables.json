@@ -730,7 +730,7 @@
   {
     "name": "/Preferences/Intake Wrist Retract Position (R)",
     "type": "double",
-    "value": 0.05,
+    "value": 0.005,
     "properties": {
       "persistent": true
     }
@@ -843,6 +843,94 @@
     "name": "/momentum-tuners/Intake Wrist/horizontalOffset",
     "type": "double",
     "value": -0.43563,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Auto Outpost wait Time (s)",
+    "type": "double",
+    "value": 2.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Auto Intake Run Time (s)",
+    "type": "double",
+    "value": 2.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Auto Shooter Run Time (s)",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/kP",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/kI",
+    "type": "double",
+    "value": 0.0,
     "properties": {
       "persistent": true
     }
