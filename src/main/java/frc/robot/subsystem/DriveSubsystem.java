@@ -17,11 +17,11 @@ import frc.robot.MoPrefs;
 import frc.robot.input.MoInput;
 import frc.robot.molib.NTHelpers;
 import frc.robot.molib.prefs.MoPrefsUtils;
+import frc.robot.util.MoSwerveInputStream;
 import frc.robot.util.MutablePIDConstants;
 import java.io.File;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
-import swervelib.SwerveInputStream;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -119,13 +119,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     private Supplier<Supplier<ChassisSpeeds>> setupDriveModes(Supplier<MoInput> inputSupplier) {
-        var swerveInputStreamBase = SwerveInputStream.of(
+        var swerveInputStreamBase = MoSwerveInputStream.of(
                         swerveDrive,
                         () -> inputSupplier.get().getDriveMoveXRequest(),
                         () -> inputSupplier.get().getDriveMoveYRequest())
                 .allianceRelativeControl(true)
                 .cubeTranslationControllerAxis(() -> MoPrefs.inputTranslationCubed.get())
                 .cubeRotationControllerAxis(() -> MoPrefs.inputRotationCubed.get());
+
+        swerveInputStreamBase.scaleTranslation(
+                () -> inputSupplier.get().getRunIntake() ? MoPrefs.driveIntakingSlowSpeed.get() : 1);
 
         var driveAngularVelocity = swerveInputStreamBase
                 .copy()

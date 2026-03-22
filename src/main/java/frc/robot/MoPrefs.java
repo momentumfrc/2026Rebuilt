@@ -32,6 +32,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final Pref<Boolean> inputRotationCubed = booleanPref("Swerve Input Rotation Cubed?", true);
     public static final Pref<Boolean> enableHeadingCorrection = booleanPref("Swerve heading correction", true);
 
+    public static final Pref<Double> driveIntakingSlowSpeed = unitlessDoublePref("Swerve intaking slow speed", 0.4);
+
     // **** INTAKE WRIST ****
 
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
