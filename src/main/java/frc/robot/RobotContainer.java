@@ -78,6 +78,7 @@ public class RobotContainer {
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
     private final Command runIndexerToShootCommand = indexer.run(indexer::run).withName("RunIndexerToShootCommand");
+    private final Command runIndexerToShuttleCommand = indexer.run(indexer::run).withName("RunIndexerToShuttleCommand");
     private final Command runIndexerWithIntakeCommand =
             indexer.run(indexer::run).withName("RunIndexerWithIntakeCommand");
     private final Command runIndexerReverseCommand =
@@ -217,7 +218,7 @@ public class RobotContainer {
                 .and(reverseIndexerTrigger.negate())
                 .whileTrue(
                         Commands.defer(() -> Commands.waitUntil(shuttleCommand::readyToShoot), Collections.emptySet())
-                                .andThen(runIndexerToShootCommand));
+                                .andThen(runIndexerToShuttleCommand));
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 
