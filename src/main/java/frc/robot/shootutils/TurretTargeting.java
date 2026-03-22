@@ -81,6 +81,10 @@ public final class TurretTargeting {
                 table.getDoubleTopic("output distance to target").publish();
     }
 
+    public RobotPositioning getPositioning() {
+        return positioning;
+    }
+
     /**
      * Get the estimated pose of the robot when the actual shooting happens.
      * <p>

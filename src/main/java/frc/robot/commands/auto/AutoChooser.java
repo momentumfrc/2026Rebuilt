@@ -91,8 +91,8 @@ public class AutoChooser {
     }
 
     public Command getShootCommand() {
-        var shootCommand = new ShootCommand(
-                turretTargeting, indexerSubsystem, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
+        var shootCommand = ShootCommand.getHubShootCommand(
+                turretTargeting, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
 
         var rezeroCommand =
                 Commands.either(Commands.none(), new ZeroHoodCommand(hoodSubsystem), hoodSubsystem::hasZero);

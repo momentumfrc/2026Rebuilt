@@ -16,7 +16,6 @@ import frc.robot.MoPrefs;
 import frc.robot.molib.NTHelpers;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.HoodSubsystem;
-import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
@@ -29,6 +28,8 @@ public class ShootCommand extends Command {
     private final HoodSubsystem hood;
 
     private final TurretTargeting targeting;
+
+    private final OdometryTargetingHelper.TargetType targetType;
 
     private final Alert targetOutOfRange = new Alert("Target out of turret range", Alert.AlertType.kInfo);
 
@@ -50,12 +51,13 @@ public class ShootCommand extends Command {
     private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
 
     public ShootCommand(
+            OdometryTargetingHelper.TargetType targetType,
             TurretTargeting targeting,
-            IndexerSubsystem indexer,
             KickerSubsystem kicker,
             TurretSubsystem turret,
             ShooterSubsystem shooter,
             HoodSubsystem hood) {
+        this.targetType = targetType;
         this.targeting = targeting;
         this.kicker = kicker;
         this.turret = turret;
@@ -76,6 +78,24 @@ public class ShootCommand extends Command {
         overrideHoodSetpoint = NTHelpers.getDoubleEntry(shooterHoodTable, "Hood Override Setpoint (°)", 10);
 
         addRequirements(kicker, turret, shooter, hood);
+    }
+
+    public static ShootCommand getHubShootCommand(
+            TurretTargeting targeting,
+            KickerSubsystem kicker,
+            TurretSubsystem turret,
+            ShooterSubsystem shooter,
+            HoodSubsystem hood) {
+        return new ShootCommand(OdometryTargetingHelper.TargetType.HUB, targeting, kicker, turret, shooter, hood);
+    }
+
+    public static ShootCommand getShuttleShootCommand(
+            TurretTargeting targeting,
+            KickerSubsystem kicker,
+            TurretSubsystem turret,
+            ShooterSubsystem shooter,
+            HoodSubsystem hood) {
+        return new ShootCommand(OdometryTargetingHelper.TargetType.SHUTTLE, targeting, kicker, turret, shooter, hood);
     }
 
     private Angle getHoodOverridePosition() {
@@ -111,7 +131,9 @@ public class ShootCommand extends Command {
             shooter.runAtSpeed(MoPrefs.flywheelFallbackSetpoint.get());
         } else {
             var target = OdometryTargetingHelper.getTarget(
-                    DriverStation.getAlliance().orElse(Alliance.Red));
+                    DriverStation.getAlliance().orElse(Alliance.Red),
+                    targeting.getPositioning().getRobotPose(),
+                    targetType);
 
             var firingSolution =
                     switch (targetingMode) {
