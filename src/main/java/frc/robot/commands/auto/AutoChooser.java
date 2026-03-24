@@ -1,7 +1,15 @@
 package frc.robot.commands.auto;
 
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,12 +33,19 @@ import frc.robot.subsystem.TurretSubsystem;
 import java.util.Collections;
 
 public class AutoChooser {
+    private static final PathConstraints AUTO_PATH_CONSTRAINTS = new PathConstraints(
+            Units.MetersPerSecond.of(2),
+            Units.MetersPerSecondPerSecond.of(2),
+            Units.RotationsPerSecond.of(2),
+            Units.RotationsPerSecondPerSecond.of(2));
+
     private enum AutoChoices {
         SHOOT
     } // probably won't need this, leaving it here just in case we do for whatever reason
 
     private enum ShootAutoRoutines {
         SHOOT_ONLY,
+        SHOOT_THEN_BACKUP,
         CENTER_AND_SCORE,
         LEFT_COLLECT_NEUTRAL_TO_HUB,
         RIGHT_COLLECT_NEUTRAL_TO_HUB,
@@ -60,6 +75,8 @@ public class AutoChooser {
     private SendableChooser<ShootAutoRoutines> autoRoutinesChooser = NTHelpers.enumToChooser(ShootAutoRoutines.class);
     private BooleanEntry assumeRobotPose;
 
+    private DoubleEntry backupDistance;
+
     public AutoChooser(
             RobotPositioning robotPositioning,
             DriveSubsystem driveSubsystem,
@@ -88,6 +105,8 @@ public class AutoChooser {
         NTHelpers.publishSendable(autoTable, "Which Auto?", autoChoicesChooser);
         NTHelpers.publishSendable(autoTable, "Which Routine?", autoRoutinesChooser);
         assumeRobotPose = NTHelpers.getBooleanEntry(autoTable, "Assume Robot Position?", false);
+
+        backupDistance = NTHelpers.getDoubleEntry(autoTable, "Auto Backup Distance (m)", 1);
     }
 
     public Command getShootCommand() {
@@ -108,6 +127,31 @@ public class AutoChooser {
     public Command getIntakeCommand() {
         return WristCommands.deployIntakeWristCommand(intakeWristSubsystem)
                 .andThen(RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem));
+    }
+
+    public Command getShootThenBackupCommand() {
+        double dx = backupDistance.get();
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
+            dx = -1 * dx;
+        }
+
+        var robotPose = robotPositioning.getRobotPose();
+        double minX = edu.wpi.first.math.util.Units.inchesToMeters(36/2);
+        double maxX = edu.wpi.first.math.util.Units.inchesToMeters(650.92 - (36/2));
+        double newX = robotPose.getX() + dx;
+        newX = Math.min(newX, maxX);
+        newX = Math.max(newX, minX);
+        var targetTrans = new Translation2d(newX, robotPose.getY());
+
+        Rotation2d directionOfTravel =
+                targetTrans.minus(robotPose.getTranslation()).getAngle();
+        var waypoints = PathPlannerPath.waypointsFromPoses(
+                new Pose2d(robotPose.getTranslation(), directionOfTravel), new Pose2d(targetTrans, directionOfTravel));
+
+        var path = new PathPlannerPath(waypoints, AUTO_PATH_CONSTRAINTS, null, new GoalEndState(0, robotPose.getRotation()));
+        path.preventFlipping = true;
+
+        return getShootCommand().andThen(AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, path));
     }
 
     // We shoot the fuel, and then we move out of the way in case another alliance member needs to move there (unlikely
@@ -206,6 +250,7 @@ public class AutoChooser {
     public Command getAutoRoutine() {
         return switch (autoRoutinesChooser.getSelected()) {
             case SHOOT_ONLY -> getShootCommand();
+            case SHOOT_THEN_BACKUP -> getShootThenBackupCommand();
             case CENTER_AND_SCORE -> buildCenterAuto();
             case LEFT_COLLECT_NEUTRAL_TO_HUB -> buildLeftCollectAndScoreAuto();
             case RIGHT_COLLECT_NEUTRAL_TO_HUB -> buildRightCollectAndScoreAuto();

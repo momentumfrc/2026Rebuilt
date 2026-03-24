@@ -27,6 +27,7 @@ public class AutoPathPlannerCommands {
             pathPlannerConfig = RobotConfig.fromGUISettings();
         } catch (Exception e) {
             DriverStation.reportError("Failed to Load PathPlanner Config - ", e.getStackTrace());
+            return Commands.none();
         }
 
         FollowPathCommand pathFollowingCommand = new FollowPathCommand(
