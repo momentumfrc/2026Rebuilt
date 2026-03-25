@@ -125,8 +125,10 @@ public class AutoChooser {
     }
 
     public Command getIntakeCommand() {
-        return WristCommands.deployIntakeWristCommand(intakeWristSubsystem)
-                .andThen(RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem));
+        return WristCommands.moveToPositionCommand(intakeWristSubsystem, MoPrefs.intakeWristDeployPosition::get)
+                .andThen(Commands.parallel(
+                        WristCommands.holdIntakeWristCommand(intakeWristSubsystem, WristCommands.Direction.OUT),
+                        RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem)));
     }
 
     public Command getShootThenBackupCommand() {

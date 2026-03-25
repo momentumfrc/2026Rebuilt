@@ -3,6 +3,7 @@ package frc.robot.commands.intake;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.MoPrefs;
 import frc.robot.molib.Utils;
 import frc.robot.subsystem.IntakeWristSubsystem;
@@ -30,21 +31,16 @@ public class WristCommands {
                 MoPrefs.intakeWristMoveTimeout::get);
     }
 
-    public static Command deployIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return moveToPositionCommand(wrist, MoPrefs.intakeWristDeployPosition::get)
-                .andThen(holdIntakeWristCommand(wrist, Direction.OUT))
-                .withName("DeployIntakeCommand");
-    }
-
-    public static Command retractIntakeWristCommand(IntakeWristSubsystem wrist) {
-        return moveToPositionCommand(wrist, MoPrefs.intakeWristRetractPosition::get)
-                .andThen(wrist.runOnce(wrist::zeroEncoder))
-                .andThen(holdIntakeWristCommand(wrist, Direction.IN))
-                .withName("RetractIntakeCommand");
-    }
-
-    public static Command intakeWristDefaultCommand(IntakeWristSubsystem wrist) {
-        return retractIntakeWristCommand(wrist).withName("DefaultRetractIntakeCommand");
+    public static Command agitateWristCommand(IntakeWristSubsystem wrist) {
+        return Commands.repeatingSequence(
+                Utils.withTimeoutPref(
+                        moveToPositionCommand(wrist, MoPrefs.intakeWristDeployPosition::get)
+                                .andThen(holdIntakeWristCommand(wrist, Direction.OUT)),
+                        MoPrefs.intakeWristAgitatePeriod::get),
+                Utils.withTimeoutPref(
+                        moveToPositionCommand(wrist, MoPrefs.intakeWristRetractPosition::get)
+                                .andThen(holdIntakeWristCommand(wrist, Direction.IN)),
+                        MoPrefs.intakeWristAgitatePeriod::get));
     }
 
     private WristCommands() {
