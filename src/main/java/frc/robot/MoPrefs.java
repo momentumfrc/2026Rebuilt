@@ -75,6 +75,12 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<CurrentUnit> indexerRollerSmartCurrentLimit =
             ampsPref("Indexer Current Limit", Units.Amps.of(40));
 
+    public static final UnitPref<VoltageUnit> centeringRunPower = voltsPref("Centering Run Power", Units.Volts.of(8));
+    public static final UnitPref<PerUnit<DimensionlessUnit, AngleUnit>> centeringEncoderScale =
+            encoderTicksPerRotationPref("Centering Encoder Scale", MoUnits.EncoderTicksPerRotation.ofNative(27 / 16));
+    public static final UnitPref<CurrentUnit> CenteringSmartCurrentLimit =
+            ampsPref("Centering Current Limit", Units.Amps.of(40));
+
     // **** KICKER ****
     public static final AngularVelocityUnitPref kickerRunSpeed = rpmPref("Kicker Run Speed", Units.RPM.of(1000));
     public static final UnitPref<CurrentUnit> kickerCurrentLimit = ampsPref("Kicker Current Limit", Units.Amps.of(40));
