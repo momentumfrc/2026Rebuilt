@@ -34,6 +34,11 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final Pref<Double> driveIntakingSlowSpeed = unitlessDoublePref("Swerve intaking slow speed", 0.4);
 
+    public static final UnitPref<CurrentUnit> boostDriveMotorLimit =
+            ampsPref("Swerve Boost Drive Limit", Units.Amps.of(60));
+    public static final UnitPref<CurrentUnit> boostSteerMotorLimit =
+            ampsPref("Swerve Boost Steer Limit", Units.Amps.of(25));
+
     // **** INTAKE WRIST ****
 
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =

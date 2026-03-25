@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -121,6 +122,7 @@ public class RobotContainer {
     private Trigger runSysIdTrigger;
 
     private Trigger lockTrigger;
+    private Trigger boostTrigger;
 
     private AutoChooser autochooser = new AutoChooser(
             robotPositioning,
@@ -188,6 +190,7 @@ public class RobotContainer {
         runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
 
         lockTrigger = new Trigger(() -> getInput().getLockRequest());
+        boostTrigger = new Trigger(() -> getInput().getDriveBoostRequest());
 
         reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
 
@@ -219,6 +222,13 @@ public class RobotContainer {
                 .whileTrue(
                         Commands.defer(() -> Commands.waitUntil(shuttleCommand::readyToShoot), Collections.emptySet())
                                 .andThen(runIndexerToShuttleCommand));
+
+        boostTrigger.whileTrue(Commands.startEnd(
+                        () -> driveSubsystem.overrideCurrentLimits(
+                                (Current) MoPrefs.boostDriveMotorLimit.get(),
+                                (Current) MoPrefs.boostSteerMotorLimit.get()),
+                        () -> driveSubsystem.restoreCurrentLimits())
+                .ignoringDisable(true));
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 

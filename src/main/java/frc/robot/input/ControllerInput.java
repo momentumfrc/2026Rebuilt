@@ -31,6 +31,11 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
+    public boolean getDriveBoostRequest() {
+        return driveController.getAButton();
+    }
+
+    @Override
     public double getDriveHeadingXRequest() {
         return driveController.getRightY();
     }
