@@ -136,8 +136,8 @@ public class AutoChooser {
         }
 
         var robotPose = robotPositioning.getRobotPose();
-        double minX = edu.wpi.first.math.util.Units.inchesToMeters(36/2);
-        double maxX = edu.wpi.first.math.util.Units.inchesToMeters(650.92 - (36/2));
+        double minX = edu.wpi.first.math.util.Units.inchesToMeters(36 / 2);
+        double maxX = edu.wpi.first.math.util.Units.inchesToMeters(650.92 - (36 / 2));
         double newX = robotPose.getX() + dx;
         newX = Math.min(newX, maxX);
         newX = Math.max(newX, minX);
@@ -148,10 +148,12 @@ public class AutoChooser {
         var waypoints = PathPlannerPath.waypointsFromPoses(
                 new Pose2d(robotPose.getTranslation(), directionOfTravel), new Pose2d(targetTrans, directionOfTravel));
 
-        var path = new PathPlannerPath(waypoints, AUTO_PATH_CONSTRAINTS, null, new GoalEndState(0, robotPose.getRotation()));
+        var path = new PathPlannerPath(
+                waypoints, AUTO_PATH_CONSTRAINTS, null, new GoalEndState(0, robotPose.getRotation()));
         path.preventFlipping = true;
 
-        return getShootCommand().andThen(AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, path));
+        return getShootCommand()
+                .andThen(AutoPathPlannerCommands.getFollowPathCommand(driveSubsystem, robotPositioning, path));
     }
 
     // We shoot the fuel, and then we move out of the way in case another alliance member needs to move there (unlikely
