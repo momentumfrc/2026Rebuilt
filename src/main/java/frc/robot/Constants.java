@@ -11,6 +11,7 @@ public class Constants {
 
     public static final CANAddress KICKER_PORT = new CANAddress(16);
     public static final CANAddress INDEXER_PORT = new CANAddress(15);
+    public static final CANAddress CENTERING_PORT = new CANAddress(23);
 
     public static final CANAddress HOOD_PORT = new CANAddress(20);
 
