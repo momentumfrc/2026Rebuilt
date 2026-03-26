@@ -57,8 +57,8 @@ import frc.robot.util.TurretAngleHelper;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
-    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
-    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 12;
+    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 12;
+    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 13;
 
     private static final int TRAPEZOID_STATE_RESET_CUTOFF = 30;
 
@@ -179,7 +179,7 @@ public class TurretSubsystem extends SubsystemBase {
 
         MoPrefs.turretMaxPower.subscribe(voltage -> {
             turretMotorConfig.Voltage.withPeakForwardVoltage((Voltage) voltage).withPeakReverseVoltage((Voltage)
-                    voltage);
+                    voltage.unaryMinus());
             turretMotor.getConfigurator().apply(turretMotorConfig);
         });
 
