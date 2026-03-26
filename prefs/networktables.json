@@ -82,7 +82,7 @@
   {
     "name": "/Preferences/Intake Roller Power (V)",
     "type": "double",
-    "value": 10.0,
+    "value": 8.0,
     "properties": {
       "persistent": true
     }
@@ -138,7 +138,7 @@
   {
     "name": "/Preferences/Turret Relative Encoder Offset (°)",
     "type": "double",
-    "value": -3.69,
+    "value": -139.1308,
     "properties": {
       "persistent": true
     }
@@ -146,7 +146,7 @@
   {
     "name": "/Preferences/Turret Abs. Encoder 1 Zero (R)",
     "type": "double",
-    "value": 0.8973,
+    "value": 0.5462,
     "properties": {
       "persistent": true
     }
@@ -154,7 +154,7 @@
   {
     "name": "/Preferences/Turret Abs. Encoder 2 Zero (R)",
     "type": "double",
-    "value": 0.4705,
+    "value": 0.5729,
     "properties": {
       "persistent": true
     }
@@ -170,7 +170,7 @@
   {
     "name": "/Preferences/Turret Max Soft Limit (°)",
     "type": "double",
-    "value": 181.0,
+    "value": 130.0,
     "properties": {
       "persistent": true
     }
@@ -866,7 +866,7 @@
   {
     "name": "/Preferences/Auto Shooter Run Time (s)",
     "type": "double",
-    "value": 3.0,
+    "value": 7.0,
     "properties": {
       "persistent": true
     }
@@ -931,6 +931,62 @@
     "name": "/momentum-tuners/PathPlanner Rotation PID/kI",
     "type": "double",
     "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve intaking slow speed",
+    "type": "double",
+    "value": 0.8,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Centering Run Power (V)",
+    "type": "double",
+    "value": 8.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Centering Encoder Scale (et_R)",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Centering Current Limit (A)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Boost Drive Limit (A)",
+    "type": "double",
+    "value": 60.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Boost Steer Limit (A)",
+    "type": "double",
+    "value": 25.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Agitate Period (s)",
+    "type": "double",
+    "value": 5.0,
     "properties": {
       "persistent": true
     }
