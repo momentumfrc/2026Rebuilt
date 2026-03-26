@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         // Update latest robot position before anything else runs.
         m_robotContainer.robotPositioning.update();
+        m_robotContainer.checkRumbles();
 
         CommandScheduler.getInstance().run();
 
