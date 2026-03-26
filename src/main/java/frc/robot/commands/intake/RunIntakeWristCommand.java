@@ -1,0 +1,76 @@
+package frc.robot.commands.intake;
+
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.MoPrefs;
+import frc.robot.commands.intake.WristCommands.Direction;
+import frc.robot.input.MoInput;
+import frc.robot.subsystem.IntakeWristSubsystem;
+import java.util.function.Supplier;
+
+public class RunIntakeWristCommand extends Command {
+    private final IntakeWristSubsystem wrist;
+    private final Supplier<MoInput> inputSupplier;
+    private final Timer moveTimer = new Timer();
+
+    private enum WristState {
+        AT_POSITION,
+        MOVING;
+    }
+
+    private WristCommands.Direction currDirection = Direction.IN;
+    private WristState currState = WristState.MOVING;
+
+    public RunIntakeWristCommand(IntakeWristSubsystem wrist, Supplier<MoInput> inputSupplier) {
+        this.wrist = wrist;
+        this.inputSupplier = inputSupplier;
+
+        addRequirements(wrist);
+    }
+
+    @Override
+    public void initialize() {
+        currState = WristState.MOVING;
+        moveTimer.restart();
+    }
+
+    @Override
+    public void execute() {
+        var input = inputSupplier.get();
+        WristCommands.Direction requestedDirection = currDirection;
+        if (input.getRetractIntake()) {
+            requestedDirection = Direction.IN;
+        } else if (input.getExtendIntake()) {
+            requestedDirection = Direction.OUT;
+        }
+
+        if (requestedDirection != currDirection) {
+            currState = WristState.MOVING;
+            currDirection = requestedDirection;
+            moveTimer.restart();
+        }
+
+        if (currState == WristState.MOVING) {
+            var targetPosition =
+                    switch (currDirection) {
+                        case OUT -> MoPrefs.intakeWristDeployPosition.get();
+                        case IN -> MoPrefs.intakeWristRetractPosition.get();
+                    };
+            if (wrist.atPosition(targetPosition) || moveTimer.hasElapsed(MoPrefs.intakeWristMoveTimeout.get())) {
+                currState = WristState.AT_POSITION;
+            } else {
+                wrist.movePosition(targetPosition);
+            }
+        }
+
+        if (currState == WristState.AT_POSITION) {
+            var targetVoltage = (Voltage)
+                    switch (currDirection) {
+                        case OUT -> MoPrefs.intakeWristHoldVoltage.get();
+                        case IN -> MoPrefs.intakeWristHoldVoltage.get().unaryMinus();
+                    };
+            wrist.moveVoltage(targetVoltage);
+        }
+    }
+}

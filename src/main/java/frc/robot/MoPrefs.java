@@ -34,6 +34,11 @@ public class MoPrefs extends MoPrefsBase {
 
     public static final Pref<Double> driveIntakingSlowSpeed = unitlessDoublePref("Swerve intaking slow speed", 0.4);
 
+    public static final UnitPref<CurrentUnit> boostDriveMotorLimit =
+            ampsPref("Swerve Boost Drive Limit", Units.Amps.of(60));
+    public static final UnitPref<CurrentUnit> boostSteerMotorLimit =
+            ampsPref("Swerve Boost Steer Limit", Units.Amps.of(25));
+
     // **** INTAKE WRIST ****
 
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
@@ -48,6 +53,9 @@ public class MoPrefs extends MoPrefsBase {
             rotationsPref("Intake Wrist Deploy Position", Units.Rotations.of(0.5));
     public static final AngleUnitPref intakeWristRetractPosition =
             rotationsPref("Intake Wrist Retract Position", Units.Rotations.of(0.05));
+
+    public static final TimeUnitPref intakeWristAgitatePeriod =
+            secondsPref("Intake Wrist Agitate Period", Units.Seconds.of(5));
 
     public static final UnitPref<VoltageUnit> intakeWristZeroVoltage =
             voltsPref("Intake Wrist Zero Voltage", Units.Volts.of(8));

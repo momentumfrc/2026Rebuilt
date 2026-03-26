@@ -6,8 +6,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -42,6 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
             NTHelpers.enumToChooser(DriveMode.class, DriveMode.VELOCITY_HEADING);
 
     private final DoublePublisher omegaSpeed;
+    private final BooleanPublisher currentBoosted;
 
     public DriveSubsystem() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -70,6 +73,8 @@ public class DriveSubsystem extends SubsystemBase {
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
         omegaSpeed = table.getDoubleTopic("Gyro Speed (rad_s)").publish();
+        currentBoosted = table.getBooleanTopic("Current Boosted").publish();
+        currentBoosted.set(false);
 
         translationPIDConstants.getTuner("PathPlanner Translation PID").safeBuild();
         rotationPIDConstants.getTuner("PathPlanner Rotation PID").safeBuild();
@@ -152,6 +157,26 @@ public class DriveSubsystem extends SubsystemBase {
             case VELOCITY_HEADING -> driveAngularVelocity;
             case ABSOLUTE_HEADING -> driveHeading;
         };
+    }
+
+    public void overrideCurrentLimits(Current driveLimit, Current steerLimit) {
+        currentBoosted.set(true);
+
+        int driveLimitAmps = (int) driveLimit.in(Units.Amps);
+        int steerLimitAmps = (int) steerLimit.in(Units.Amps);
+        for (var module : swerveDrive.getModules()) {
+            module.getDriveMotor().setCurrentLimit(driveLimitAmps);
+            module.getAngleMotor().setCurrentLimit(steerLimitAmps);
+        }
+    }
+
+    public void restoreCurrentLimits() {
+        currentBoosted.set(false);
+
+        for (var module : swerveDrive.getModules()) {
+            module.getDriveMotor().setCurrentLimit(module.configuration.physicalCharacteristics.driveMotorCurrentLimit);
+            module.getAngleMotor().setCurrentLimit(module.configuration.physicalCharacteristics.angleMotorCurrentLimit);
+        }
     }
 
     public Command getTeleopDriveCommand(Supplier<MoInput> inputSupplier) {

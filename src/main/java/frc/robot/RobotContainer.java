@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -13,6 +14,7 @@ import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ZeroHoodCommand;
 import frc.robot.commands.auto.AutoChooser;
 import frc.robot.commands.intake.RollerCommands;
+import frc.robot.commands.intake.RunIntakeWristCommand;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.commands.intake.ZeroIntakeWristCommand;
 import frc.robot.input.ControllerInput;
@@ -91,10 +93,9 @@ public class RobotContainer {
     private final Command runKickerCommand = kicker.run(kicker::run);
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
-    private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
-    private final Command retractIntakeWristCommand = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
+    private final Command agitateIntakeWristCommand = WristCommands.agitateWristCommand(intakeWristSubsystem);
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
-    private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
+    private final Command intakeWristDefaultCommand = new RunIntakeWristCommand(intakeWristSubsystem, this::getInput);
     private final Command zeroIntakeWristCommand = new ZeroIntakeWristCommand(intakeWristSubsystem);
     private final Command testIntakeWristCommand =
             intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
@@ -106,8 +107,6 @@ public class RobotContainer {
 
     private Trigger runIntakeTrigger;
     private Trigger agitateIntakeTrigger;
-    private Trigger extendIntakeTrigger;
-    private Trigger retractIntakeTrigger;
 
     private Trigger reverseIndexerTrigger;
 
@@ -121,6 +120,7 @@ public class RobotContainer {
     private Trigger runSysIdTrigger;
 
     private Trigger lockTrigger;
+    private Trigger boostTrigger;
 
     private AutoChooser autochooser = new AutoChooser(
             robotPositioning,
@@ -175,8 +175,6 @@ public class RobotContainer {
         // Intake Triggers
         runIntakeTrigger = new Trigger(() -> getInput().getRunIntake());
         agitateIntakeTrigger = new Trigger(() -> getInput().getAgitate());
-        extendIntakeTrigger = new Trigger(() -> getInput().getExtendIntake());
-        retractIntakeTrigger = new Trigger(() -> getInput().getRetractIntake());
 
         clearShooterTrigger = new Trigger(() -> getInput().getClearShooter());
         shootTrigger = new Trigger(() -> getInput().getShootRequest());
@@ -188,6 +186,7 @@ public class RobotContainer {
         runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
 
         lockTrigger = new Trigger(() -> getInput().getLockRequest());
+        boostTrigger = new Trigger(() -> getInput().getDriveBoostRequest());
 
         reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
 
@@ -196,11 +195,7 @@ public class RobotContainer {
 
         // Intake Trigger Bindings
         runIntakeTrigger.whileTrue(runRollerCommand);
-        retractIntakeTrigger
-                .or(agitateIntakeTrigger)
-                .and(zeroIntakeWristTrigger.negate())
-                .onTrue(retractIntakeWristCommand);
-        extendIntakeTrigger.and(zeroIntakeWristTrigger.negate()).onTrue(extendIntakeWristCommand);
+        agitateIntakeTrigger.whileTrue(agitateIntakeWristCommand);
 
         shootTrigger.whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
                 .andThen(shootCommand));
@@ -219,6 +214,13 @@ public class RobotContainer {
                 .whileTrue(
                         Commands.defer(() -> Commands.waitUntil(shuttleCommand::readyToShoot), Collections.emptySet())
                                 .andThen(runIndexerToShuttleCommand));
+
+        boostTrigger.whileTrue(Commands.startEnd(
+                        () -> driveSubsystem.overrideCurrentLimits(
+                                (Current) MoPrefs.boostDriveMotorLimit.get(),
+                                (Current) MoPrefs.boostSteerMotorLimit.get()),
+                        () -> driveSubsystem.restoreCurrentLimits())
+                .ignoringDisable(true));
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 
