@@ -24,6 +24,7 @@ import frc.robot.util.MutablePIDConstants;
 import java.io.File;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -40,11 +41,13 @@ public class DriveSubsystem extends SubsystemBase {
         ABSOLUTE_HEADING
     };
 
+    private boolean boostCurrentLimits = false;
+
     private final SendableChooser<DriveMode> driveModeChooser =
             NTHelpers.enumToChooser(DriveMode.class, DriveMode.VELOCITY_HEADING);
 
     private final DoublePublisher omegaSpeed;
-    private final BooleanPublisher currentBoosted;
+    private final BooleanPublisher boostCurrentLimitsPublisher;
 
     public DriveSubsystem() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -73,8 +76,8 @@ public class DriveSubsystem extends SubsystemBase {
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
         omegaSpeed = table.getDoubleTopic("Gyro Speed (rad_s)").publish();
-        currentBoosted = table.getBooleanTopic("Current Boosted").publish();
-        currentBoosted.set(false);
+        boostCurrentLimitsPublisher =
+                table.getBooleanTopic("Boost Current Limits").publish();
 
         translationPIDConstants.getTuner("PathPlanner Translation PID").safeBuild();
         rotationPIDConstants.getTuner("PathPlanner Rotation PID").safeBuild();
@@ -159,24 +162,48 @@ public class DriveSubsystem extends SubsystemBase {
         };
     }
 
-    public void overrideCurrentLimits(Current driveLimit, Current steerLimit) {
-        currentBoosted.set(true);
+    public boolean isBoosted() {
+        return boostCurrentLimits;
+    }
 
-        int driveLimitAmps = (int) driveLimit.in(Units.Amps);
-        int steerLimitAmps = (int) steerLimit.in(Units.Amps);
-        for (var module : swerveDrive.getModules()) {
-            module.getDriveMotor().setCurrentLimit(driveLimitAmps);
-            module.getAngleMotor().setCurrentLimit(steerLimitAmps);
+    public void toggleBoostCurrentLimits() {
+        if (boostCurrentLimits) {
+            boostCurrentLimits = false;
+            restoreCurrentLimits();
+        } else {
+            boostCurrentLimits = true;
+            overrideCurrentLimits(
+                    (Current) MoPrefs.boostDriveMotorLimit.get(), (Current) MoPrefs.boostSteerMotorLimit.get());
         }
     }
 
-    public void restoreCurrentLimits() {
-        currentBoosted.set(false);
+    public void overrideCurrentLimits(Current driveLimit, Current steerLimit) {
+        final int driveLimitAmps = (int) driveLimit.in(Units.Amps);
+        final int steerLimitAmps = (int) steerLimit.in(Units.Amps);
 
-        for (var module : swerveDrive.getModules()) {
-            module.getDriveMotor().setCurrentLimit(module.configuration.physicalCharacteristics.driveMotorCurrentLimit);
-            module.getAngleMotor().setCurrentLimit(module.configuration.physicalCharacteristics.angleMotorCurrentLimit);
-        }
+        final SwerveModule[] swerveModules = swerveDrive.getModules();
+
+        new Thread(() -> {
+                    for (var module : swerveModules) {
+                        module.getDriveMotor().setCurrentLimit(driveLimitAmps);
+                        module.getAngleMotor().setCurrentLimit(steerLimitAmps);
+                    }
+                })
+                .start();
+    }
+
+    public void restoreCurrentLimits() {
+        final SwerveModule[] swerveModules = swerveDrive.getModules();
+
+        new Thread(() -> {
+                    for (var module : swerveModules) {
+                        module.getDriveMotor()
+                                .setCurrentLimit(module.configuration.physicalCharacteristics.driveMotorCurrentLimit);
+                        module.getAngleMotor()
+                                .setCurrentLimit(module.configuration.physicalCharacteristics.angleMotorCurrentLimit);
+                    }
+                })
+                .start();
     }
 
     public Command getTeleopDriveCommand(Supplier<MoInput> inputSupplier) {
@@ -191,5 +218,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void periodic() {
         omegaSpeed.set(swerveDrive.getRobotVelocity().omegaRadiansPerSecond);
+        boostCurrentLimitsPublisher.set(boostCurrentLimits);
     }
 }

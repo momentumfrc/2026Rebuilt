@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -215,12 +215,8 @@ public class RobotContainer {
                         Commands.defer(() -> Commands.waitUntil(shuttleCommand::readyToShoot), Collections.emptySet())
                                 .andThen(runIndexerToShuttleCommand));
 
-        boostTrigger.whileTrue(Commands.startEnd(
-                        () -> driveSubsystem.overrideCurrentLimits(
-                                (Current) MoPrefs.boostDriveMotorLimit.get(),
-                                (Current) MoPrefs.boostSteerMotorLimit.get()),
-                        () -> driveSubsystem.restoreCurrentLimits())
-                .ignoringDisable(true));
+        boostTrigger.onTrue(
+                Commands.runOnce(driveSubsystem::toggleBoostCurrentLimits).ignoringDisable(true));
 
         clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
 
@@ -261,5 +257,10 @@ public class RobotContainer {
                         shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
                 kicker.run(
                         () -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
+    }
+
+    public void checkRumbles() {
+        double rumble = driveSubsystem.isBoosted() ? 0.4 : 0;
+        controllerInput.getDriveController().setRumble(RumbleType.kBothRumble, rumble);
     }
 }
