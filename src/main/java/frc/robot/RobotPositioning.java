@@ -251,11 +251,12 @@ public class RobotPositioning {
 
         // The stationary limelight is assumed to be the LL2, which cannot return accurate measurements while moving.
         var robotVelocity = swerveDrive.getRobotVelocity();
+        /*
         if (Math.abs(robotVelocity.vxMetersPerSecond) > STATIONARY_CUTOFF
                 || Math.abs(robotVelocity.vyMetersPerSecond) > STATIONARY_CUTOFF
                 || Math.abs(robotVelocity.omegaRadiansPerSecond) > STATIONARY_CUTOFF) {
             return;
-        }
+        } */
 
         LimelightHelpers.PoseEstimate poseEstimate = null;
         Vector<N3> visionStdDevs = null;
