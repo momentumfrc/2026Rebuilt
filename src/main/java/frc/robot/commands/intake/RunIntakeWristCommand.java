@@ -1,11 +1,13 @@
 package frc.robot.commands.intake;
 
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.MoPrefs;
 import frc.robot.commands.intake.WristCommands.Direction;
 import frc.robot.input.MoInput;
+import frc.robot.molib.NTHelpers;
 import frc.robot.subsystem.IntakeWristSubsystem;
 import java.util.function.Supplier;
 
@@ -22,9 +24,16 @@ public class RunIntakeWristCommand extends Command {
     private WristCommands.Direction currDirection = Direction.IN;
     private WristState currState = WristState.MOVING;
 
+    private final StringPublisher directionPublisher;
+    private final StringPublisher statePublisher;
+
     public RunIntakeWristCommand(IntakeWristSubsystem wrist, Supplier<MoInput> inputSupplier) {
         this.wrist = wrist;
         this.inputSupplier = inputSupplier;
+
+        final var table = NTHelpers.getTable("Intake Wrist");
+        directionPublisher = table.getStringTopic("Wrist Direction").publish();
+        statePublisher = table.getStringTopic("Wrist State").publish();
 
         addRequirements(wrist);
     }
@@ -72,5 +81,8 @@ public class RunIntakeWristCommand extends Command {
                     };
             wrist.moveVoltage(targetVoltage);
         }
+
+        directionPublisher.accept(currDirection.toString());
+        statePublisher.accept(currState.toString());
     }
 }
