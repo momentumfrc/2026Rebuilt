@@ -33,15 +33,15 @@ public class WristCommands {
 
     public static Command agitateWristCommand(IntakeWristSubsystem wrist) {
         return Commands.repeatingSequence(
-            Utils.withTimeoutPref(
-                        moveToPositionCommand(wrist, MoPrefs.intakeWristRetractPosition::get)
-                                .andThen(holdIntakeWristCommand(wrist, Direction.IN)),
-                        MoPrefs.intakeWristAgitatePeriod::get),
-                Utils.withTimeoutPref(
-                        moveToPositionCommand(wrist, MoPrefs.intakeWristDeployPosition::get)
-                                .andThen(holdIntakeWristCommand(wrist, Direction.OUT)),
-                        MoPrefs.intakeWristAgitatePeriod::get)
-                ).withName("AgitateIntakeWristCommand");
+                        Utils.withTimeoutPref(
+                                moveToPositionCommand(wrist, MoPrefs.intakeWristRetractPosition::get)
+                                        .andThen(holdIntakeWristCommand(wrist, Direction.IN)),
+                                MoPrefs.intakeWristAgitatePeriod::get),
+                        Utils.withTimeoutPref(
+                                moveToPositionCommand(wrist, MoPrefs.intakeWristDeployPosition::get)
+                                        .andThen(holdIntakeWristCommand(wrist, Direction.OUT)),
+                                MoPrefs.intakeWristAgitatePeriod::get))
+                .withName("AgitateIntakeWristCommand");
     }
 
     private WristCommands() {
