@@ -170,20 +170,20 @@ public class AutoChooser {
         return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Left Start to Left Neutral Zone", assumeRobotPose.get())
                 .andThen(Commands.deadline(
-                                AutoPathPlannerCommands.getFollowPathCommand(
-                                        driveSubsystem, robotPositioning, "Left Neutral Zone to Left Hub", false),
-                                getIntakeCommand())
-                        .andThen(getShootCommand()));
+                        AutoPathPlannerCommands.getFollowPathCommand(
+                                driveSubsystem, robotPositioning, "Left Neutral Zone to Left Hub", false),
+                        getIntakeCommand()))
+                .andThen(getShootCommand());
     }
 
     public Command buildRightCollectAndScoreAuto() {
         return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Start to Right Neutral Zone", assumeRobotPose.get())
                 .andThen(Commands.deadline(
-                                AutoPathPlannerCommands.getFollowPathCommand(
-                                        driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", false),
-                                getIntakeCommand())
-                        .andThen(getShootCommand()));
+                        AutoPathPlannerCommands.getFollowPathCommand(
+                                driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", false),
+                        getIntakeCommand()))
+                .andThen(getShootCommand());
     }
 
     // Might need some fixing later
@@ -204,12 +204,12 @@ public class AutoChooser {
                         driveSubsystem, robotPositioning, "Left Start to Left Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
                 .andThen(Commands.deadline(
-                                AutoPathPlannerCommands.getFollowPathCommand(
-                                        driveSubsystem, robotPositioning, "Left Hub to Depot", false),
-                                getIntakeCommand())
-                        .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                                driveSubsystem, robotPositioning, "Depot to Left Hub", false))
-                        .andThen(getShootCommand()));
+                        AutoPathPlannerCommands.getFollowPathCommand(
+                                driveSubsystem, robotPositioning, "Left Hub to Depot", false),
+                        getIntakeCommand()))
+                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Depot to Left Hub", false))
+                .andThen(getShootCommand());
     }
 
     public Command buildScoreLeftAndNeutral() {
@@ -241,14 +241,13 @@ public class AutoChooser {
     public Command buildScoreRightAndOutpost() {
         return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Hub to Outpost", assumeRobotPose.get())
-                .andThen(getShootCommand()
-                        .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                                        driveSubsystem, robotPositioning, "Outpost to Right Hub", false)
-                                .andThen(Commands.waitSeconds(
-                                        MoPrefs.autoOutpostWaitTime.get().in(Units.Seconds)))
-                                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                                                driveSubsystem, robotPositioning, "Outpost to Right Hub", false)
-                                        .andThen(getShootCommand()))));
+                .andThen(getShootCommand())
+                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Outpost to Right Hub", false))
+                .andThen(Commands.waitSeconds(MoPrefs.autoOutpostWaitTime.get().in(Units.Seconds)))
+                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Outpost to Right Hub", false))
+                .andThen(getShootCommand());
     }
 
     public Command getAutoRoutine() {
