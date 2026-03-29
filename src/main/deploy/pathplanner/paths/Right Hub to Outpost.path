@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 3.0,
-        "y": 2.75
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.2483975191458088,
-        "y": 2.778260794083103
+        "y": 2.528260794083103
       },
       "isLocked": false,
       "linkedName": "Right Side Hub"
