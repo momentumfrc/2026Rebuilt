@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.249987703795336,
-        "y": 2.7475204937719027
+        "x": 3.2483975191458088,
+        "y": 2.778260794083103
       },
       "isLocked": false,
       "linkedName": "Right Side Hub"
     },
     {
       "anchor": {
-        "x": 0.47674549549549605,
-        "y": 0.6848198198198201
+        "x": 0.8,
+        "y": 0.685
       },
       "prevControl": {
-        "x": 0.21359162742464105,
-        "y": 0.517490243039584
+        "x": 0.4604410060817083,
+        "y": 0.396312866039582
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Right Paths",

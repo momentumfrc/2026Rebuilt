@@ -12,7 +12,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 1152.0,
-            "height": 640.0,
+            "height": 512.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Field",
@@ -43,8 +43,8 @@
           },
           {
             "title": "Use MT2",
-            "x": 128.0,
-            "y": 640.0,
+            "x": 256.0,
+            "y": 512.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Toggle Switch",
@@ -56,8 +56,8 @@
           },
           {
             "title": "Use stationary limelight",
-            "x": 256.0,
-            "y": 640.0,
+            "x": 0.0,
+            "y": 512.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Toggle Switch",
@@ -69,13 +69,43 @@
           },
           {
             "title": "Use turret limelight",
-            "x": 384.0,
-            "y": 640.0,
+            "x": 128.0,
+            "y": 512.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Toggle Switch",
             "properties": {
               "topic": "/odometry/Use turret limelight",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Target In Range",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/turret/Target In Range",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Passive Tracking",
+            "x": 128.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/turret/Passive Tracking",
               "period": 0.06,
               "data_type": "boolean"
             }
@@ -86,7 +116,146 @@
     {
       "name": "Autonomous",
       "grid_layout": {
-        "layouts": [],
+        "layouts": [
+          {
+            "title": "PathPlanner Translation PID",
+            "x": 1024.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "i_zone",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Translation PID/i_zone",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Translation PID/kD",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Translation PID/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Translation PID/kP",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "PathPlanner Rotation PID",
+            "x": 1280.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "i_zone",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Rotation PID/i_zone",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kD",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Rotation PID/kD",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kI",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Rotation PID/kI",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kP",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/momentum-tuners/PathPlanner Rotation PID/kP",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          }
+        ],
         "containers": [
           {
             "title": "Preferences",
@@ -97,6 +266,168 @@
             "type": "RobotPreferences",
             "properties": {
               "topic": "/Preferences",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "Which Auto?",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/Auto/Which Auto?",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Which Routine?",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/Auto/Which Routine?",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Run Auto?",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/Auto/Run Auto?",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Assume Robot Position?",
+            "x": 128.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/Auto/Assume Robot Position?",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Auto Backup Distance (m)",
+            "x": 1408.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/Auto/Auto Backup Distance (m)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "DriveSubsystem",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/DriveSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "HoodSubsystem",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/HoodSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "TurretSubsystem",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/TurretSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "ShooterSubsystem",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/ShooterSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "IndexerSubsystem",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/IndexerSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "KickerSubsystem",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/KickerSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "IntakeRollerSubsystem",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/IntakeRollerSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "IntakeWristSubsystem",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/IntakeWristSubsystem",
               "period": 0.06
             }
           }
@@ -660,6 +991,23 @@
               "show_desired_states": true,
               "angle_offset": 0.0
             }
+          },
+          {
+            "title": "Boost Current Limits",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/drive/Boost Current Limits",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
           }
         ]
       }
@@ -845,7 +1193,7 @@
             "title": "Indexer Encoder Position",
             "x": 0.0,
             "y": 256.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -859,7 +1207,7 @@
             "title": "Indexer Encoder Speed",
             "x": 0.0,
             "y": 128.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -885,7 +1233,7 @@
             "title": "IndexerSubsystem",
             "x": 0.0,
             "y": 0.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Subsystem",
             "properties": {
@@ -904,7 +1252,7 @@
           {
             "title": "Kicker Current Limit (A)",
             "x": 0.0,
-            "y": 128.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
@@ -918,7 +1266,7 @@
           {
             "title": "Kicker Encoder Scale (et_R)",
             "x": 0.0,
-            "y": 256.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
@@ -1000,7 +1348,7 @@
           {
             "title": "Kicker Run Speed (R_min)",
             "x": 0.0,
-            "y": 0.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
@@ -1009,6 +1357,30 @@
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": true
+            }
+          },
+          {
+            "title": "Preferences",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "RobotPreferences",
+            "properties": {
+              "topic": "/Preferences",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "KickerSubsystem",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/KickerSubsystem",
+              "period": 0.06
             }
           }
         ]
@@ -1256,27 +1628,164 @@
         "layouts": [],
         "containers": [
           {
-            "title": "KickerSubsystem",
-            "x": 768.0,
+            "title": "Preferences",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "RobotPreferences",
+            "properties": {
+              "topic": "/Preferences",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "SysId Mechanism",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/sysid/SysId Mechanism",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "SysId Mode",
+            "x": 1280.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/sysid/SysId Mode",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "timeout (s)",
+            "x": 1408.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/sysid/timeout (s)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "step voltage (v)",
+            "x": 1280.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/sysid/step voltage (v)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "ramp rate (v_s)",
+            "x": 1152.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/sysid/ramp rate (v_s)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "ShooterSubsystem",
+            "x": 0.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Subsystem",
             "properties": {
-              "topic": "/subsystems/KickerSubsystem",
+              "topic": "/subsystems/ShooterSubsystem",
               "period": 0.06
             }
           },
           {
-            "title": "HoodSubsystem",
-            "x": 768.0,
+            "title": "Flywheel Speed (RPM)",
+            "x": 0.0,
             "y": 128.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 128.0,
-            "type": "Subsystem",
+            "type": "Text Display",
             "properties": {
-              "topic": "/subsystems/HoodSubsystem",
-              "period": 0.06
+              "topic": "/shooter-flywheel/Flywheel Speed (RPM)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Flywheel Override Setpoint (RPM)",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/shooter-flywheel/Flywheel Override Setpoint (RPM)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Override Flywheel Setpoint?",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/shooter-flywheel/Override Flywheel Setpoint?",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Flywheel Current",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/shooter-flywheel/Flywheel Current",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Calculated Flywheel Speed (RPM)",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/shooter-flywheel/Calculated Flywheel Speed (RPM)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
@@ -1286,7 +1795,229 @@
       "name": "Hood",
       "grid_layout": {
         "layouts": [],
-        "containers": []
+        "containers": [
+          {
+            "title": "Preferences",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "RobotPreferences",
+            "properties": {
+              "topic": "/Preferences",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "HoodSubsystem",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Subsystem",
+            "properties": {
+              "topic": "/subsystems/HoodSubsystem",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "ramp rate (v_s)",
+            "x": 1152.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/sysid/ramp rate (v_s)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "step voltage (v)",
+            "x": 1280.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/sysid/step voltage (v)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "timeout (s)",
+            "x": 1408.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/sysid/timeout (s)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "SysId Mode",
+            "x": 1280.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/sysid/SysId Mode",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "SysId Mechanism",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/sysid/SysId Mechanism",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Has zero?",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/shooter-hood/Has zero?",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Coast Motor",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/shooter-hood/Coast Motor",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Encoder (deg)",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/shooter-hood/Encoder (deg)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Override Hood Setpoint?",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/shooter-hood/Override Hood Setpoint?",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Hood Override Setpoint (°)",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/shooter-hood/Hood Override Setpoint (°)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Current",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/shooter-hood/Current",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Calculated Hood Position (deg)",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/shooter-hood/Calculated Hood Position (deg)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Forward Soft Limit",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/shooter-hood/Forward Soft Limit",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Reverse Soft Limit",
+            "x": 128.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/shooter-hood/Reverse Soft Limit",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          }
+        ]
       }
     },
     {
