@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1398059169488377,
-        "y": 6.058829236244292
+        "x": 1.2829829163052038,
+        "y": 5.8437519238264715
       },
       "isLocked": false,
       "linkedName": "Left Side Hub"
@@ -20,8 +20,8 @@
         "y": 5.95
       },
       "prevControl": {
-        "x": 2.4184650406008377,
-        "y": 5.485321760449153
+        "x": 2.4357689809719805,
+        "y": 5.857855557452244
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Left Paths",
