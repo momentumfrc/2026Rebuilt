@@ -54,7 +54,8 @@ public class AutoChooser {
         SCORE_LEFT_AND_COLLECT_DEPOT,
         SCORE_LEFT_AND_COLLECT_NEUTRAL_ZONE,
         SCORE_RIGHT_AND_COLLECT_NEUTRAL_ZONE,
-        SCORE_RIGHT_AND_COLLECT_OUTPOST
+        SCORE_RIGHT_AND_COLLECT_OUTPOST,
+        TEST_PATH
     } // edit with more choices once auto routines are defined
 
     private final TurretTargeting turretTargeting;
@@ -263,6 +264,9 @@ public class AutoChooser {
             case SCORE_LEFT_AND_COLLECT_NEUTRAL_ZONE -> buildScoreLeftAndNeutral();
             case SCORE_RIGHT_AND_COLLECT_NEUTRAL_ZONE -> buildScoreRightAndNeutral();
             case SCORE_RIGHT_AND_COLLECT_OUTPOST -> buildScoreRightAndOutpost();
+            case TEST_PATH ->
+                AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "TEST", assumeRobotPose.get());
         };
     }
 
