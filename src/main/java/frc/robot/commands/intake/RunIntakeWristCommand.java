@@ -74,11 +74,15 @@ public class RunIntakeWristCommand extends Command {
         }
 
         if (currState == WristState.AT_POSITION) {
-
-            if(currDirection == Direction.OUT) {
-                wrist.moveVoltageNoFF((Voltage) MoPrefs.intakeWristHoldVoltage.get());
+            if (currDirection == Direction.OUT) {
+                if (MoPrefs.intakeWristFwdHoldApplyFF.get()) {
+                    wrist.moveVoltage((Voltage) MoPrefs.intakeWristFwdHoldVoltage.get());
+                } else {
+                    wrist.moveVoltageNoFF((Voltage) MoPrefs.intakeWristFwdHoldVoltage.get());
+                }
             } else {
-                wrist.moveVoltage((Voltage) MoPrefs.intakeWristHoldVoltage.get().unaryMinus());
+                wrist.moveVoltage(
+                        (Voltage) MoPrefs.intakeWristRevHoldVoltage.get().unaryMinus());
             }
         }
 

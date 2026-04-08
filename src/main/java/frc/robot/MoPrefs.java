@@ -63,8 +63,11 @@ public class MoPrefs extends MoPrefsBase {
             ampsPref("Intake Wrist Zero Current Thresh", Units.Amps.of(18));
     public static final TimeUnitPref intakeWristZeroTime = secondsPref("Intake Wrist Zero Time", Units.Seconds.of(0.5));
 
-    public static final UnitPref<VoltageUnit> intakeWristHoldVoltage =
-            voltsPref("Intake Wrist Hold Power", Units.Volts.of(1));
+    public static final UnitPref<VoltageUnit> intakeWristFwdHoldVoltage =
+            voltsPref("Intake Wrist Fwd Hold Power", Units.Volts.of(0.125));
+    public static final UnitPref<VoltageUnit> intakeWristRevHoldVoltage =
+            voltsPref("Intake Wrist Rev Hold Power", Units.Volts.of(0.125));
+    public static final Pref<Boolean> intakeWristFwdHoldApplyFF = booleanPref("Intake Wrist Fwd Apply FF?", true);
 
     public static final AngularVelocityUnitPref intakeWristMaxVelocity =
             degreesPerSecPref("Intake Wrist Max Velocity", Units.DegreesPerSecond.of(360));

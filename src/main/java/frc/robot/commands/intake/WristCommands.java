@@ -19,8 +19,8 @@ public class WristCommands {
         return switch (direction) {
             case IN ->
                 wrist.run(() -> wrist.moveVoltage(
-                        (Voltage) MoPrefs.intakeWristHoldVoltage.get().unaryMinus()));
-            case OUT -> wrist.run(() -> wrist.moveVoltage((Voltage) MoPrefs.intakeWristHoldVoltage.get()));
+                        (Voltage) MoPrefs.intakeWristRevHoldVoltage.get().unaryMinus()));
+            case OUT -> wrist.run(() -> wrist.moveVoltage((Voltage) MoPrefs.intakeWristFwdHoldVoltage.get()));
         };
     }
 
