@@ -97,6 +97,10 @@ public class IntakeWristSubsystem extends SubsystemBase {
         intakeWrist.setVoltage(voltage.in(Units.Volts) + ff);
     }
 
+    public void moveVoltageNoFF(Voltage voltage) {
+        intakeWrist.setVoltage(voltage.in(Units.Volts));
+    }
+
     public void movePosition(Angle position) {
         if (hasZeroEntry.get() == false) {
             stopWristMotor();

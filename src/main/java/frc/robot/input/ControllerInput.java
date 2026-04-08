@@ -56,6 +56,11 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
+    public boolean getRunIntakeReverse() {
+        return operatorController.getRightTriggerAxis() > 0.8;
+    }
+
+    @Override
     public boolean getAgitate() {
         return operatorController.getLeftBumperButton();
     }

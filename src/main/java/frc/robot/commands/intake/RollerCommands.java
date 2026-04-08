@@ -16,4 +16,8 @@ public class RollerCommands {
     public static Command runIntakeRollerCommand(IntakeRollerSubsystem roller) {
         return Commands.run(roller::rollerIntake, roller).withName("RunIntakeRollersCommand");
     }
+
+    public static Command runIntakeRollerReverseCommand(IntakeRollerSubsystem roller) {
+        return Commands.run(roller::rollerExtake, roller).withName("RunIntakeRollersReverseCommand");
+    }
 }

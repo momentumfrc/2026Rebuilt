@@ -93,6 +93,7 @@ public class RobotContainer {
     private final Command runKickerCommand = kicker.run(kicker::run);
 
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
+    private final Command runRollerReverseCommand = RollerCommands.runIntakeRollerReverseCommand(intakeRollerSubsystem);
     private final Command agitateIntakeWristCommand = WristCommands.agitateWristCommand(intakeWristSubsystem);
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
     private final Command intakeWristDefaultCommand = new RunIntakeWristCommand(intakeWristSubsystem, this::getInput);
@@ -106,6 +107,7 @@ public class RobotContainer {
     private Trigger resetFieldOrientedFwd;
 
     private Trigger runIntakeTrigger;
+    private Trigger runIntakeReverseTrigger;
     private Trigger agitateIntakeTrigger;
 
     private Trigger reverseIndexerTrigger;
@@ -174,6 +176,7 @@ public class RobotContainer {
 
         // Intake Triggers
         runIntakeTrigger = new Trigger(() -> getInput().getRunIntake());
+        runIntakeReverseTrigger = new Trigger(() -> getInput().getRunIntakeReverse());
         agitateIntakeTrigger = new Trigger(() -> getInput().getAgitate());
 
         clearShooterTrigger = new Trigger(() -> getInput().getClearShooter());
@@ -195,6 +198,7 @@ public class RobotContainer {
 
         // Intake Trigger Bindings
         runIntakeTrigger.whileTrue(runRollerCommand);
+        runIntakeReverseTrigger.and(runIntakeTrigger.negate()).whileTrue(runRollerReverseCommand);
         agitateIntakeTrigger.whileTrue(agitateIntakeWristCommand);
 
         shootTrigger.whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)

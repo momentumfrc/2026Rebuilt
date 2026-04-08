@@ -74,12 +74,12 @@ public class RunIntakeWristCommand extends Command {
         }
 
         if (currState == WristState.AT_POSITION) {
-            var targetVoltage = (Voltage)
-                    switch (currDirection) {
-                        case OUT -> MoPrefs.intakeWristHoldVoltage.get();
-                        case IN -> MoPrefs.intakeWristHoldVoltage.get().unaryMinus();
-                    };
-            wrist.moveVoltage(targetVoltage);
+
+            if(currDirection == Direction.OUT) {
+                wrist.moveVoltageNoFF((Voltage) MoPrefs.intakeWristHoldVoltage.get());
+            } else {
+                wrist.moveVoltage((Voltage) MoPrefs.intakeWristHoldVoltage.get().unaryMinus());
+            }
         }
 
         directionPublisher.accept(currDirection.toString());
