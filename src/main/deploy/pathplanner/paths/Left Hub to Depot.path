@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2829829163052038,
-        "y": 5.8437519238264715
+        "x": 1.2751685884971278,
+        "y": 5.842909581822621
       },
       "isLocked": false,
       "linkedName": "Left Side Hub"
@@ -20,8 +20,8 @@
         "y": 5.95
       },
       "prevControl": {
-        "x": 2.4357689809719805,
-        "y": 5.857855557452244
+        "x": 2.4442810707272504,
+        "y": 5.849771113140938
       },
       "nextControl": null,
       "isLocked": false,

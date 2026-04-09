@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2483975191458088,
-        "y": 2.528260794083103
+        "x": 3.277466126988764,
+        "y": 2.5177968882256665
       },
       "isLocked": false,
       "linkedName": "Right Side Hub"
@@ -20,8 +20,8 @@
         "y": 0.685
       },
       "prevControl": {
-        "x": 0.4604410060817083,
-        "y": 0.396312866039582
+        "x": 0.4521283401510274,
+        "y": 0.4371377241169512
       },
       "nextControl": null,
       "isLocked": false,

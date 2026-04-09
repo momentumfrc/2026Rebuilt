@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9105555555555553,
-        "y": -0.5317888888888889
+        "x": 3.1681249999999994,
+        "y": 1.1034464285714285
       },
       "isLocked": false,
       "linkedName": "Right Side Hub"
+    },
+    {
+      "anchor": {
+        "x": 4.285678571428571,
+        "y": 0.5851607142857143
+      },
+      "prevControl": {
+        "x": 3.1681249999999994,
+        "y": 0.6823392857142857
+      },
+      "nextControl": {
+        "x": 4.534738718477492,
+        "y": 0.5635033101945037
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +36,8 @@
         "y": 1.2675777777777761
       },
       "prevControl": {
-        "x": 4.367477777777779,
-        "y": 0.40032222222222247
+        "x": 4.537426109688142,
+        "y": 0.4152838465512855
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +46,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.30931677018632914,
-      "rotationDegrees": 89.21711284842563
+      "waypointRelativePos": 1.6993987975951905,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
