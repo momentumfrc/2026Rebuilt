@@ -122,14 +122,15 @@ public class AutoChooser {
                         .andThen(indexerSubsystem.run(indexerSubsystem::run)))
                 .withName("AutoShootCommand"));
 
-        return Utils.withTimeoutPref(command, MoPrefs.autoShooterRunTime::get);
+        return Utils.withTimeoutPref(command.asProxy(), MoPrefs.autoShooterRunTime::get);
     }
 
     public Command getIntakeCommand() {
         return WristCommands.moveToPositionCommand(intakeWristSubsystem, MoPrefs.intakeWristDeployPosition::get)
                 .andThen(Commands.parallel(
                         WristCommands.holdIntakeWristCommand(intakeWristSubsystem, WristCommands.Direction.OUT),
-                        RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem)));
+                        RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem)))
+                .asProxy();
     }
 
     public Command getShootThenBackupCommand() {

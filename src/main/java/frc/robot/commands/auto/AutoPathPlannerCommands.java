@@ -40,7 +40,7 @@ public class AutoPathPlannerCommands {
                 () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                 driveSubsystem);
 
-        return pathFollowingCommand;
+        return pathFollowingCommand.asProxy();
     }
 
     public static Command getFollowPathCommand(
