@@ -52,7 +52,7 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getRunIntake() {
-        return operatorController.getRightBumperButton();
+        return operatorController.getRightBumperButton() || driveController.getRightTriggerAxis() > 0.8;
     }
 
     @Override

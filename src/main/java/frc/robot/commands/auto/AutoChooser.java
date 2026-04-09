@@ -243,8 +243,10 @@ public class AutoChooser {
         return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Start to Right Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
-                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                        driveSubsystem, robotPositioning, "Right Hub to Outpost", false))
+                .andThen(Commands.deadline(
+                        AutoPathPlannerCommands.getFollowPathCommand(
+                                driveSubsystem, robotPositioning, "Right Hub to Outpost", false),
+                        getIntakeCommand()))
                 .andThen(Commands.waitSeconds(MoPrefs.autoOutpostWaitTime.get().in(Units.Seconds)))
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Outpost to Right Hub", false))

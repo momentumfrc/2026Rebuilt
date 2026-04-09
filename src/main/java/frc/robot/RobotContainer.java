@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -266,5 +267,8 @@ public class RobotContainer {
     public void checkRumbles() {
         double rumble = driveSubsystem.isBoosted() ? 0.4 : 0;
         controllerInput.getDriveController().setRumble(RumbleType.kBothRumble, rumble);
+
+        double operatorRumble = DriverStation.isTeleopEnabled() && turret.targetIsAligned() ? 0.2 : 0;
+        controllerInput.getOperatorController().setRumble(RumbleType.kBothRumble, operatorRumble);
     }
 }
