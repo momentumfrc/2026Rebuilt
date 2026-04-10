@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0543144478068873,
-        "y": 2.366569122619847
+        "x": 1.4552629886028283,
+        "y": 1.8799892364825692
       },
       "isLocked": false,
       "linkedName": "Right Starting Point"
     },
     {
       "anchor": {
-        "x": 3.0,
-        "y": 2.5
+        "x": 0.62,
+        "y": 0.685
       },
       "prevControl": {
-        "x": 3.075974768843711,
-        "y": 2.201185186359325
+        "x": 1.980755517676832,
+        "y": 0.561327545747288
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Side Hub"
+      "linkedName": "Outpost"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Right Paths",

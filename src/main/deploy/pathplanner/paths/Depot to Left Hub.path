@@ -8,11 +8,43 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9066008702112303,
-        "y": 5.736055640145759
+        "x": 1.3824745089395192,
+        "y": 6.041954351138646
       },
       "isLocked": false,
       "linkedName": "Depot"
+    },
+    {
+      "anchor": {
+        "x": 0.75,
+        "y": 5.95
+      },
+      "prevControl": {
+        "x": 1.2378019005603855,
+        "y": 5.78914487846103
+      },
+      "nextControl": {
+        "x": 0.5125755337225243,
+        "y": 6.028291907709902
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.75,
+        "y": 5.95
+      },
+      "prevControl": {
+        "x": 0.5140282001530584,
+        "y": 6.032567001138439
+      },
+      "nextControl": {
+        "x": 0.9859717998469416,
+        "y": 5.867432998861561
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,15 +52,20 @@
         "y": 5.75
       },
       "prevControl": {
-        "x": 1.6805382641066933,
-        "y": 5.9108024402113255
+        "x": 1.992139316422457,
+        "y": 5.783903057401385
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Left Side Hub"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 2.304347826086954,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

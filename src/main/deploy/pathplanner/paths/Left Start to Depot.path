@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 3.5,
-        "y": 0.65
+        "y": 7.45
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0543144478068873,
-        "y": 2.366569122619847
+        "x": 3.815137693647628,
+        "y": 7.573369060842064
       },
       "isLocked": false,
-      "linkedName": "Right Starting Point"
+      "linkedName": "Left Starting Point"
     },
     {
       "anchor": {
-        "x": 3.0,
-        "y": 2.5
+        "x": 1.15,
+        "y": 5.95
       },
       "prevControl": {
-        "x": 3.075974768843711,
-        "y": 2.201185186359325
+        "x": 0.9355780219702923,
+        "y": 5.821457340396942
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Side Hub"
+      "linkedName": "Depot"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Right Paths",
+  "folder": "Left Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
