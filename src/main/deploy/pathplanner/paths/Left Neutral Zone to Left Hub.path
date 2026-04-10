@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.275,
-        "y": 6.8
+        "x": 8.279744444444445,
+        "y": 7.406577777777777
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.322934716977363,
-        "y": 6.257951751817451
+        "x": 8.327679161421807,
+        "y": 6.864529529595228
       },
       "isLocked": false,
       "linkedName": "Left Side Neutral Zone"
@@ -32,19 +32,19 @@
     },
     {
       "anchor": {
-        "x": 8.275,
-        "y": 6.8
+        "x": 7.899711111111111,
+        "y": 6.938844444444444
       },
       "prevControl": {
-        "x": 8.281387580267971,
-        "y": 6.467322584518107
+        "x": 8.289951947422551,
+        "y": 6.617839885543099
       },
       "nextControl": {
-        "x": 8.26861241973203,
-        "y": 7.132677415481893
+        "x": 7.295555555555556,
+        "y": 7.435811111111111
       },
       "isLocked": false,
-      "linkedName": "Left Side Neutral Zone"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -86,15 +86,33 @@
       "rotationDegrees": -90.0
     },
     {
-      "waypointRelativePos": 3.0460921843687374,
-      "rotationDegrees": -90.0
+      "waypointRelativePos": 2.3436853002070435,
+      "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 3.719438877755511,
+      "waypointRelativePos": 3.4501035196687506,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 4.0,
       "rotationDegrees": -135.0
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.26732673267325724,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 0.75,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 90.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {

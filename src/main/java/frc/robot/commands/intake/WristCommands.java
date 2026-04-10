@@ -44,6 +44,10 @@ public class WristCommands {
                 .withName("AgitateIntakeWristCommand");
     }
 
+    public static Command idleWristCommand(IntakeWristSubsystem wrist) {
+        return wrist.run(wrist::stopWristMotor).withName("IdleIntakeWristCommand");
+    }
+
     private WristCommands() {
         throw new UnsupportedOperationException("IntakeCommands is a static class");
     }

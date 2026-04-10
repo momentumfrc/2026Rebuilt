@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.15,
+        "x": 1.5073555555555558,
         "y": 5.95
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3824745089395192,
-        "y": 6.041954351138646
+        "x": 1.7101060866944766,
+        "y": 6.2125864295835065
       },
       "isLocked": false,
       "linkedName": "Depot"
     },
     {
       "anchor": {
-        "x": 0.75,
+        "x": 0.61,
         "y": 5.95
       },
       "prevControl": {
-        "x": 1.2378019005603855,
-        "y": 5.78914487846103
+        "x": 1.0923847256337744,
+        "y": 5.792304411949461
       },
       "nextControl": {
-        "x": 0.5125755337225243,
-        "y": 6.028291907709902
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 0.75,
-        "y": 5.95
-      },
-      "prevControl": {
-        "x": 0.5140282001530584,
-        "y": 6.032567001138439
-      },
-      "nextControl": {
-        "x": 0.9859717998469416,
-        "y": 5.867432998861561
+        "x": 0.3611529031332448,
+        "y": 6.031350190397332
       },
       "isLocked": false,
       "linkedName": null
@@ -52,8 +36,8 @@
         "y": 5.75
       },
       "prevControl": {
-        "x": 1.992139316422457,
-        "y": 5.783903057401385
+        "x": 1.959646871603268,
+        "y": 5.643584366441418
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,11 +46,25 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 2.304347826086954,
+      "waypointRelativePos": 1.65,
       "rotationDegrees": 180.0
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 1.2,
+      "constraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 90.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {

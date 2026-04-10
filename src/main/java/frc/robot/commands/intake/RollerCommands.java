@@ -1,12 +1,11 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystem.IntakeRollerSubsystem;
 
 public class RollerCommands {
     public static Command idleIntakeRollerCommand(IntakeRollerSubsystem roller) {
-        return Commands.run(roller::stopRollerMotor, roller).withName("IdleIntakeRollerCommand");
+        return roller.run(roller::stopRollerMotor).withName("IdleIntakeRollerCommand");
     }
 
     public static Command intakeRollerDefaultCommand(IntakeRollerSubsystem roller) {
@@ -14,10 +13,10 @@ public class RollerCommands {
     }
 
     public static Command runIntakeRollerCommand(IntakeRollerSubsystem roller) {
-        return Commands.run(roller::rollerIntake, roller).withName("RunIntakeRollersCommand");
+        return roller.run(roller::rollerIntake).withName("RunIntakeRollersCommand");
     }
 
     public static Command runIntakeRollerReverseCommand(IntakeRollerSubsystem roller) {
-        return Commands.run(roller::rollerExtake, roller).withName("RunIntakeRollersReverseCommand");
+        return roller.run(roller::rollerExtake).withName("RunIntakeRollersReverseCommand");
     }
 }

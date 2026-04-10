@@ -72,6 +72,11 @@ public class IndexerSubsystem extends SubsystemBase {
         centeringMotor.setVoltage(MoPrefs.centeringRunPower.get().in(Units.Volts));
     }
 
+    public void runIndexerNoCentering() {
+        indexerMotor.setVoltage(MoPrefs.indexerRunPower.get().in(Units.Volts));
+        centeringMotor.stopMotor();
+    }
+
     public void stop() {
         indexerMotor.stopMotor();
         centeringMotor.stopMotor();

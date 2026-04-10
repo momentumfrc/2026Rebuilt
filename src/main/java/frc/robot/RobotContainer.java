@@ -83,7 +83,7 @@ public class RobotContainer {
     private final Command runIndexerToShootCommand = indexer.run(indexer::run).withName("RunIndexerToShootCommand");
     private final Command runIndexerToShuttleCommand = indexer.run(indexer::run).withName("RunIndexerToShuttleCommand");
     private final Command runIndexerWithIntakeCommand =
-            indexer.run(indexer::run).withName("RunIndexerWithIntakeCommand");
+            indexer.run(indexer::runIndexerNoCentering).withName("RunIndexerWithIntakeCommand");
     private final Command runIndexerReverseCommand =
             indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
 
@@ -144,6 +144,11 @@ public class RobotContainer {
 
     public void setAutoDefaultCommnds() {
         driveSubsystem.setDefaultCommand(driveSubsystem.run(driveSubsystem::stop));
+        intakeWristSubsystem.setDefaultCommand(Commands.either(
+                        Commands.none(),
+                        new ZeroIntakeWristCommand(intakeWristSubsystem),
+                        intakeWristSubsystem::hasZero)
+                .andThen(WristCommands.idleWristCommand(intakeWristSubsystem)));
     }
 
     public void setDefaultCommands() {
