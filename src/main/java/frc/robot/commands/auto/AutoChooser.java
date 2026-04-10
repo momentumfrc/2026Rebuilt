@@ -248,7 +248,7 @@ public class AutoChooser {
                         getIntakeCommand())
                 .andThen(Commands.deadline(
                         AutoPathPlannerCommands.getFollowPathCommand(
-                                driveSubsystem, robotPositioning, "Depot to Left Hub", assumeRobotPose.get()),
+                                driveSubsystem, robotPositioning, "Depot to Left Hub", false),
                         getIntakeCommand()))
                 .andThen(getShootCommand());
     }
@@ -274,8 +274,12 @@ public class AutoChooser {
         return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Start to Right Hub", assumeRobotPose.get())
                 .andThen(getShootCommand())
-                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
-                        driveSubsystem, robotPositioning, "Right Hub to Right Neutral Zone", false))
+                .andThen(
+                        Commands.deadline(AutoPathPlannerCommands.getFollowPathCommand(
+                                driveSubsystem, robotPositioning, "Right Hub to Right Neutral Zone", false)),
+                        WristCommands.moveToPositionCommand(
+                                        intakeWristSubsystem, MoPrefs.intakeWristDeployPosition::get)
+                                .asProxy())
                 .andThen(Commands.deadline(
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", false),
@@ -284,8 +288,10 @@ public class AutoChooser {
     }
 
     public Command buildLeftCollectAndScoreAuto() {
-        return AutoPathPlannerCommands.getFollowPathCommand(
-                        driveSubsystem, robotPositioning, "Left Start to Left Neutral Zone", assumeRobotPose.get())
+        return WristCommands.moveToPositionCommand(intakeWristSubsystem, MoPrefs.intakeWristDeployPosition::get)
+                .asProxy()
+                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Left Start to Left Neutral Zone", assumeRobotPose.get()))
                 .andThen(Commands.deadline(
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Left Neutral Zone to Left Hub", false),
@@ -296,6 +302,9 @@ public class AutoChooser {
     public Command buildRightCollectAndScoreAuto() {
         return AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Right Start to Right Neutral Zone", assumeRobotPose.get())
+                .andThen(WristCommands.moveToPositionCommand(
+                                intakeWristSubsystem, MoPrefs.intakeWristDeployPosition::get)
+                        .asProxy())
                 .andThen(Commands.deadline(
                         AutoPathPlannerCommands.getFollowPathCommand(
                                 driveSubsystem, robotPositioning, "Right Neutral Zone to Right Hub", false),

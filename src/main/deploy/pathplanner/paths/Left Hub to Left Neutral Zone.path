@@ -8,38 +8,50 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.216714285714285,
-        "y": 7.841160714285714
+        "x": 2.8715777777777785,
+        "y": 7.3968333333333325
       },
       "isLocked": false,
       "linkedName": "Left Side Hub"
     },
     {
       "anchor": {
-        "x": 8.279744444444445,
-        "y": 7.406577777777777
+        "x": 4.956888888888889,
+        "y": 7.426066666666667
       },
       "prevControl": {
-        "x": 2.4818,
-        "y": 7.2799000000000005
+        "x": 3.3198222222222227,
+        "y": 7.601466666666667
+      },
+      "nextControl": {
+        "x": 6.027467514867498,
+        "y": 7.311361813883245
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.25,
+        "y": 7.4
+      },
+      "prevControl": {
+        "x": 7.607377777777778,
+        "y": 6.773188888888889
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Side Neutral Zone"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3871635610766014,
+      "waypointRelativePos": 0.5391304347826171,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 0.8542443064182197,
+      "waypointRelativePos": 1.3010351966873652,
       "rotationDegrees": 180.0
-    },
-    {
-      "waypointRelativePos": 0.9254658385093167,
-      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [],

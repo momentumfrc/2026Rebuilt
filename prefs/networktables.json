@@ -56,14 +56,6 @@
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Hold Power (V)",
-    "type": "double",
-    "value": 0.125,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/Intake Wrist Smart Current Limit (A)",
     "type": "double",
     "value": 20.0,
@@ -82,7 +74,7 @@
   {
     "name": "/Preferences/Intake Roller Power (V)",
     "type": "double",
-    "value": 10.0,
+    "value": 12.0,
     "properties": {
       "persistent": true
     }
@@ -866,7 +858,7 @@
   {
     "name": "/Preferences/Auto Shooter Run Time (s)",
     "type": "double",
-    "value": 7.0,
+    "value": 4.0,
     "properties": {
       "persistent": true
     }
@@ -987,6 +979,30 @@
     "name": "/Preferences/Intake Wrist Agitate Period (s)",
     "type": "double",
     "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Fwd Hold Power (V)",
+    "type": "double",
+    "value": 0.125,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Rev Hold Power (V)",
+    "type": "double",
+    "value": 0.125,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Fwd Apply FF?",
+    "type": "boolean",
+    "value": true,
     "properties": {
       "persistent": true
     }

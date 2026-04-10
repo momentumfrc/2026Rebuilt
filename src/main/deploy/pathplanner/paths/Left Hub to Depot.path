@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2751685884971278,
-        "y": 5.842909581822621
+        "x": 1.244808607488952,
+        "y": 5.813972947576661
       },
       "isLocked": false,
       "linkedName": "Left Side Hub"
     },
     {
       "anchor": {
-        "x": 1.15,
+        "x": 1.5073555555555558,
         "y": 5.95
       },
       "prevControl": {
-        "x": 2.4442810707272504,
-        "y": 5.849771113140938
+        "x": 2.7329832349876937,
+        "y": 6.04732069152302
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot"
     }
   ],
   "rotationTargets": [],
