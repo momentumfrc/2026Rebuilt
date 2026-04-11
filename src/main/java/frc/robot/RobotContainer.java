@@ -270,10 +270,11 @@ public class RobotContainer {
     }
 
     public void checkRumbles() {
-        double rumble = driveSubsystem.isBoosted() ? 0.4 : 0;
+        double rumble = driveSubsystem.isBoosted() ? MoPrefs.driverRumble.get() : 0;
         controllerInput.getDriveController().setRumble(RumbleType.kBothRumble, rumble);
 
-        double operatorRumble = DriverStation.isTeleopEnabled() && turret.targetIsAligned() ? 0.2 : 0;
+        double operatorRumble =
+                DriverStation.isTeleopEnabled() && turret.targetIsAligned() ? MoPrefs.operatorRumble.get() : 0;
         controllerInput.getOperatorController().setRumble(RumbleType.kBothRumble, operatorRumble);
     }
 }

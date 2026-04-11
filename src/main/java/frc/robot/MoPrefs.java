@@ -39,6 +39,9 @@ public class MoPrefs extends MoPrefsBase {
     public static final UnitPref<CurrentUnit> boostSteerMotorLimit =
             ampsPref("Swerve Boost Steer Limit", Units.Amps.of(25));
 
+    public static final Pref<Double> driverRumble = unitlessDoublePref("Driver Rumble", 0.4);
+    public static final Pref<Double> operatorRumble = unitlessDoublePref("Operator Rumble", 0.1);
+
     // **** INTAKE WRIST ****
 
     public static final UnitPref<CurrentUnit> intakeWristSmartCurrentLimit =
