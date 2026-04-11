@@ -30,7 +30,7 @@ public class AutoPathPlannerCommands {
             return Commands.none();
         }
 
-        FollowPathCommand pathFollowingCommand = new FollowPathCommand(
+        Command pathFollowingCommand = new FollowPathCommand(
                 path,
                 robotPositioning::getRobotPose,
                 robotPositioning::getRobotVelocity,
@@ -39,6 +39,11 @@ public class AutoPathPlannerCommands {
                 pathPlannerConfig,
                 () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                 driveSubsystem);
+
+        pathFollowingCommand = Commands.either(
+                pathFollowingCommand,
+                Commands.print("Refusing to follow path without established initial position"),
+                robotPositioning::hasInitialPosition);
 
         return pathFollowingCommand.asProxy();
     }

@@ -127,10 +127,15 @@ public class AutoChooser {
         var rezeroCommand =
                 Commands.either(Commands.none(), new ZeroHoodCommand(hoodSubsystem), hoodSubsystem::hasZero);
 
-        var command = rezeroCommand.andThen(shootCommand
+        Command command = rezeroCommand.andThen(shootCommand
                 .alongWith(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet())
                         .andThen(indexerSubsystem.run(indexerSubsystem::run)))
                 .withName("AutoShootCommand"));
+
+        command = Commands.either(
+                command,
+                Commands.print("Refusing to shoot without an established initial position"),
+                robotPositioning::hasInitialPosition);
 
         return Utils.withTimeoutPref(command.asProxy(), MoPrefs.autoShooterRunTime::get);
     }
@@ -212,6 +217,7 @@ public class AutoChooser {
                         getIntakeCommand()))
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Outpost to Right Hub", false))
+                .andThen(getShootCommand())
                 .andThen(getShootCommand());
     }
 
@@ -225,6 +231,8 @@ public class AutoChooser {
                                 .andThen(Commands.waitSeconds(
                                         MoPrefs.autoOutpostWaitTime.get().in(Units.Seconds))),
                         getIntakeCommand())
+                .andThen(getShootCommand())
+                .andThen(getShootCommand())
                 .andThen(getShootCommand());
     }
 
@@ -347,6 +355,7 @@ public class AutoChooser {
                         "Auto command requires illegal subsystem [" + subsystem.getName() + "]", false);
             }
         }
+
         return auto;
     }
 }
