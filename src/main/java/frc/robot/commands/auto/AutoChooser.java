@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +23,6 @@ import frc.robot.commands.intake.RollerCommands;
 import frc.robot.commands.intake.WristCommands;
 import frc.robot.commands.intake.ZeroIntakeWristCommand;
 import frc.robot.molib.NTHelpers;
-import frc.robot.molib.Utils;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.DriveSubsystem;
 import frc.robot.subsystem.HoodSubsystem;
@@ -120,7 +120,7 @@ public class AutoChooser {
         backupDistance = NTHelpers.getDoubleEntry(autoTable, "Auto Backup Distance (m)", 1);
     }
 
-    public Command getShootCommand() {
+    public Command getShootCommand(Time shootTime) {
         var shootCommand = ShootCommand.getHubShootCommand(
                 turretTargeting, kickerSubsystem, turretSubsystem, shooterSubsystem, hoodSubsystem);
 
@@ -137,7 +137,11 @@ public class AutoChooser {
                 Commands.print("Refusing to shoot without an established initial position"),
                 robotPositioning::hasInitialPosition);
 
-        return Utils.withTimeoutPref(command.asProxy(), MoPrefs.autoShooterRunTime::get);
+        return command.asProxy().withTimeout(shootTime);
+    }
+
+    public Command getShootCommand() {
+        return getShootCommand(MoPrefs.autoShooterRunTime.get());
     }
 
     public Command getIntakeCommand() {
@@ -217,8 +221,7 @@ public class AutoChooser {
                         getIntakeCommand()))
                 .andThen(AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "Outpost to Right Hub", false))
-                .andThen(getShootCommand())
-                .andThen(getShootCommand());
+                .andThen(getShootCommand(Units.Seconds.of(12)));
     }
 
     public Command buildCollectOutpostAndScore() {
@@ -231,9 +234,9 @@ public class AutoChooser {
                                 .andThen(Commands.waitSeconds(
                                         MoPrefs.autoOutpostWaitTime.get().in(Units.Seconds))),
                         getIntakeCommand())
-                .andThen(getShootCommand())
-                .andThen(getShootCommand())
-                .andThen(getShootCommand());
+                .andThen(AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Outpost Spin", false))
+                .andThen(getShootCommand(Units.Seconds.of(15)));
     }
 
     public Command buildScoreLeftAndDepot() {
@@ -322,7 +325,7 @@ public class AutoChooser {
 
     public Command getAutoRoutine() {
         return switch (autoRoutinesChooser.getSelected()) {
-            case SHOOT_ONLY -> getShootCommand();
+            case SHOOT_ONLY -> getShootCommand(Units.Seconds.of(8));
             case SHOOT_THEN_BACKUP -> getShootThenBackupCommand();
             case CENTER_AND_SCORE -> buildCenterAuto();
             case SCORE_LEFT_TO_HUB -> buildScoreLeftAuto();
