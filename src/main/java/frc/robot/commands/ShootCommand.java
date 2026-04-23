@@ -46,6 +46,7 @@ public class ShootCommand extends Command {
     private final DoubleEntry overrideFlywheelSetpoint;
     private final BooleanEntry doOverrideHoodSetpoint;
     private final DoubleEntry overrideHoodSetpoint;
+    private final BooleanEntry currentlyShooting;
 
     private final MutAngle hoodOverridePosition = Units.Degrees.mutable(0);
     private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
@@ -72,6 +73,9 @@ public class ShootCommand extends Command {
                 NTHelpers.getBooleanEntry(shooterFlywheelTable, "Override Flywheel Setpoint?", false);
         overrideFlywheelSetpoint =
                 NTHelpers.getDoubleEntry(shooterFlywheelTable, "Flywheel Override Setpoint (RPM)", 120);
+
+        currentlyShooting =
+                shooterFlywheelTable.getBooleanTopic("Currently Shooting?").getEntry(false);
 
         var shooterHoodTable = NTHelpers.getTable("shooter-hood");
         doOverrideHoodSetpoint = NTHelpers.getBooleanEntry(shooterHoodTable, "Override Hood Setpoint?", false);
@@ -110,6 +114,10 @@ public class ShootCommand extends Command {
         return turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed();
     }
 
+    public boolean currentlyShooting() {
+        return currentlyShooting.get();
+    }
+
     @Override
     public void execute() {
         var targetingMode = modeChooser.getSelected();
@@ -118,6 +126,7 @@ public class ShootCommand extends Command {
             var moduloAngle = turret.getAngleHelper().turretAngleModulus(targetAngle);
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
+                currentlyShooting.set(false);
 
                 kicker.stop();
                 shooter.stop();
@@ -129,6 +138,7 @@ public class ShootCommand extends Command {
             turret.alignAbsolute(targetAngle, Units.DegreesPerSecond.zero());
             hood.setPosition(MoPrefs.hoodFallbackSetpoint.get());
             shooter.runAtSpeed(MoPrefs.flywheelFallbackSetpoint.get());
+
         } else {
             var target = OdometryTargetingHelper.getTarget(
                     DriverStation.getAlliance().orElse(Alliance.Red),
@@ -144,6 +154,7 @@ public class ShootCommand extends Command {
             var moduloAngle = turret.getAngleHelper().turretAngleModulus(firingSolution.goalAngle());
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
+                currentlyShooting.set(false);
 
                 kicker.stop();
                 shooter.stop();
@@ -169,8 +180,12 @@ public class ShootCommand extends Command {
 
         if (readyToShoot()) {
             kicker.run();
+
+            currentlyShooting.set(true);
         } else {
             kicker.stop();
+
+            currentlyShooting.set(false);
         }
     }
 

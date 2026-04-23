@@ -109,7 +109,8 @@ public class RobotContainer {
     private final Command testIntakeWristCommand =
             intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
 
-    private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
+    private final Command ledCommand =
+            new LEDCommand(leds, robotPositioning, turret, intakeRollerSubsystem, shootCommand);
 
     // **** TRIGGERS ****
     private Trigger resetFieldOrientedFwd;

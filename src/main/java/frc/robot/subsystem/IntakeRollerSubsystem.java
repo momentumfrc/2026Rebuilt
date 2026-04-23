@@ -46,6 +46,10 @@ public class IntakeRollerSubsystem extends SubsystemBase {
         intakeRoller.setVoltage(0);
     }
 
+    public boolean runningRollers() {
+        return intakeRoller.getAppliedOutput() != 0;
+    }
+
     @Override
     public void periodic() {
         speedPublisher.set(intakeRoller.getEncoder().getVelocity());
