@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -20,6 +22,7 @@ import frc.robot.commands.intake.WristCommands;
 import frc.robot.commands.intake.ZeroIntakeWristCommand;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
+import frc.robot.input.SingleControllerInput;
 import frc.robot.molib.NTHelpers;
 import frc.robot.molib.Utils;
 import frc.robot.shootutils.TurretTargeting;
@@ -56,6 +59,10 @@ public class RobotContainer {
     private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
 
     private final ControllerInput controllerInput = new ControllerInput();
+    private final SingleControllerInput singleControllerInput = new SingleControllerInput();
+
+    private final SendableChooser<MoInput> inputChooser = new SendableChooser<>();
+
     private final SysIdUtil sysId = new SysIdUtil(List.of(
             intakeWristSubsystem.getSysIdMechanism(),
             kicker.getSysIdMechanism(),
@@ -137,6 +144,7 @@ public class RobotContainer {
             intakeWristSubsystem);
 
     public RobotContainer() {
+        addInputChooserToDashboard();
         configureBindings();
         setDefaultCommands();
         addSubsystemsToDashboard();
@@ -174,6 +182,12 @@ public class RobotContainer {
         NTHelpers.publishSendable(table, intakeRollerSubsystem);
         NTHelpers.publishSendable(table, intakeWristSubsystem);
         NTHelpers.publishSendable(table, leds);
+    }
+
+    private void addInputChooserToDashboard() {
+        inputChooser.setDefaultOption("Driver + Operator", controllerInput);
+        inputChooser.addOption("Single Driver", singleControllerInput);
+        SmartDashboard.putData("Controller Input Chooser", inputChooser);
     }
 
     private void configureBindings() {
@@ -254,7 +268,7 @@ public class RobotContainer {
     }
 
     private MoInput getInput() {
-        return controllerInput;
+        return inputChooser.getSelected();
     }
 
     private TurretSubsystem getTurretSubsystem() {
