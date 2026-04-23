@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -143,10 +144,10 @@ public class RobotContainer {
             intakeWristSubsystem);
 
     public RobotContainer() {
+        addInputChooserToDashboard();
         configureBindings();
         setDefaultCommands();
         addSubsystemsToDashboard();
-        addInputChooserToDashboard();
     }
 
     public void setAutoDefaultCommnds() {
@@ -186,6 +187,7 @@ public class RobotContainer {
     private void addInputChooserToDashboard() {
         inputChooser.setDefaultOption("Driver + Operator", controllerInput);
         inputChooser.addOption("Single Driver", singleControllerInput);
+        SmartDashboard.putData("Controller Input Chooser", inputChooser);
     }
 
     private void configureBindings() {

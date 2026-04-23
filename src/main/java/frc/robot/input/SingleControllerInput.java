@@ -85,4 +85,19 @@ public class SingleControllerInput implements MoInput {
     public boolean getLockRequest() {
         return driveController.getXButton();
     }
+
+    @Override
+    public boolean getShuttleRequest() {
+        return false;
+    }
+
+    @Override
+    public boolean getRunIntakeReverse() {
+        return false;
+    }
+
+    @Override
+    public boolean getDriveBoostRequest() {
+        return false;
+    }
 }
