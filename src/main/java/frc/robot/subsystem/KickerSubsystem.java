@@ -32,7 +32,7 @@ public class KickerSubsystem extends SubsystemBase {
 
         config.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.kickerCurrentLimit.get().in(Units.Amps))
-                .inverted(false)
+                .inverted(true)
                 .idleMode(IdleMode.kCoast));
 
         MoPrefs.kickerCurrentLimit.subscribe(

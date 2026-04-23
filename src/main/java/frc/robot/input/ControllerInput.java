@@ -31,6 +31,11 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
+    public boolean getDriveBoostRequest() {
+        return driveController.getAButton();
+    }
+
+    @Override
     public double getDriveHeadingXRequest() {
         return driveController.getRightY();
     }
@@ -47,7 +52,12 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getRunIntake() {
-        return operatorController.getRightBumperButton();
+        return operatorController.getRightBumperButton() || driveController.getRightTriggerAxis() > 0.8;
+    }
+
+    @Override
+    public boolean getRunIntakeReverse() {
+        return operatorController.getRightTriggerAxis() > 0.8;
     }
 
     @Override
@@ -73,6 +83,11 @@ public final class ControllerInput implements MoInput {
     @Override
     public boolean getShootRequest() {
         return operatorController.getAButton();
+    }
+
+    @Override
+    public boolean getShuttleRequest() {
+        return operatorController.getYButton();
     }
 
     @Override

@@ -47,6 +47,7 @@ public class HoodSubsystem extends SubsystemBase {
     private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> pid;
     private final LinearFilter hoodAngleFilter = LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
     private TrapezoidProfile profile;
+    private State setpointState = new State();
 
     private double lastHoodAngle = Double.NaN;
     private final MoRotationEncoder encoder;
@@ -166,13 +167,11 @@ public class HoodSubsystem extends SubsystemBase {
         }
 
         double goalVelocity = velocity.in(Units.RadiansPerSecond);
-        State currentState = new State(
-                encoder.getPosition().in(Units.Radians), encoder.getVelocity().in(Units.RadiansPerSecond));
         State goalState = new State(position.in(Units.Radians), goalVelocity);
-        State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
+        setpointState = profile.calculate(Constants.LOOP_PERIOD, setpointState, goalState);
 
-        positionReference.mut_replace(setpoint.position, Units.Radians);
-        velocityReference.mut_replace(setpoint.velocity, Units.RadiansPerSecond);
+        positionReference.mut_replace(setpointState.position, Units.Radians);
+        velocityReference.mut_replace(setpointState.velocity, Units.RadiansPerSecond);
         pid.setReference(positionReference, velocityReference);
     }
 
@@ -219,7 +218,8 @@ public class HoodSubsystem extends SubsystemBase {
                             MoPrefs.hoodMinSoftLimit.get().in(Units.Degrees),
                             MoPrefs.hoodMaxSoftLimit.get().in(Units.Degrees),
                             MathUtil.inverseInterpolate(-1, 1, y));
-                    setPosition(Units.Degrees.of(setpointDegrees), Units.RadiansPerSecond.zero());
+                    positionReference.mut_replace(setpointDegrees, Units.Degrees);
+                    pid.setReference(positionReference, Units.DegreesPerSecond.zero());
                 })
                 .withName("HoodTestCommand");
     }

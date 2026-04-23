@@ -2,7 +2,7 @@
   {
     "name": "/Preferences/Swerve Max Allowed Speed (m_s)",
     "type": "double",
-    "value": 5.0,
+    "value": 4.0,
     "properties": {
       "persistent": true
     }
@@ -10,7 +10,7 @@
   {
     "name": "/Preferences/Swerve Max Possible Speed (m_s)",
     "type": "double",
-    "value": 5.0,
+    "value": 4.0,
     "properties": {
       "persistent": true
     }
@@ -56,25 +56,9 @@
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Power (V)",
-    "type": "double",
-    "value": 8.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake Wrist Hold Power (V)",
-    "type": "double",
-    "value": 0.125,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/Intake Wrist Smart Current Limit (A)",
     "type": "double",
-    "value": 25.0,
+    "value": 20.0,
     "properties": {
       "persistent": true
     }
@@ -82,7 +66,7 @@
   {
     "name": "/Preferences/Intake Ramp Time (s)",
     "type": "double",
-    "value": 1.0,
+    "value": 0.25,
     "properties": {
       "persistent": true
     }
@@ -90,7 +74,7 @@
   {
     "name": "/Preferences/Intake Roller Power (V)",
     "type": "double",
-    "value": 10.0,
+    "value": 12.0,
     "properties": {
       "persistent": true
     }
@@ -146,7 +130,7 @@
   {
     "name": "/Preferences/Turret Relative Encoder Offset (°)",
     "type": "double",
-    "value": -3.69,
+    "value": -139.1308,
     "properties": {
       "persistent": true
     }
@@ -154,7 +138,7 @@
   {
     "name": "/Preferences/Turret Abs. Encoder 1 Zero (R)",
     "type": "double",
-    "value": 0.8973,
+    "value": 0.5462,
     "properties": {
       "persistent": true
     }
@@ -162,7 +146,7 @@
   {
     "name": "/Preferences/Turret Abs. Encoder 2 Zero (R)",
     "type": "double",
-    "value": 0.4705,
+    "value": 0.5729,
     "properties": {
       "persistent": true
     }
@@ -170,7 +154,7 @@
   {
     "name": "/Preferences/Turret Min Soft Limit (°)",
     "type": "double",
-    "value": 1.0,
+    "value": -1.0,
     "properties": {
       "persistent": true
     }
@@ -178,7 +162,7 @@
   {
     "name": "/Preferences/Turret Max Soft Limit (°)",
     "type": "double",
-    "value": 154.0,
+    "value": 130.0,
     "properties": {
       "persistent": true
     }
@@ -338,7 +322,7 @@
   {
     "name": "/momentum-tuners/Turret Absolute Position/kP",
     "type": "double",
-    "value": 0.001,
+    "value": 50.0,
     "properties": {
       "persistent": true
     }
@@ -602,7 +586,7 @@
   {
     "name": "/momentum-tuners/Hood PID/kP",
     "type": "double",
-    "value": 0.001,
+    "value": 180.0,
     "properties": {
       "persistent": true
     }
@@ -688,31 +672,23 @@
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Current Thresh (A)",
+    "name": "/Preferences/Kicker Clear Speed (R_min)",
     "type": "double",
-    "value": 17.0,
+    "value": 300.0,
     "properties": {
       "persistent": true
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Current Time (s)",
+    "name": "/Preferences/Flywheel Clear Speed (R_min)",
     "type": "double",
-    "value": 0.5,
+    "value": 300.0,
     "properties": {
       "persistent": true
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Agitate Low (R)",
-    "type": "double",
-    "value": 0.45,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/Intake Wrist Agitate High (R)",
+    "name": "/Preferences/Shooter Clear Time (s)",
     "type": "double",
     "value": 0.25,
     "properties": {
@@ -720,9 +696,313 @@
     }
   },
   {
-    "name": "/Preferences/Intake Wrist Agitate Timeout (s)",
+    "name": "/Preferences/LED Brightness (%)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Move Timeout (s)",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Deploy Position (R)",
+    "type": "double",
+    "value": 0.477,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Retract Position (R)",
+    "type": "double",
+    "value": 0.005,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Zero Voltage (V)",
+    "type": "double",
+    "value": 8.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Zero Current Thresh (A)",
+    "type": "double",
+    "value": 18.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Zero Time (s)",
     "type": "double",
     "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Max Velocity (°_s)",
+    "type": "double",
+    "value": 720.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Max Acceleration (°_s_s)",
+    "type": "double",
+    "value": 90.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kP",
+    "type": "double",
+    "value": 10.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/ff_kV",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/ff_kA",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/ff_kS",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kG",
+    "type": "double",
+    "value": -0.25,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/Intake Wrist/horizontalOffset",
+    "type": "double",
+    "value": -0.43563,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Auto Outpost wait Time (s)",
+    "type": "double",
+    "value": 2.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Auto Intake Run Time (s)",
+    "type": "double",
+    "value": 2.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Auto Shooter Run Time (s)",
+    "type": "double",
+    "value": 4.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/kP",
+    "type": "double",
+    "value": 4.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Translation PID/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/i_zone",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/kP",
+    "type": "double",
+    "value": 8.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/kD",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/momentum-tuners/PathPlanner Rotation PID/kI",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve intaking slow speed",
+    "type": "double",
+    "value": 0.8,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Centering Run Power (V)",
+    "type": "double",
+    "value": 8.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Centering Encoder Scale (et_R)",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Centering Current Limit (A)",
+    "type": "double",
+    "value": 40.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Boost Drive Limit (A)",
+    "type": "double",
+    "value": 60.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Swerve Boost Steer Limit (A)",
+    "type": "double",
+    "value": 25.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Agitate Period (s)",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Fwd Hold Power (V)",
+    "type": "double",
+    "value": 0.125,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Rev Hold Power (V)",
+    "type": "double",
+    "value": 0.125,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intake Wrist Fwd Apply FF?",
+    "type": "boolean",
+    "value": true,
     "properties": {
       "persistent": true
     }

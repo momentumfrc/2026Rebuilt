@@ -2,6 +2,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,12 +24,15 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.molib.NTHelpers;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.LimelightHelpers;
+import java.util.Set;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
 
 public class RobotPositioning {
     private static final double STATIONARY_CUTOFF = 1e-2;
     private static final double TURRET_ANGLE_BUFFER_TIME = 2.0; // seconds
+
+    private static final Set<Integer> DISALLOWED_TAGS = Set.of(1, 12, 22, 23);
 
     private final SwerveDrive swerveDrive;
     private final Supplier<Angle> turretYawSupplier;
@@ -75,6 +80,13 @@ public class RobotPositioning {
 
         LimelightHelpers.setCameraPose_RobotSpace(
                 Constants.STATIONARY_LIMELIGHT_NAME, -0.328071, 0.031750, 0.295345, 0, 10, 180);
+
+        int[] allowedTagIds = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded).getTags().stream()
+                .mapToInt(tag -> tag.ID)
+                .filter(tag -> DISALLOWED_TAGS.contains(tag) == false)
+                .toArray();
+        LimelightHelpers.SetFiducialIDFiltersOverride(Constants.TURRET_LIMELIGHT_NAME, allowedTagIds);
+        LimelightHelpers.SetFiducialIDFiltersOverride(Constants.STATIONARY_LIMELIGHT_NAME, allowedTagIds);
 
         robotPosePublisher = table.getStructTopic("robot pose", Pose2d.struct).publish();
         turretLLAprilTagsPublisher =
@@ -239,11 +251,12 @@ public class RobotPositioning {
 
         // The stationary limelight is assumed to be the LL2, which cannot return accurate measurements while moving.
         var robotVelocity = swerveDrive.getRobotVelocity();
+        /*
         if (Math.abs(robotVelocity.vxMetersPerSecond) > STATIONARY_CUTOFF
                 || Math.abs(robotVelocity.vyMetersPerSecond) > STATIONARY_CUTOFF
                 || Math.abs(robotVelocity.omegaRadiansPerSecond) > STATIONARY_CUTOFF) {
             return;
-        }
+        } */
 
         LimelightHelpers.PoseEstimate poseEstimate = null;
         Vector<N3> visionStdDevs = null;

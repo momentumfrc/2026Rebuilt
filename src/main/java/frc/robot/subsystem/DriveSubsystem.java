@@ -1,11 +1,15 @@
 package frc.robot.subsystem;
 
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,10 +19,12 @@ import frc.robot.MoPrefs;
 import frc.robot.input.MoInput;
 import frc.robot.molib.NTHelpers;
 import frc.robot.molib.prefs.MoPrefsUtils;
+import frc.robot.util.MoSwerveInputStream;
+import frc.robot.util.MutablePIDConstants;
 import java.io.File;
 import java.util.function.Supplier;
 import swervelib.SwerveDrive;
-import swervelib.SwerveInputStream;
+import swervelib.SwerveModule;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -27,15 +33,21 @@ public class DriveSubsystem extends SubsystemBase {
     private final File directory = new File(Filesystem.getDeployDirectory(), "swerve");
     private final SwerveDrive swerveDrive;
 
+    private final MutablePIDConstants translationPIDConstants = new MutablePIDConstants();
+    private final MutablePIDConstants rotationPIDConstants = new MutablePIDConstants();
+
     private enum DriveMode {
         VELOCITY_HEADING,
         ABSOLUTE_HEADING
     };
 
+    private boolean boostCurrentLimits = false;
+
     private final SendableChooser<DriveMode> driveModeChooser =
             NTHelpers.enumToChooser(DriveMode.class, DriveMode.VELOCITY_HEADING);
 
     private final DoublePublisher omegaSpeed;
+    private final BooleanPublisher boostCurrentLimitsPublisher;
 
     public DriveSubsystem() {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -64,6 +76,11 @@ public class DriveSubsystem extends SubsystemBase {
         var table = NTHelpers.getTable("drive");
         NTHelpers.publishSendable(table, "Drive Mode", driveModeChooser);
         omegaSpeed = table.getDoubleTopic("Gyro Speed (rad_s)").publish();
+        boostCurrentLimitsPublisher =
+                table.getBooleanTopic("Boost Current Limits").publish();
+
+        translationPIDConstants.getTuner("PathPlanner Translation PID").safeBuild();
+        rotationPIDConstants.getTuner("PathPlanner Rotation PID").safeBuild();
     }
 
     public void driveFieldOriented(ChassisSpeeds velocity) {
@@ -89,18 +106,37 @@ public class DriveSubsystem extends SubsystemBase {
         });
     }
 
+    public void driveRobotRelativeSpeeds(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
+        swerveDrive.drive(
+                chassisSpeeds,
+                swerveDrive.kinematics.toSwerveModuleStates(chassisSpeeds),
+                driveFeedforwards.linearForces());
+    }
+
+    public PPHolonomicDriveController driveController() {
+        return new PPHolonomicDriveController(
+                translationPIDConstants.toImmutable(), rotationPIDConstants.toImmutable());
+    }
+
+    public void stop() {
+        swerveDrive.drive(new ChassisSpeeds());
+    }
+
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
     }
 
     private Supplier<Supplier<ChassisSpeeds>> setupDriveModes(Supplier<MoInput> inputSupplier) {
-        var swerveInputStreamBase = SwerveInputStream.of(
+        var swerveInputStreamBase = MoSwerveInputStream.of(
                         swerveDrive,
                         () -> inputSupplier.get().getDriveMoveXRequest(),
                         () -> inputSupplier.get().getDriveMoveYRequest())
                 .allianceRelativeControl(true)
                 .cubeTranslationControllerAxis(() -> MoPrefs.inputTranslationCubed.get())
                 .cubeRotationControllerAxis(() -> MoPrefs.inputRotationCubed.get());
+
+        swerveInputStreamBase.scaleTranslation(
+                () -> inputSupplier.get().getRunIntake() ? MoPrefs.driveIntakingSlowSpeed.get() : 1);
 
         var driveAngularVelocity = swerveInputStreamBase
                 .copy()
@@ -126,6 +162,50 @@ public class DriveSubsystem extends SubsystemBase {
         };
     }
 
+    public boolean isBoosted() {
+        return boostCurrentLimits;
+    }
+
+    public void toggleBoostCurrentLimits() {
+        if (boostCurrentLimits) {
+            boostCurrentLimits = false;
+            restoreCurrentLimits();
+        } else {
+            boostCurrentLimits = true;
+            overrideCurrentLimits(
+                    (Current) MoPrefs.boostDriveMotorLimit.get(), (Current) MoPrefs.boostSteerMotorLimit.get());
+        }
+    }
+
+    public void overrideCurrentLimits(Current driveLimit, Current steerLimit) {
+        final int driveLimitAmps = (int) driveLimit.in(Units.Amps);
+        final int steerLimitAmps = (int) steerLimit.in(Units.Amps);
+
+        final SwerveModule[] swerveModules = swerveDrive.getModules();
+
+        new Thread(() -> {
+                    for (var module : swerveModules) {
+                        module.getDriveMotor().setCurrentLimit(driveLimitAmps);
+                        module.getAngleMotor().setCurrentLimit(steerLimitAmps);
+                    }
+                })
+                .start();
+    }
+
+    public void restoreCurrentLimits() {
+        final SwerveModule[] swerveModules = swerveDrive.getModules();
+
+        new Thread(() -> {
+                    for (var module : swerveModules) {
+                        module.getDriveMotor()
+                                .setCurrentLimit(module.configuration.physicalCharacteristics.driveMotorCurrentLimit);
+                        module.getAngleMotor()
+                                .setCurrentLimit(module.configuration.physicalCharacteristics.angleMotorCurrentLimit);
+                    }
+                })
+                .start();
+    }
+
     public Command getTeleopDriveCommand(Supplier<MoInput> inputSupplier) {
         return driveFieldOriented(setupDriveModes(inputSupplier));
     }
@@ -138,5 +218,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void periodic() {
         omegaSpeed.set(swerveDrive.getRobotVelocity().omegaRadiansPerSecond);
+        boostCurrentLimitsPublisher.set(boostCurrentLimits);
     }
 }

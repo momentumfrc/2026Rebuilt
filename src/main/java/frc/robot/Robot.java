@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,9 +27,15 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void robotInit() {
+        PathfindingCommand.warmupCommand();
+    }
+
+    @Override
     public void robotPeriodic() {
         // Update latest robot position before anything else runs.
         m_robotContainer.robotPositioning.update();
+        m_robotContainer.checkRumbles();
 
         CommandScheduler.getInstance().run();
 
@@ -47,6 +54,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        m_robotContainer.setAutoDefaultCommnds();
+
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
@@ -62,6 +71,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        m_robotContainer.setDefaultCommands();
+
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }

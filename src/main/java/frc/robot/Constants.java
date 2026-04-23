@@ -11,6 +11,7 @@ public class Constants {
 
     public static final CANAddress KICKER_PORT = new CANAddress(16);
     public static final CANAddress INDEXER_PORT = new CANAddress(15);
+    public static final CANAddress CENTERING_PORT = new CANAddress(23);
 
     public static final CANAddress HOOD_PORT = new CANAddress(20);
 
@@ -25,7 +26,7 @@ public class Constants {
     public static final CANAddress INTAKE_ROLLER_PORT = new CANAddress(14); // edit this with the actual robot
     public static final CANAddress INTAKE_WRIST_PORT = new CANAddress(18);
 
-    public static final PWMPort LED_PORT = new PWMPort(0);
+    public static final PWMPort LED_PORT = new PWMPort(9);
 
     public static record CANAddress(int address) {}
 

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -12,8 +14,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.LEDCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ZeroHoodCommand;
+import frc.robot.commands.auto.AutoChooser;
 import frc.robot.commands.intake.RollerCommands;
+import frc.robot.commands.intake.RunIntakeWristCommand;
 import frc.robot.commands.intake.WristCommands;
+import frc.robot.commands.intake.ZeroIntakeWristCommand;
 import frc.robot.input.ControllerInput;
 import frc.robot.input.MoInput;
 import frc.robot.input.SingleControllerInput;
@@ -30,6 +35,7 @@ import frc.robot.subsystem.LEDSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.SysIdUtil;
+import java.util.Collections;
 import java.util.List;
 
 public class RobotContainer {
@@ -57,6 +63,7 @@ public class RobotContainer {
     private final SendableChooser<MoInput> inputChooser = new SendableChooser<>();
 
     private final SysIdUtil sysId = new SysIdUtil(List.of(
+            intakeWristSubsystem.getSysIdMechanism(),
             kicker.getSysIdMechanism(),
             turret.getSysIdMechanism(),
             shooter.getSysIdMechanism(),
@@ -66,7 +73,9 @@ public class RobotContainer {
     private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
 
     private final ShootCommand shootCommand =
-            new ShootCommand(turretTargetingHelper, indexer, kicker, turret, shooter, hood);
+            ShootCommand.getHubShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
+    private final ShootCommand shuttleCommand =
+            ShootCommand.getShuttleShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
 
     private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
 
@@ -77,7 +86,10 @@ public class RobotContainer {
     private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
     private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
 
-    private final Command runIndexerCommand = indexer.run(indexer::run).withName("RunIndexerCommand");
+    private final Command runIndexerToShootCommand = indexer.run(indexer::run).withName("RunIndexerToShootCommand");
+    private final Command runIndexerToShuttleCommand = indexer.run(indexer::run).withName("RunIndexerToShuttleCommand");
+    private final Command runIndexerWithIntakeCommand =
+            indexer.run(indexer::runIndexerNoCentering).withName("RunIndexerWithIntakeCommand");
     private final Command runIndexerReverseCommand =
             indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
 
@@ -87,17 +99,14 @@ public class RobotContainer {
 
     private final Command runKickerCommand = kicker.run(kicker::run);
 
-    private final Command clearShooterKickerCommand = Commands.parallel(
-            shooter.run(
-                    () -> shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
-            kicker.run(() -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
-
     private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
-    private final Command extendIntakeWristCommand = WristCommands.deployIntakeWristCommand(intakeWristSubsystem);
-    private final Command agitateIntakeCommand = WristCommands.agitatingCommand(intakeWristSubsystem);
-    private final Command retractIntakeWristCommend = WristCommands.retractIntakeWristCommand(intakeWristSubsystem);
+    private final Command runRollerReverseCommand = RollerCommands.runIntakeRollerReverseCommand(intakeRollerSubsystem);
+    private final Command agitateIntakeWristCommand = WristCommands.agitateWristCommand(intakeWristSubsystem);
     private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
-    private final Command intakeWristDefaultCommand = WristCommands.intakeWristDefaultCommand(intakeWristSubsystem);
+    private final Command intakeWristDefaultCommand = new RunIntakeWristCommand(intakeWristSubsystem, this::getInput);
+    private final Command zeroIntakeWristCommand = new ZeroIntakeWristCommand(intakeWristSubsystem);
+    private final Command testIntakeWristCommand =
+            intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
 
     private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
 
@@ -105,20 +114,33 @@ public class RobotContainer {
     private Trigger resetFieldOrientedFwd;
 
     private Trigger runIntakeTrigger;
+    private Trigger runIntakeReverseTrigger;
     private Trigger agitateIntakeTrigger;
-    private Trigger extendIntakeTrigger;
-    private Trigger retractIntakeTrigger;
 
     private Trigger reverseIndexerTrigger;
 
     private Trigger clearShooterTrigger;
     private Trigger shootTrigger;
+    private Trigger shuttleTrigger;
 
     private Trigger zeroHoodTrigger;
+    private Trigger zeroIntakeWristTrigger;
 
     private Trigger runSysIdTrigger;
 
     private Trigger lockTrigger;
+    private Trigger boostTrigger;
+
+    private AutoChooser autochooser = new AutoChooser(
+            robotPositioning,
+            driveSubsystem,
+            turret,
+            indexer,
+            kicker,
+            shooter,
+            hood,
+            intakeRollerSubsystem,
+            intakeWristSubsystem);
 
     public RobotContainer() {
         configureBindings();
@@ -127,7 +149,16 @@ public class RobotContainer {
         addInputChooserToDashboard();
     }
 
-    private void setDefaultCommands() {
+    public void setAutoDefaultCommnds() {
+        driveSubsystem.setDefaultCommand(driveSubsystem.run(driveSubsystem::stop));
+        intakeWristSubsystem.setDefaultCommand(Commands.either(
+                        Commands.none(),
+                        new ZeroIntakeWristCommand(intakeWristSubsystem),
+                        intakeWristSubsystem::hasZero)
+                .andThen(WristCommands.idleWristCommand(intakeWristSubsystem)));
+    }
+
+    public void setDefaultCommands() {
         driveSubsystem.setDefaultCommand(driveCommand);
         hood.setDefaultCommand(idleHoodCommand);
         indexer.setDefaultCommand(idleIndexerCommand);
@@ -163,18 +194,20 @@ public class RobotContainer {
 
         // Intake Triggers
         runIntakeTrigger = new Trigger(() -> getInput().getRunIntake());
+        runIntakeReverseTrigger = new Trigger(() -> getInput().getRunIntakeReverse());
         agitateIntakeTrigger = new Trigger(() -> getInput().getAgitate());
-        extendIntakeTrigger = new Trigger(() -> getInput().getExtendIntake());
-        retractIntakeTrigger = new Trigger(() -> getInput().getRetractIntake());
 
         clearShooterTrigger = new Trigger(() -> getInput().getClearShooter());
         shootTrigger = new Trigger(() -> getInput().getShootRequest());
+        shuttleTrigger = new Trigger(() -> getInput().getShuttleRequest());
 
         zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
+        zeroIntakeWristTrigger = new Trigger(() -> intakeWristSubsystem.hasZero() == false);
 
         runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
 
         lockTrigger = new Trigger(() -> getInput().getLockRequest());
+        boostTrigger = new Trigger(() -> getInput().getDriveBoostRequest());
 
         reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
 
@@ -183,36 +216,53 @@ public class RobotContainer {
 
         // Intake Trigger Bindings
         runIntakeTrigger.whileTrue(runRollerCommand);
-        agitateIntakeTrigger.whileTrue(agitateIntakeCommand);
-        extendIntakeTrigger.onTrue(extendIntakeWristCommand);
-        retractIntakeTrigger.onTrue(retractIntakeWristCommend);
+        runIntakeReverseTrigger.and(runIntakeTrigger.negate()).whileTrue(runRollerReverseCommand);
+        agitateIntakeTrigger.whileTrue(agitateIntakeWristCommand);
 
-        shootTrigger.whileTrue(Utils.withTimeoutPref(clearShooterKickerCommand, MoPrefs.shooterClearTime::get)
+        shootTrigger.whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
                 .andThen(shootCommand));
+        shootTrigger
+                .and(reverseIndexerTrigger.negate())
+                .whileTrue(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet())
+                        .andThen(runIndexerToShootCommand));
 
-        clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearShooterKickerCommand);
+        shuttleTrigger
+                .and(shootTrigger.negate())
+                .whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
+                        .andThen(shuttleCommand));
+        shuttleTrigger
+                .and(shootTrigger.negate())
+                .and(reverseIndexerTrigger.negate())
+                .whileTrue(
+                        Commands.defer(() -> Commands.waitUntil(shuttleCommand::readyToShoot), Collections.emptySet())
+                                .andThen(runIndexerToShuttleCommand));
 
-        zeroHoodTrigger.and(RobotModeTriggers.disabled().negate()).onTrue(zeroHoodCommand);
+        boostTrigger.onTrue(
+                Commands.runOnce(driveSubsystem::toggleBoostCurrentLimits).ignoringDisable(true));
+
+        clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
+
+        zeroHoodTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroHoodCommand);
+        zeroIntakeWristTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroIntakeWristCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 
         lockTrigger.whileTrue(driveSubsystem.lockPose());
 
-        runIntakeTrigger.whileTrue(runKickerCommand);
-
         runIntakeTrigger
                 .and(reverseIndexerTrigger.negate())
                 .and(shootTrigger.negate())
-                .whileTrue(runIndexerCommand);
+                .whileTrue(runIndexerWithIntakeCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
         RobotModeTriggers.test().whileTrue(turretTestCommand);
         RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
         RobotModeTriggers.test().whileTrue(shooterTestCommand);
+        RobotModeTriggers.test().and(zeroIntakeWristTrigger.negate()).whileTrue(testIntakeWristCommand);
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return autochooser.getAutoChooserCommand();
     }
 
     private MoInput getInput() {
@@ -221,5 +271,22 @@ public class RobotContainer {
 
     private TurretSubsystem getTurretSubsystem() {
         return turret;
+    }
+
+    private Command clearKickerShooterCommand() {
+        return Commands.parallel(
+                shooter.run(() ->
+                        shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
+                kicker.run(
+                        () -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
+    }
+
+    public void checkRumbles() {
+        double rumble = driveSubsystem.isBoosted() ? MoPrefs.driverRumble.get() : 0;
+        controllerInput.getDriveController().setRumble(RumbleType.kBothRumble, rumble);
+
+        double operatorRumble =
+                DriverStation.isTeleopEnabled() && turret.targetIsAligned() ? MoPrefs.operatorRumble.get() : 0;
+        controllerInput.getOperatorController().setRumble(RumbleType.kBothRumble, operatorRumble);
     }
 }

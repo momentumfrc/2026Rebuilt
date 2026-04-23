@@ -16,6 +16,11 @@
         "hoodAngle": 18,
         "flywheelSpeed": 3600,
         "timeOfFlight": 1.42
+    }, {
+        "distance": 5.233,
+        "hoodAngle": 27,
+        "flywheelSpeed": 3600,
+        "timeOfFlight": 4
     }
   ]
 }

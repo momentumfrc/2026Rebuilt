@@ -57,8 +57,10 @@ import frc.robot.util.TurretAngleHelper;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
-    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 13;
-    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 12;
+    private static final int ENCODER_1_GEAR_TOOTH_COUNT = 12;
+    private static final int ENCODER_2_GEAR_TOOTH_COUNT = 13;
+
+    private static final int TRAPEZOID_STATE_RESET_CUTOFF = 30;
 
     public static final Transform2d robotToTurret =
             new Transform2d(new Translation2d(-0.144780, -0.031750), Rotation2d.kZero);
@@ -92,6 +94,7 @@ public class TurretSubsystem extends SubsystemBase {
     private TurretAngleHelper angleHelper;
 
     private TrapezoidProfile profile;
+    private TrapezoidProfile.State absoluteSetpoint = new TrapezoidProfile.State();
     private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private final PIDController turretRelativePid;
 
@@ -176,7 +179,7 @@ public class TurretSubsystem extends SubsystemBase {
 
         MoPrefs.turretMaxPower.subscribe(voltage -> {
             turretMotorConfig.Voltage.withPeakForwardVoltage((Voltage) voltage).withPeakReverseVoltage((Voltage)
-                    voltage);
+                    voltage.unaryMinus());
             turretMotor.getConfigurator().apply(turretMotorConfig);
         });
 
@@ -342,9 +345,6 @@ public class TurretSubsystem extends SubsystemBase {
         TurretAngleHelper.Result result = angleHelper.turretAngleModulus(goalAngle);
         targetInRange.set(result.inRange());
 
-        State currentState =
-                new State(getTurretYaw().in(Units.Degrees), getTurretYawRate().in(Units.DegreesPerSecond));
-
         State goalState;
         if (result.inRange()) {
             goalState = new State(result.angle().getDegrees(), goalVelocity.in(Units.DegreesPerSecond));
@@ -352,10 +352,18 @@ public class TurretSubsystem extends SubsystemBase {
         } else {
             goalState = new State(result.angle().getDegrees(), calculateOutOfRangeVelocity(result.angle()));
         }
-        State setpoint = profile.calculate(Constants.LOOP_PERIOD, currentState, goalState);
 
-        this.goalAngle.mut_replace(setpoint.position, Units.Degrees);
-        this.goalVelocity.mut_replace(setpoint.velocity, Units.DegreesPerSecond);
+        if (Math.abs(absoluteSetpoint.position - turretEncoder.getPosition().in(Units.Degrees))
+                > TRAPEZOID_STATE_RESET_CUTOFF) {
+            absoluteSetpoint = new State(
+                    turretEncoder.getPosition().in(Units.Degrees),
+                    turretEncoder.getVelocity().in(Units.DegreesPerSecond));
+        }
+
+        absoluteSetpoint = profile.calculate(Constants.LOOP_PERIOD, absoluteSetpoint, goalState);
+
+        this.goalAngle.mut_replace(absoluteSetpoint.position, Units.Degrees);
+        this.goalVelocity.mut_replace(absoluteSetpoint.velocity, Units.DegreesPerSecond);
         this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
     }
 
@@ -397,7 +405,7 @@ public class TurretSubsystem extends SubsystemBase {
     public Command passiveTargetingCommand(TurretTargeting targeting) {
         return run(() -> {
                     if (shouldEnablePassiveTracking()) {
-                        var target = OdometryTargetingHelper.getTarget(
+                        var target = OdometryTargetingHelper.getHubTarget(
                                 DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
                         var firingSolution = targeting.targetPositionStationary(target.toTranslation2d());
                         align(firingSolution);
@@ -415,7 +423,12 @@ public class TurretSubsystem extends SubsystemBase {
                     if (Math.hypot(x, y) < 0.05) {
                         stop();
                     } else {
-                        alignAbsolute(Units.Radians.of(Math.atan2(y, x)), Units.RadiansPerSecond.of(0));
+                        double goalRadians = Math.atan2(y, x);
+                        var result = angleHelper.turretAngleModulusRads(goalRadians);
+                        targetInRange.set(result.inRange());
+
+                        goalAngle.mut_replace(result.angle().getRadians(), Units.Radians);
+                        this.turretAbsolutePid.setReference(this.goalAngle, Units.RadiansPerSecond.zero());
                     }
                 })
                 .withName("TurretTestCommand");

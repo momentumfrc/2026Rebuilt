@@ -14,50 +14,85 @@ import frc.robot.molib.encoder.MoRotationEncoder;
 
 public class IndexerSubsystem extends SubsystemBase {
 
-    private final SparkFlex motor;
-    private final MoSparkConfigurator config;
+    private final SparkFlex indexerMotor;
+    private final SparkFlex centeringMotor;
 
-    private final MoRotationEncoder encoder;
+    private final MoSparkConfigurator indexerConfig;
+    private final MoSparkConfigurator centeringConfig;
+
+    private final MoRotationEncoder indexerEncoder;
+    private final MoRotationEncoder centeringEncoder;
 
     private final DoublePublisher indexerEncoderPosition;
     private final DoublePublisher indexerEncoderSpeed;
 
-    public IndexerSubsystem() {
-        motor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
-        config = MoSparkConfigurator.forSparkFlex(motor);
+    private final DoublePublisher centeringEncoderPostion;
+    private final DoublePublisher centeringEncoderSpeed;
 
-        config.accept(config -> config.smartCurrentLimit(
+    public IndexerSubsystem() {
+        indexerMotor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
+        centeringMotor = new SparkFlex(Constants.CENTERING_PORT.address(), MotorType.kBrushless);
+
+        indexerConfig = MoSparkConfigurator.forSparkFlex(indexerMotor);
+        centeringConfig = MoSparkConfigurator.forSparkFlex(centeringMotor);
+
+        indexerConfig.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.indexerRollerSmartCurrentLimit.get().in(Units.Amps))
                 .inverted(false)
                 .idleMode(IdleMode.kCoast));
         MoPrefs.indexerRollerSmartCurrentLimit.subscribe(
-                limit -> config.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
+                limit -> indexerConfig.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
 
-        encoder = MoRotationEncoder.forSparkRelative(motor, Units.Revolutions);
-        MoPrefs.indexerEncoderScale.subscribe(encoder::setConversionFactor, true);
+        centeringConfig.accept(config -> config.smartCurrentLimit(
+                        (int) MoPrefs.CenteringSmartCurrentLimit.get().in(Units.Amps))
+                .inverted(true)
+                .idleMode(IdleMode.kCoast));
+        MoPrefs.CenteringSmartCurrentLimit.subscribe(
+                limit -> centeringConfig.accept(config -> config.smartCurrentLimit((int) limit.in(Units.Amps))));
+
+        indexerEncoder = MoRotationEncoder.forSparkRelative(indexerMotor, Units.Revolutions);
+        MoPrefs.indexerEncoderScale.subscribe(indexerEncoder::setConversionFactor, true);
+
+        centeringEncoder = MoRotationEncoder.forSparkRelative(centeringMotor, Units.Revolutions);
+        MoPrefs.centeringEncoderScale.subscribe(centeringEncoder::setConversionFactor, true);
 
         var table = NTHelpers.getTable("Indexer");
 
         indexerEncoderPosition =
                 table.getDoubleTopic("Indexer Encoder Position").publish();
         indexerEncoderSpeed = table.getDoubleTopic("Indexer Encoder Speed").publish();
+
+        centeringEncoderPostion =
+                table.getDoubleTopic("Centering Encoder Position").publish();
+        centeringEncoderSpeed = table.getDoubleTopic("Centering Encoder Speed").publish();
     }
 
     public void run() {
-        motor.setVoltage(MoPrefs.indexerRunPower.get().in(Units.Volts));
+        indexerMotor.setVoltage(MoPrefs.indexerRunPower.get().in(Units.Volts));
+        centeringMotor.setVoltage(MoPrefs.centeringRunPower.get().in(Units.Volts));
+    }
+
+    public void runIndexerNoCentering() {
+        indexerMotor.setVoltage(MoPrefs.indexerRunPower.get().in(Units.Volts));
+        centeringMotor.stopMotor();
     }
 
     public void stop() {
-        motor.stopMotor();
+        indexerMotor.stopMotor();
+        centeringMotor.stopMotor();
     }
 
     public void runReverse() {
-        motor.setVoltage(-1 * MoPrefs.indexerRunPower.get().in(Units.Volts));
+        indexerMotor.setVoltage(-1 * MoPrefs.indexerRunPower.get().in(Units.Volts));
+        centeringMotor.setVoltage(-1 * MoPrefs.centeringRunPower.get().in(Units.Volts));
     }
 
     @Override
     public void periodic() {
-        indexerEncoderPosition.set(encoder.getPosition().in(Units.Revolutions));
-        indexerEncoderSpeed.set(encoder.getVelocity().in(Units.RevolutionsPerSecond));
+        indexerEncoderPosition.set(indexerEncoder.getPosition().in(Units.Revolutions));
+        indexerEncoderSpeed.set(indexerEncoder.getVelocity().in(Units.RevolutionsPerSecond));
+
+        centeringEncoderPostion.set(centeringEncoder.getPosition().in(Units.Revolutions));
+        centeringEncoderSpeed.set(centeringEncoder.getVelocity().in(Units.RevolutionsPerSecond));
     }
 }

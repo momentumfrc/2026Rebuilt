@@ -16,7 +16,6 @@ import frc.robot.MoPrefs;
 import frc.robot.molib.NTHelpers;
 import frc.robot.shootutils.TurretTargeting;
 import frc.robot.subsystem.HoodSubsystem;
-import frc.robot.subsystem.IndexerSubsystem;
 import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
@@ -27,9 +26,10 @@ public class ShootCommand extends Command {
     private final TurretSubsystem turret;
     private final ShooterSubsystem shooter;
     private final HoodSubsystem hood;
-    private final IndexerSubsystem indexer;
 
     private final TurretTargeting targeting;
+
+    private final OdometryTargetingHelper.TargetType targetType;
 
     private final Alert targetOutOfRange = new Alert("Target out of turret range", Alert.AlertType.kInfo);
 
@@ -51,14 +51,14 @@ public class ShootCommand extends Command {
     private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
 
     public ShootCommand(
+            OdometryTargetingHelper.TargetType targetType,
             TurretTargeting targeting,
-            IndexerSubsystem indexer,
             KickerSubsystem kicker,
             TurretSubsystem turret,
             ShooterSubsystem shooter,
             HoodSubsystem hood) {
+        this.targetType = targetType;
         this.targeting = targeting;
-        this.indexer = indexer;
         this.kicker = kicker;
         this.turret = turret;
         this.shooter = shooter;
@@ -80,12 +80,34 @@ public class ShootCommand extends Command {
         addRequirements(kicker, turret, shooter, hood);
     }
 
+    public static ShootCommand getHubShootCommand(
+            TurretTargeting targeting,
+            KickerSubsystem kicker,
+            TurretSubsystem turret,
+            ShooterSubsystem shooter,
+            HoodSubsystem hood) {
+        return new ShootCommand(OdometryTargetingHelper.TargetType.HUB, targeting, kicker, turret, shooter, hood);
+    }
+
+    public static ShootCommand getShuttleShootCommand(
+            TurretTargeting targeting,
+            KickerSubsystem kicker,
+            TurretSubsystem turret,
+            ShooterSubsystem shooter,
+            HoodSubsystem hood) {
+        return new ShootCommand(OdometryTargetingHelper.TargetType.SHUTTLE, targeting, kicker, turret, shooter, hood);
+    }
+
     private Angle getHoodOverridePosition() {
         return hoodOverridePosition.mut_replace(overrideHoodSetpoint.get(), Units.Degrees);
     }
 
     private AngularVelocity getFlywheelOverrideSpeed() {
         return flywheelOverrideSpeed.mut_replace(overrideFlywheelSetpoint.get(), Units.RPM);
+    }
+
+    public boolean readyToShoot() {
+        return turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed();
     }
 
     @Override
@@ -97,7 +119,6 @@ public class ShootCommand extends Command {
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
 
-                indexer.stop();
                 kicker.stop();
                 shooter.stop();
                 hood.goToRest();
@@ -110,7 +131,9 @@ public class ShootCommand extends Command {
             shooter.runAtSpeed(MoPrefs.flywheelFallbackSetpoint.get());
         } else {
             var target = OdometryTargetingHelper.getTarget(
-                    DriverStation.getAlliance().orElse(Alliance.Red));
+                    DriverStation.getAlliance().orElse(Alliance.Red),
+                    targeting.getPositioning().getRobotPose(),
+                    targetType);
 
             var firingSolution =
                     switch (targetingMode) {
@@ -122,7 +145,6 @@ public class ShootCommand extends Command {
             if (moduloAngle.inRange() == false) {
                 targetOutOfRange.set(true);
 
-                indexer.stop();
                 kicker.stop();
                 shooter.stop();
                 hood.goToRest();
@@ -145,11 +167,9 @@ public class ShootCommand extends Command {
 
         targetOutOfRange.set(false);
 
-        if (turret.targetIsAligned() && hood.isInPosition() && shooter.isUpToSpeed()) {
-            indexer.run();
+        if (readyToShoot()) {
             kicker.run();
         } else {
-            indexer.stop();
             kicker.stop();
         }
     }
