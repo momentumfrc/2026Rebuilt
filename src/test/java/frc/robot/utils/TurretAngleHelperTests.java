@@ -2,7 +2,7 @@ package frc.robot.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Rotation2d;
 import frc.robot.util.TurretAngleHelper;
 import org.junit.jupiter.api.Test;
 

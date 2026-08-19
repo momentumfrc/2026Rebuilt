@@ -1,3 +1,0 @@
-[submodule "src/main/java/frc/robot/molib"]
-	path = src/main/java/frc/robot/molib
-	url = https://github.com/momentumfrc/molib.git
