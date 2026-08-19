@@ -1,17 +1,18 @@
 package first.input;
 
+import org.wpilib.driverstation.Gamepad;
+
 import first.Constants;
-import org.wpilib.driverstation.XboxController;
 
 public final class ControllerInput implements MoInput {
-    private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
-    private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
+    private final Gamepad driveController = new Gamepad(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final Gamepad operatorController = new Gamepad(Constants.OPERATOR_CONTROLLER_PORT.hidport());
 
-    public XboxController getDriveController() {
+    public Gamepad getDriveController() {
         return driveController;
     }
 
-    public XboxController getOperatorController() {
+    public Gamepad getOperatorController() {
         return operatorController;
     }
 
@@ -32,7 +33,7 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getDriveBoostRequest() {
-        return driveController.getAButton();
+        return driveController.getSouthFaceButton();
     }
 
     @Override
@@ -67,7 +68,7 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getClearShooter() {
-        return operatorController.getBButton();
+        return operatorController.getEastFaceButton();
     }
 
     @Override
@@ -82,17 +83,17 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getShootRequest() {
-        return operatorController.getAButton();
+        return operatorController.getSouthFaceButton();
     }
 
     @Override
     public boolean getShuttleRequest() {
-        return operatorController.getYButton();
+        return operatorController.getNorthFaceButton();
     }
 
     @Override
     public boolean getReverseIndexerRequest() {
-        return operatorController.getXButton();
+        return operatorController.getWestFaceButton();
     }
 
     @Override
@@ -102,6 +103,6 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getLockRequest() {
-        return driveController.getXButton();
+        return driveController.getWestFaceButton();
     }
 }

@@ -13,7 +13,7 @@ import org.wpilib.math.geometry.Transform2d;
 import org.wpilib.math.geometry.Transform3d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.interpolation.TimeInterpolatableBuffer;
-import org.wpilib.math.kinematics.ChassisSpeeds;
+import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.linalg.Vector;
 import org.wpilib.math.numbers.N3;
@@ -117,14 +117,14 @@ public class RobotPositioning {
     /**
      * Get the field-relative velocity of the robot.
      */
-    public ChassisSpeeds getFieldVelocity() {
+    public ChassisVelocities getFieldVelocity() {
         return swerveDrive.getFieldVelocity();
     }
 
     /**
      * Get the robot-relative velocity of the robot.
      */
-    public ChassisSpeeds getRobotVelocity() {
+    public ChassisVelocities getRobotVelocity() {
         return swerveDrive.getRobotVelocity();
     }
 
@@ -252,9 +252,9 @@ public class RobotPositioning {
         // The stationary limelight is assumed to be the LL2, which cannot return accurate measurements while moving.
         var robotVelocity = swerveDrive.getRobotVelocity();
         /*
-        if (Math.abs(robotVelocity.vxMetersPerSecond) > STATIONARY_CUTOFF
-                || Math.abs(robotVelocity.vyMetersPerSecond) > STATIONARY_CUTOFF
-                || Math.abs(robotVelocity.omegaRadiansPerSecond) > STATIONARY_CUTOFF) {
+        if (Math.abs(robotVelocity.vx) > STATIONARY_CUTOFF
+                || Math.abs(robotVelocity.vy) > STATIONARY_CUTOFF
+                || Math.abs(robotVelocity.omega) > STATIONARY_CUTOFF) {
             return;
         } */
 
@@ -263,7 +263,7 @@ public class RobotPositioning {
         if (useMT2.get() && hasInitialPosition.get()) {
             poseEstimate = getPoseEstimateMT2(
                     Constants.STATIONARY_LIMELIGHT_NAME,
-                    Units.RadiansPerSecond.of(robotVelocity.omegaRadiansPerSecond));
+                    Units.RadiansPerSecond.of(robotVelocity.omega));
             visionStdDevs = MT2_VISION_STDDEVS;
         } else {
             poseEstimate = getPoseEstimateMT1(Constants.STATIONARY_LIMELIGHT_NAME);

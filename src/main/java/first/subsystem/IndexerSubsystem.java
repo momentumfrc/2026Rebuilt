@@ -30,8 +30,8 @@ public class IndexerSubsystem extends SubsystemBase {
     private final DoublePublisher centeringEncoderSpeed;
 
     public IndexerSubsystem() {
-        indexerMotor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
-        centeringMotor = new SparkFlex(Constants.CENTERING_PORT.address(), MotorType.kBrushless);
+        indexerMotor = new SparkFlex(Constants.INDEXER_PORT.address(), Constants.DEFAULT_CAN_BUS, MotorType.kBrushless);
+        centeringMotor = new SparkFlex(Constants.CENTERING_PORT.address(), Constants.DEFAULT_CAN_BUS, MotorType.kBrushless);
 
         indexerConfig = MoSparkConfigurator.forSparkFlex(indexerMotor);
         centeringConfig = MoSparkConfigurator.forSparkFlex(centeringMotor);

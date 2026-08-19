@@ -1,5 +1,6 @@
 package first.subsystem;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -20,6 +21,7 @@ import first.util.SysIdUtil;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.driverstation.Gamepad;
 import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.math.trajectory.TrapezoidProfile;
 import org.wpilib.math.trajectory.TrapezoidProfile.State;
@@ -62,7 +64,7 @@ public class HoodSubsystem extends SubsystemBase {
     private final DoublePublisher calculatedHoodPositionPublisher;
 
     public HoodSubsystem() {
-        motor = new TalonFX(Constants.HOOD_PORT.address());
+        motor = new TalonFX(Constants.HOOD_PORT.address(), CANBus.systemcore(Constants.DEFAULT_CAN_BUS));
         motorConfig = new TalonFXConfiguration();
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions, motorConfig);
 
@@ -131,7 +133,8 @@ public class HoodSubsystem extends SubsystemBase {
         setPosition(position);
     }
 
-    private MutAngularVelocity mutVelocityReference = Units.RadiansPerSecond.mutable(0);
+    // TODO
+    // private MutAngularVelocity mutVelocityReference = Units.RadiansPerSecond.mutable(0);
 
     public void goToRest() {
         setPosition(MoPrefs.hoodDeadzonePosition.get(), Units.DegreesPerSecond.zero());
@@ -148,7 +151,8 @@ public class HoodSubsystem extends SubsystemBase {
                 hoodAngleFilter.calculate((position.in(Units.Radians) - lastHoodAngle) / Constants.LOOP_PERIOD);
         lastHoodAngle = position.in(Units.Radians);
 
-        setPosition(position, mutVelocityReference.mut_replace(goalVelocity, Units.RadiansPerSecond));
+        // TODO
+        //setPosition(position, mutVelocityReference.mut_replace(goalVelocity, Units.RadiansPerSecond));
     }
 
     /**
@@ -165,9 +169,10 @@ public class HoodSubsystem extends SubsystemBase {
         State goalState = new State(position.in(Units.Radians), goalVelocity);
         setpointState = profile.calculate(Constants.LOOP_PERIOD, setpointState, goalState);
 
-        positionReference.mut_replace(setpointState.position, Units.Radians);
-        velocityReference.mut_replace(setpointState.velocity, Units.RadiansPerSecond);
-        pid.setReference(positionReference, velocityReference);
+        // TODO
+        // positionReference.mut_replace(setpointState.position, Units.Radians);
+        // velocityReference.mut_replace(setpointState.velocity, Units.RadiansPerSecond);
+        // pid.setReference(positionReference, velocityReference);
     }
 
     public boolean isInPosition() {
@@ -206,15 +211,16 @@ public class HoodSubsystem extends SubsystemBase {
         return SysIdUtil.sysIdMechanismForTalonFx(this, "hood", motor, encoder);
     }
 
-    public Command testCommand(XboxController testController) {
+    public Command testCommand(Gamepad testController) {
         return run(() -> {
                     double y = -1 * testController.getRightY();
-                    double setpointDegrees = MathUtil.interpolate(
+                    double setpointDegrees = MathUtil.lerp(
                             MoPrefs.hoodMinSoftLimit.get().in(Units.Degrees),
                             MoPrefs.hoodMaxSoftLimit.get().in(Units.Degrees),
-                            MathUtil.inverseInterpolate(-1, 1, y));
-                    positionReference.mut_replace(setpointDegrees, Units.Degrees);
-                    pid.setReference(positionReference, Units.DegreesPerSecond.zero());
+                            MathUtil.inverseLerp(-1, 1, y));
+                    // TODO
+                    // positionReference.mut_replace(setpointDegrees, Units.Degrees);
+                    // pid.setReference(positionReference, Units.DegreesPerSecond.zero());
                 })
                 .withName("HoodTestCommand");
     }

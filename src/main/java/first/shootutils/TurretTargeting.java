@@ -97,35 +97,32 @@ public final class TurretTargeting {
         ChassisVelocities robotRelativeVelocity = positioning.getRobotVelocity();
 
         double phaseDelaySeconds = MoPrefs.turretPhaseDelay.get().in(Units.Seconds);
-        var estimatedPose = robotPose.exp(new Twist2d(
-                robotRelativeVelocity.vxMetersPerSecond * phaseDelaySeconds,
-                robotRelativeVelocity.vyMetersPerSecond * phaseDelaySeconds,
-                robotRelativeVelocity.omegaRadiansPerSecond * phaseDelaySeconds));
+        var estimatedPose = robotPose.plus(new Twist2d(
+                robotRelativeVelocity.vx * phaseDelaySeconds,
+                robotRelativeVelocity.vy * phaseDelaySeconds,
+                robotRelativeVelocity.omega * phaseDelaySeconds).exp());
 
         phaseDelayEstimatedPosePublisher.set(estimatedPose);
         return estimatedPose;
     }
 
-    private double calculateTurretVelocityX(ChassisSpeeds robotVelocity, double robotAngle) {
-        return robotVelocity.vxMetersPerSecond
-                + robotVelocity.omegaRadiansPerSecond
+    private double calculateTurretVelocityX(ChassisVelocities robotVelocity, double robotAngle) {
+        return robotVelocity.vx
+                + robotVelocity.omega
                         * (TurretSubsystem.robotToTurret.getY() * Math.cos(robotAngle)
                                 - TurretSubsystem.robotToTurret.getX() * Math.sin(robotAngle));
     }
 
-    private double calculateTurretVelocityY(ChassisSpeeds robotVelocity, double robotAngle) {
-        return robotVelocity.vyMetersPerSecond
-                + robotVelocity.omegaRadiansPerSecond
+    private double calculateTurretVelocityY(ChassisVelocities robotVelocity, double robotAngle) {
+        return robotVelocity.vy
+                + robotVelocity.omega
                         * (TurretSubsystem.robotToTurret.getX() * Math.cos(robotAngle)
                                 - TurretSubsystem.robotToTurret.getY() * Math.sin(robotAngle));
     }
 
-    private final MutDistance distanceToTargetForTOFEstimation =
-            HoodSerializedInformationHolder.DISTANCE_STORE_UNIT.mutable(0);
-
     private double estimateTimeOfFlight(double distanceToTarget) {
         return HoodSerializedInformationHolder.getInstance()
-                .getTimeOfFlight(distanceToTargetForTOFEstimation.mut_replace(distanceToTarget, Units.Meters))
+                .getTimeOfFlight(Units.Meters.of(distanceToTarget))
                 .in(Units.Seconds);
     }
 
@@ -134,7 +131,7 @@ public final class TurretTargeting {
      * pose as if the robot were not moving.
      */
     private Pose2d estimateLookaheadPose(
-            Translation2d target, Pose2d turretPosition, ChassisSpeeds robotVelocity, Rotation2d robotAngle) {
+            Translation2d target, Pose2d turretPosition, ChassisVelocities robotVelocity, Rotation2d robotAngle) {
         double turretVelocityX = calculateTurretVelocityX(robotVelocity, robotAngle.getRadians());
         double turretVelocityY = calculateTurretVelocityY(robotVelocity, robotAngle.getRadians());
 
@@ -171,7 +168,7 @@ public final class TurretTargeting {
         var turretPosition = estimatedPose.transformBy(TurretSubsystem.robotToTurret);
         turretPositionPublisher.set(turretPosition);
 
-        ChassisSpeeds robotVelocity = positioning.getFieldVelocity();
+        ChassisVelocities robotVelocity = positioning.getFieldVelocity();
         Rotation2d robotAngle = estimatedPose.getRotation();
 
         return estimateLookaheadPose(target, turretPosition, robotVelocity, robotAngle);
@@ -194,11 +191,12 @@ public final class TurretTargeting {
 
         Rotation2d robotRelativeGoalAngle =
                 goalAngle.minus(positioning.getRobotPose().getRotation());
-        double robotRelativeGoalVelocity = goalVelocity - positioning.getFieldVelocity().omegaRadiansPerSecond;
+        double robotRelativeGoalVelocity = goalVelocity - positioning.getFieldVelocity().omega;
 
-        outputSetpoint.goalAngle.mut_replace(robotRelativeGoalAngle.getRadians(), Units.Radians);
-        outputSetpoint.goalVelocity.mut_replace(robotRelativeGoalVelocity, Units.RadiansPerSecond);
-        outputSetpoint.targetDistance.mut_replace(turretToTargetDistance, Units.Meters);
+        // TODO
+        // outputSetpoint.goalAngle.mut_replace(robotRelativeGoalAngle.getRadians(), Units.Radians);
+        // outputSetpoint.goalVelocity.mut_replace(robotRelativeGoalVelocity, Units.RadiansPerSecond);
+        // outputSetpoint.targetDistance.mut_replace(turretToTargetDistance, Units.Meters);
 
         outputGoalAnglePublisher.set(robotRelativeGoalAngle);
         outputOmegaPublisher.set(robotRelativeGoalVelocity);

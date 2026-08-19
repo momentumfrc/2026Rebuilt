@@ -25,7 +25,9 @@ import java.util.Set;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.SubsystemBase;
-import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
@@ -162,7 +164,7 @@ public class AutoChooser {
 
     public Command getShootThenBackupCommand() {
         double dx = backupDistance.get();
-        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
+        if (MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.BLUE) {
             dx = -1 * dx;
         }
 
@@ -354,7 +356,7 @@ public class AutoChooser {
                 };
         for (var subsystem : proxiedSubsystems) {
             if (auto.getRequirements().contains(subsystem)) {
-                DriverStation.reportWarning(
+                DriverStationErrors.reportWarning(
                         "Auto command requires illegal subsystem [" + subsystem.getName() + "]", false);
             }
         }

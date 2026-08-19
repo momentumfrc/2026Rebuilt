@@ -1,12 +1,13 @@
 package first.input;
 
 import first.Constants;
-import org.wpilib.driverstation.XboxController;
+
+import org.wpilib.driverstation.Gamepad;
 
 public class SingleControllerInput implements MoInput {
-    private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final Gamepad driveController = new Gamepad(Constants.DRIVE_CONTORLLER_PORT.hidport());
 
-    public XboxController getDriveController() {
+    public Gamepad getDriveController() {
         return driveController;
     }
 
@@ -52,7 +53,7 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getClearShooter() {
-        return driveController.getBButton();
+        return driveController.getEastFaceButton();
     }
 
     @Override
@@ -67,12 +68,12 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getShootRequest() {
-        return driveController.getAButton();
+        return driveController.getSouthFaceButton();
     }
 
     @Override
     public boolean getReverseIndexerRequest() {
-        return driveController.getYButton();
+        return driveController.getNorthFaceButton();
     }
 
     // use operator controller if you need this
@@ -83,7 +84,7 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getLockRequest() {
-        return driveController.getXButton();
+        return driveController.getWestFaceButton();
     }
 
     @Override

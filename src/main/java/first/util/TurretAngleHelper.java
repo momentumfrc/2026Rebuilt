@@ -13,8 +13,6 @@ public class TurretAngleHelper {
     private final Rotation2d minAngle;
     private final Rotation2d maxAngle;
 
-    private MutAngle mutAngle = Units.Radians.mutable(0);
-
     public static class Result {
         private Rotation2d angle;
         private boolean inRange;

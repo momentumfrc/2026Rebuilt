@@ -15,7 +15,7 @@ import first.molib.pid.MoSparkMaxArmProfilePID;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.driverstation.XboxController;
+import org.wpilib.driverstation.Gamepad;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.DoublePublisher;
@@ -24,7 +24,6 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularAcceleration;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Current;
-import org.wpilib.units.measure.MutCurrent;
 import org.wpilib.units.measure.Voltage;
 
 public class IntakeWristSubsystem extends SubsystemBase {
@@ -37,8 +36,6 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
     private final MoSparkConfigurator intakeWristConfig;
 
-    private MutCurrent intakeWristCurrent = Units.Amps.mutable(0);
-
     private final DoublePublisher positionPublisher;
     private final DoublePublisher wristCurrentPublisher;
     private final DoublePublisher wristVoltagePublisher;
@@ -46,7 +43,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
     private final BooleanEntry hasZeroEntry;
 
     public IntakeWristSubsystem() {
-        intakeWrist = new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), MotorType.kBrushless);
+        intakeWrist = new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), Constants.DEFAULT_CAN_BUS, MotorType.kBrushless);
         intakeWristConfig = MoSparkConfigurator.forSparkFlex(intakeWrist);
         intakeWristConfig.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.intakeWristSmartCurrentLimit.get().in(Units.Amps))
@@ -115,9 +112,11 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public Current getIntakeWristCurrent() {
-        double current = intakeWrist.getOutputCurrent();
-        intakeWristCurrent.mut_replace(current, Units.Amps);
-        return intakeWristCurrent;
+        // TODO
+        // double current = intakeWrist.getOutputCurrent();
+        // intakeWristCurrent.mut_replace(current, Units.Amps);
+        // return intakeWristCurrent;
+        return null;
     }
 
     public boolean atPosition(Angle position) {
@@ -144,13 +143,13 @@ public class IntakeWristSubsystem extends SubsystemBase {
         return hasZeroEntry.get();
     }
 
-    public Command testCommand(XboxController testController) {
+    public Command testCommand(Gamepad testController) {
         return run(() -> {
             double y = -1 * testController.getRightY();
-            double setpointRotations = MathUtil.interpolate(
+            double setpointRotations = MathUtil.lerp(
                     MoPrefs.intakeWristRetractPosition.get().in(Units.Rotations),
                     MoPrefs.intakeWristDeployPosition.get().in(Units.Rotations),
-                    MathUtil.inverseInterpolate(-1, 1, y));
+                    MathUtil.inverseLerp(-1, 1, y));
             wristPid.setUnprofiledPositionReference(Units.Rotations.of(setpointRotations));
         });
     }
@@ -158,9 +157,9 @@ public class IntakeWristSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         wristCurrentPublisher.set(getIntakeWristCurrent().in(Units.Amps));
-        positionPublisher.set(intakeWrist.getEncoder().getPosition());
+        positionPublisher.set(intakeWrist.getEncoder().getPosition().get());
 
-        wristVoltagePublisher.set(intakeWrist.getAppliedOutput() * intakeWrist.getBusVoltage());
+        wristVoltagePublisher.set(intakeWrist.getAppliedOutput().get() * intakeWrist.getBusVoltage().get());
     }
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
@@ -170,7 +169,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
         return new SysIdRoutine.Mechanism(
                 intakeWrist::setVoltage,
                 log -> log.motor("intake wrist")
-                        .voltage(Units.Volts.of(intakeWrist.getBusVoltage() * intakeWrist.getAppliedOutput()))
+                        .voltage(Units.Volts.of(intakeWrist.getBusVoltage().get() * intakeWrist.getAppliedOutput().get()))
                         .value(
                                 "position",
                                 wristEncoder.getPositionInEncoderUnits(),

@@ -1,5 +1,6 @@
 package first.subsystem;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -20,7 +21,7 @@ import first.util.SysIdUtil;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.driverstation.XboxController;
+import org.wpilib.driverstation.Gamepad;
 import org.wpilib.networktables.DoubleEntry;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.units.AngleUnit;
@@ -47,8 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final DoublePublisher calculatedFlywheelSpeedPublisher;
 
     public ShooterSubsystem() {
-        motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
-        motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address());
+        motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address(), CANBus.systemcore(Constants.DEFAULT_CAN_BUS));
+        motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address(), CANBus.systemcore(Constants.DEFAULT_CAN_BUS));
         motor1Config = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Coast)
@@ -110,9 +111,9 @@ public class ShooterSubsystem extends SubsystemBase {
         return SysIdUtil.sysIdMechanismForTalonFx(this, "shooter", motor1, encoder);
     }
 
-    public Command getTestCommand(XboxController controller) {
+    public Command getTestCommand(Gamepad controller) {
         return run(() -> {
-                    if (controller.getBButton()) {
+                    if (controller.getEastFaceButton()) {
                         runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
                     } else {
                         stop();

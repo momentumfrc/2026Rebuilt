@@ -9,17 +9,15 @@ import first.subsystem.ShooterSubsystem;
 import first.subsystem.TurretSubsystem;
 import first.util.OdometryTargetingHelper;
 import org.wpilib.command2.Command;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.DriverStation.Alliance;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.DoubleEntry;
 import org.wpilib.smartdashboard.SendableChooser;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.MutAngle;
-import org.wpilib.units.measure.MutAngularVelocity;
-import org.wpilib.util.Alert;
 
 public class ShootCommand extends Command {
     private final KickerSubsystem kicker;
@@ -31,7 +29,7 @@ public class ShootCommand extends Command {
 
     private final OdometryTargetingHelper.TargetType targetType;
 
-    private final Alert targetOutOfRange = new Alert("Target out of turret range", Alert.AlertType.kInfo);
+    private final Alert targetOutOfRange = new Alert("Target out of turret range", Alert.Level.LOW);
 
     private enum TargetingMode {
         ON_THE_MOVE,
@@ -47,8 +45,9 @@ public class ShootCommand extends Command {
     private final BooleanEntry doOverrideHoodSetpoint;
     private final DoubleEntry overrideHoodSetpoint;
 
-    private final MutAngle hoodOverridePosition = Units.Degrees.mutable(0);
-    private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
+    // TODO
+    // private final MutAngle hoodOverridePosition = Units.Degrees.mutable(0);
+    // private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
 
     public ShootCommand(
             OdometryTargetingHelper.TargetType targetType,
@@ -99,11 +98,11 @@ public class ShootCommand extends Command {
     }
 
     private Angle getHoodOverridePosition() {
-        return hoodOverridePosition.mut_replace(overrideHoodSetpoint.get(), Units.Degrees);
+        return null; // hoodOverridePosition.mut_replace(overrideHoodSetpoint.get(), Units.Degrees);
     }
 
     private AngularVelocity getFlywheelOverrideSpeed() {
-        return flywheelOverrideSpeed.mut_replace(overrideFlywheelSetpoint.get(), Units.RPM);
+        return null; // flywheelOverrideSpeed.mut_replace(overrideFlywheelSetpoint.get(), Units.RPM);
     }
 
     public boolean readyToShoot() {
@@ -131,7 +130,7 @@ public class ShootCommand extends Command {
             shooter.runAtSpeed(MoPrefs.flywheelFallbackSetpoint.get());
         } else {
             var target = OdometryTargetingHelper.getTarget(
-                    DriverStation.getAlliance().orElse(Alliance.Red),
+                    MatchState.getAlliance().orElse(Alliance.RED),
                     targeting.getPositioning().getRobotPose(),
                     targetType);
 

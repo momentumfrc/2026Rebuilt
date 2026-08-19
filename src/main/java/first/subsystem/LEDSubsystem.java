@@ -7,7 +7,6 @@ import org.wpilib.hardware.led.AddressableLED;
 import org.wpilib.hardware.led.AddressableLEDBuffer;
 import org.wpilib.hardware.led.LEDPattern;
 import org.wpilib.hardware.led.LEDWriter;
-import org.wpilib.math.util.MathUtil;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Distance;
 
@@ -26,12 +25,13 @@ public class LEDSubsystem extends SubsystemBase {
 
         leds.setLength(LED_COUNT);
         leds.setData(ledBuffer);
-        leds.start();
+        // TODO
+        // leds.start();
 
         dimmer = (i, r, g, b) -> {
             double k = MoPrefs.ledBrightness.get().in(Units.Value);
-            ledBuffer.setRGB(i, (int) MathUtil.clamp(r * k, 0, 255), (int) MathUtil.clamp(g * k, 0, 255), (int)
-                    MathUtil.clamp(b * k, 0, 255));
+            ledBuffer.setRGB(i, (int) Math.clamp(r * k, 0, 255), (int) Math.clamp(g * k, 0, 255), (int)
+                    Math.clamp(b * k, 0, 255));
         };
     }
 

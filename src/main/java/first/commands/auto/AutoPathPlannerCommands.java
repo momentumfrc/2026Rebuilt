@@ -10,8 +10,9 @@ import first.subsystem.DriveSubsystem;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.SequentialCommandGroup;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.DriverStation.Alliance;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 
@@ -26,19 +27,21 @@ public class AutoPathPlannerCommands {
         try {
             pathPlannerConfig = RobotConfig.fromGUISettings();
         } catch (Exception e) {
-            DriverStation.reportError("Failed to Load PathPlanner Config - ", e.getStackTrace());
+            DriverStationErrors.reportError("Failed to Load PathPlanner Config - ", e.getStackTrace());
             return Commands.none();
         }
 
-        Command pathFollowingCommand = new FollowPathCommand(
-                path,
-                robotPositioning::getRobotPose,
-                robotPositioning::getRobotVelocity,
-                driveSubsystem::driveRobotRelativeSpeeds,
-                driveController,
-                pathPlannerConfig,
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                driveSubsystem);
+        // TODO
+        // Command pathFollowingCommand = new FollowPathCommand(
+        //         path,
+        //         robotPositioning::getRobotPose,
+        //         robotPositioning::getRobotVelocity,
+        //         driveSubsystem::driveRobotRelativeSpeeds,
+        //         driveController,
+        //         pathPlannerConfig,
+        //         () -> MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED,
+        //         driveSubsystem);
+        Command pathFollowingCommand = null;
 
         pathFollowingCommand = Commands.either(
                 pathFollowingCommand,
@@ -64,7 +67,7 @@ public class AutoPathPlannerCommands {
                 return new SequentialCommandGroup(
                         Commands.runOnce(() -> {
                             Pose2d pose;
-                            if (DriverStation.getAlliance().orElse(Alliance.Red) == DriverStation.Alliance.Red) {
+                            if (MatchState.getAlliance().orElse(Alliance.RED) == Alliance.RED) {
                                 pose = FlippingUtil.flipFieldPose(startPose);
                             } else {
                                 pose = startPose;
@@ -77,7 +80,7 @@ public class AutoPathPlannerCommands {
             }
 
         } catch (Exception e) {
-            DriverStation.reportError(
+            DriverStationErrors.reportError(
                     "Failed to build and follow PathPlanner command - " + e.getMessage(), e.getStackTrace());
             return Commands.print("Failed to load pathplanner config, refusing to follow provided path");
         }

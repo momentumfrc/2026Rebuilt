@@ -1,5 +1,6 @@
 package first.subsystem;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
@@ -29,9 +30,9 @@ import first.util.TurretAngleHelper;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.DriverStation.Alliance;
-import org.wpilib.driverstation.XboxController;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.Gamepad;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.math.geometry.Rotation2d;
@@ -49,11 +50,9 @@ import org.wpilib.units.AngularVelocityUnit;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.MutAngle;
-import org.wpilib.units.measure.MutAngularVelocity;
 import org.wpilib.units.measure.Time;
 import org.wpilib.units.measure.Voltage;
-import org.wpilib.util.Alert;
+import org.wpilib.driverstation.Alert;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
@@ -89,7 +88,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final MoAbsoluteEncoder absEncoder2;
     private final VernierEncoder vernierEncoder;
     private final Alert encodersDisconnectedAlert =
-            new Alert("turret absolute encoder disconnected", Alert.AlertType.kError);
+            new Alert("turret absolute encoder disconnected", Alert.Level.HIGH);
 
     private TurretAngleHelper angleHelper;
 
@@ -98,8 +97,9 @@ public class TurretSubsystem extends SubsystemBase {
     private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private final PIDController turretRelativePid;
 
-    private final MutAngle goalAngle = Units.Rotations.mutable(0);
-    private final MutAngularVelocity goalVelocity = Units.RPM.mutable(0);
+    // TODO
+    // private final MutAngle goalAngle = Units.Rotations.mutable(0);
+    // private final MutAngularVelocity goalVelocity = Units.RPM.mutable(0);
     private Rotation2d lastOORAngle = null;
     private final LinearFilter turretOORVelocityFilter =
             LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
@@ -144,7 +144,7 @@ public class TurretSubsystem extends SubsystemBase {
         NTHelpers.publishSendable(table, "Align Mode", alignModeChooser);
 
         /* ==== MOTOR SETUP === */
-        this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address());
+        this.turretMotor = new TalonFX(Constants.TURRET_MOTOR.address(), CANBus.systemcore(Constants.DEFAULT_CAN_BUS));
         this.turretMotorConfig = new TalonFXConfiguration();
         this.turretEncoder = MoRotationEncoder.forTalonFx(turretMotor, Units.Rotations, turretMotorConfig);
 
@@ -362,9 +362,10 @@ public class TurretSubsystem extends SubsystemBase {
 
         absoluteSetpoint = profile.calculate(Constants.LOOP_PERIOD, absoluteSetpoint, goalState);
 
-        this.goalAngle.mut_replace(absoluteSetpoint.position, Units.Degrees);
-        this.goalVelocity.mut_replace(absoluteSetpoint.velocity, Units.DegreesPerSecond);
-        this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
+        // TODO
+        // this.goalAngle.mut_replace(absoluteSetpoint.position, Units.Degrees);
+        // this.goalVelocity.mut_replace(absoluteSetpoint.velocity, Units.DegreesPerSecond);
+        // this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
     }
 
     public boolean relativeTargetIsVisible() {
@@ -406,7 +407,7 @@ public class TurretSubsystem extends SubsystemBase {
         return run(() -> {
                     if (shouldEnablePassiveTracking()) {
                         var target = OdometryTargetingHelper.getHubTarget(
-                                DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
+                                MatchState.getAlliance().orElse(Alliance.RED));
                         var firingSolution = targeting.targetPositionStationary(target.toTranslation2d());
                         align(firingSolution);
                     } else {
@@ -416,7 +417,7 @@ public class TurretSubsystem extends SubsystemBase {
                 .withName("TurretPassiveTargetingCommand");
     }
 
-    public Command testCommand(XboxController testController) {
+    public Command testCommand(Gamepad testController) {
         return run(() -> {
                     double x = -1 * testController.getLeftY();
                     double y = -1 * testController.getLeftX();
@@ -427,8 +428,9 @@ public class TurretSubsystem extends SubsystemBase {
                         var result = angleHelper.turretAngleModulusRads(goalRadians);
                         targetInRange.set(result.inRange());
 
-                        goalAngle.mut_replace(result.angle().getRadians(), Units.Radians);
-                        this.turretAbsolutePid.setReference(this.goalAngle, Units.RadiansPerSecond.zero());
+                        // TODO
+                        // goalAngle.mut_replace(result.angle().getRadians(), Units.Radians);
+                        // this.turretAbsolutePid.setReference(this.goalAngle, Units.RadiansPerSecond.zero());
                     }
                 })
                 .withName("TurretTestCommand");
@@ -443,7 +445,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        targetingHelper.targetNearestTag(DriverStation.getAlliance().orElse(Alliance.Red));
+        targetingHelper.targetNearestTag(MatchState.getAlliance().orElse(Alliance.RED));
 
         relativeEncoderPublisher.set(turretEncoder.getPosition().in(Units.Degrees));
         absEncoder1Publisher.set(absEncoder1.getPosition().in(Units.Rotations));

@@ -22,6 +22,8 @@ public class Constants {
     public static final CANAddress SHOOTER_1_ADDRESS = new CANAddress(21);
     public static final CANAddress SHOOTER_2_ADDRESS = new CANAddress(22);
 
+    public static final int DEFAULT_CAN_BUS = 0;
+
     // Intake Ports
     public static final CANAddress INTAKE_ROLLER_PORT = new CANAddress(14); // edit this with the actual robot
     public static final CANAddress INTAKE_WRIST_PORT = new CANAddress(18);
