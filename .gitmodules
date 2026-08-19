@@ -1,0 +1,3 @@
+[submodule "src/main/java/first/molib"]
+	path = src/main/java/first/molib
+	url = https://github.com/momentumfrc/molib.git
