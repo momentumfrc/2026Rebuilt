@@ -1,8 +1,8 @@
-package first.utils;
+package frc.robot.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import first.util.TurretAngleHelper;
+import first.robot.util.TurretAngleHelper;
 import org.junit.jupiter.api.Test;
 import org.wpilib.math.geometry.Rotation2d;
 

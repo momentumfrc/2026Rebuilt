@@ -1,8 +1,9 @@
-package first.molib.motune;
+package frc.robot.molib.motune;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import first.molib.motune.MoTuner.OnPopulateFinished;
+import first.robot.molib.motune.MoTuner;
+import first.robot.molib.motune.MoTuner.OnPopulateFinished;
 import org.junit.jupiter.api.Test;
 import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableInstance;

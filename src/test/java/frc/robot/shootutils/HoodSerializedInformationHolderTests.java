@@ -1,4 +1,4 @@
-package first.shootutils;
+package frc.robot.shootutils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
