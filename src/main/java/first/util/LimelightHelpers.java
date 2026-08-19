@@ -2,12 +2,15 @@
 
 package first.util;
 
-
 import io.avaje.json.JsonDataException;
 import io.avaje.jsonb.Json;
 import io.avaje.jsonb.JsonType;
 import io.avaje.jsonb.Jsonb;
-
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -21,11 +24,6 @@ import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableEntry;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.TimestampedDoubleArray;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * LimelightHelpers provides static methods and classes for interfacing with Limelight vision cameras in FRC.
@@ -309,7 +307,8 @@ public class LimelightHelpers {
 
         public double timestamp_RIOFPGA_capture;
 
-        //Jsonb doesn't quite support booleans being numbers. It can happen though, and if you need me to do that I can.
+        // Jsonb doesn't quite support booleans being numbers. It can happen though, and if you need me to do that I
+        // can.
         public boolean valid;
 
         public double[] botpose;

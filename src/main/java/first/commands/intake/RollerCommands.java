@@ -1,7 +1,7 @@
 package frc.robot.commands.intake;
 
-import org.wpilib.command2.Command;
 import frc.robot.subsystem.IntakeRollerSubsystem;
+import org.wpilib.command2.Command;
 
 public class RollerCommands {
     public static Command idleIntakeRollerCommand(IntakeRollerSubsystem roller) {

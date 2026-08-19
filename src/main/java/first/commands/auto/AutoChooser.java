@@ -3,18 +3,6 @@ package first.commands.auto;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.networktables.BooleanEntry;
-import org.wpilib.networktables.DoubleEntry;
-import org.wpilib.units.Units;
-import org.wpilib.units.measure.Time;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.SubsystemBase;
 import first.MoPrefs;
 import first.RobotPositioning;
 import first.commands.ShootCommand;
@@ -34,6 +22,18 @@ import first.subsystem.ShooterSubsystem;
 import first.subsystem.TurretSubsystem;
 import java.util.Collections;
 import java.util.Set;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.networktables.BooleanEntry;
+import org.wpilib.networktables.DoubleEntry;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.units.Units;
+import org.wpilib.units.measure.Time;
 
 public class AutoChooser {
     private static final PathConstraints AUTO_PATH_CONSTRAINTS = new PathConstraints(

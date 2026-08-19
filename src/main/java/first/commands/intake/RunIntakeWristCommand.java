@@ -1,15 +1,15 @@
 package frc.robot.commands.intake;
 
-import org.wpilib.networktables.StringPublisher;
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.system.Timer;
-import org.wpilib.command2.Command;
 import frc.robot.MoPrefs;
 import frc.robot.commands.intake.WristCommands.Direction;
 import frc.robot.input.MoInput;
 import frc.robot.molib.NTHelpers;
 import frc.robot.subsystem.IntakeWristSubsystem;
 import java.util.function.Supplier;
+import org.wpilib.command2.Command;
+import org.wpilib.networktables.StringPublisher;
+import org.wpilib.system.Timer;
+import org.wpilib.units.measure.Voltage;
 
 public class RunIntakeWristCommand extends Command {
     private final IntakeWristSubsystem wrist;

@@ -8,18 +8,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import org.wpilib.networktables.DoubleEntry;
-import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.units.AngleUnit;
-import org.wpilib.units.AngularVelocityUnit;
-import org.wpilib.units.Units;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.Current;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.driverstation.XboxController;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.SubsystemBase;
-import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.MoPrefs;
 import frc.robot.molib.NTHelpers;
@@ -29,6 +17,18 @@ import frc.robot.molib.pid.MoTalonFxPID;
 import frc.robot.molib.pid.MoTalonFxPID.Type;
 import frc.robot.shootutils.HoodSerializedInformationHolder;
 import frc.robot.util.SysIdUtil;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.driverstation.XboxController;
+import org.wpilib.networktables.DoubleEntry;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.units.AngleUnit;
+import org.wpilib.units.AngularVelocityUnit;
+import org.wpilib.units.Units;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Current;
+import org.wpilib.units.measure.Distance;
 
 public class ShooterSubsystem extends SubsystemBase {
 

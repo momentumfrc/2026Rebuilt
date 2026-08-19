@@ -2,22 +2,22 @@ package first.util;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import org.wpilib.networktables.DoubleEntry;
-import org.wpilib.networktables.NetworkTable;
-import org.wpilib.networktables.NetworkTableEvent;
-import org.wpilib.units.AngularAccelerationUnit;
-import org.wpilib.units.Units;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.Subsystem;
-import org.wpilib.command2.sysid.SysIdRoutine;
 import first.molib.NTHelpers;
 import first.molib.encoder.MoRotationEncoder;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.networktables.DoubleEntry;
+import org.wpilib.networktables.NetworkTable;
+import org.wpilib.networktables.NetworkTableEvent;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.units.AngularAccelerationUnit;
+import org.wpilib.units.Units;
 
 public class SysIdUtil {
     private enum SysIdMode {

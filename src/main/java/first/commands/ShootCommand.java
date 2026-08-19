@@ -1,17 +1,5 @@
 package frc.robot.commands;
 
-import org.wpilib.networktables.BooleanEntry;
-import org.wpilib.networktables.DoubleEntry;
-import org.wpilib.units.Units;
-import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.MutAngle;
-import org.wpilib.units.measure.MutAngularVelocity;
-import org.wpilib.util.Alert;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.DriverStation.Alliance;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.command2.Command;
 import frc.robot.MoPrefs;
 import frc.robot.molib.NTHelpers;
 import frc.robot.shootutils.TurretTargeting;
@@ -20,6 +8,18 @@ import frc.robot.subsystem.KickerSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.OdometryTargetingHelper;
+import org.wpilib.command2.Command;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.DriverStation.Alliance;
+import org.wpilib.networktables.BooleanEntry;
+import org.wpilib.networktables.DoubleEntry;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.units.Units;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.MutAngle;
+import org.wpilib.units.measure.MutAngularVelocity;
+import org.wpilib.util.Alert;
 
 public class ShootCommand extends Command {
     private final KickerSubsystem kicker;

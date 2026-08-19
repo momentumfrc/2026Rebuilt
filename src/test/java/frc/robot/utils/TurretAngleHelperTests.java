@@ -2,9 +2,9 @@ package frc.robot.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.wpilib.math.geometry.Rotation2d;
 import frc.robot.util.TurretAngleHelper;
 import org.junit.jupiter.api.Test;
+import org.wpilib.math.geometry.Rotation2d;
 
 public class TurretAngleHelperTests {
     private void assertResult(Rotation2d angle, boolean inRange, TurretAngleHelper.Result result) {

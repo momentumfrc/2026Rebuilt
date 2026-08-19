@@ -2,10 +2,9 @@ package first.util;
 
 import static org.wpilib.math.util.Units.inchesToMeters;
 
+import org.wpilib.driverstation.Alliance;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation3d;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
 
 public class OdometryTargetingHelper {
     public enum TargetType {

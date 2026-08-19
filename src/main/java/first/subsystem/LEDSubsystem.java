@@ -1,15 +1,15 @@
 package frc.robot.subsystem;
 
-import org.wpilib.math.util.MathUtil;
-import org.wpilib.units.Units;
-import org.wpilib.units.measure.Distance;
+import frc.robot.Constants;
+import frc.robot.MoPrefs;
+import org.wpilib.command2.SubsystemBase;
 import org.wpilib.hardware.led.AddressableLED;
 import org.wpilib.hardware.led.AddressableLEDBuffer;
 import org.wpilib.hardware.led.LEDPattern;
 import org.wpilib.hardware.led.LEDWriter;
-import org.wpilib.command2.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.units.Units;
+import org.wpilib.units.measure.Distance;
 
 public class LEDSubsystem extends SubsystemBase {
     private static final int LED_COUNT = 120;

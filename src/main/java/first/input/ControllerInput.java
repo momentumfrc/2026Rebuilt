@@ -1,7 +1,7 @@
 package frc.robot.input;
 
-import org.wpilib.driverstation.XboxController;
 import frc.robot.Constants;
+import org.wpilib.driverstation.XboxController;
 
 public final class ControllerInput implements MoInput {
     private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());

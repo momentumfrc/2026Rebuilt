@@ -4,14 +4,6 @@
 
 package frc.robot;
 
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.GenericHID.RumbleType;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.button.RobotModeTriggers;
-import org.wpilib.command2.button.Trigger;
 import frc.robot.commands.LEDCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ZeroHoodCommand;
@@ -38,6 +30,14 @@ import frc.robot.subsystem.TurretSubsystem;
 import frc.robot.util.SysIdUtil;
 import java.util.Collections;
 import java.util.List;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.button.RobotModeTriggers;
+import org.wpilib.command2.button.Trigger;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.GenericHID.RumbleType;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
     // **** SUBSYSTEMS ****

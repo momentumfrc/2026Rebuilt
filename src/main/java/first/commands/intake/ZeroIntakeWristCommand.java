@@ -1,10 +1,10 @@
 package frc.robot.commands.intake;
 
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.system.Timer;
-import org.wpilib.command2.Command;
 import frc.robot.MoPrefs;
 import frc.robot.subsystem.IntakeWristSubsystem;
+import org.wpilib.command2.Command;
+import org.wpilib.system.Timer;
+import org.wpilib.units.measure.Voltage;
 
 public class ZeroIntakeWristCommand extends Command {
     private final IntakeWristSubsystem wrist;

@@ -1,13 +1,13 @@
 package frc.robot.commands.intake;
 
-import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
 import frc.robot.MoPrefs;
 import frc.robot.molib.Utils;
 import frc.robot.subsystem.IntakeWristSubsystem;
 import java.util.function.Supplier;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Voltage;
 
 public class WristCommands {
     public enum Direction {

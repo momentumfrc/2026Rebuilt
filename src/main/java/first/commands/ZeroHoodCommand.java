@@ -1,11 +1,11 @@
 package frc.robot.commands;
 
-import org.wpilib.units.measure.Current;
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.system.Timer;
-import org.wpilib.command2.Command;
 import frc.robot.MoPrefs;
 import frc.robot.subsystem.HoodSubsystem;
+import org.wpilib.command2.Command;
+import org.wpilib.system.Timer;
+import org.wpilib.units.measure.Current;
+import org.wpilib.units.measure.Voltage;
 
 public class ZeroHoodCommand extends Command {
     private final HoodSubsystem hood;

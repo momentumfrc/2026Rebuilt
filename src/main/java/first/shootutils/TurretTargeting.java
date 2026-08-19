@@ -1,5 +1,10 @@
 package first.shootutils;
 
+import first.Constants;
+import first.MoPrefs;
+import first.RobotPositioning;
+import first.molib.NTHelpers;
+import first.subsystem.TurretSubsystem;
 import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -12,11 +17,6 @@ import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
-import first.Constants;
-import first.MoPrefs;
-import first.RobotPositioning;
-import first.molib.NTHelpers;
-import first.subsystem.TurretSubsystem;
 
 /**
  * Logic to perform turret targeting for shoot-on-the-fly.

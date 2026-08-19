@@ -1,9 +1,9 @@
 package first.util;
 
-import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.interpolation.Interpolator;
 import org.wpilib.math.interpolation.InverseInterpolator;
+import org.wpilib.math.util.MathUtil;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 
@@ -67,9 +67,12 @@ public class TurretAngleHelper {
             result.angle = Rotation2d.fromRadians(minRad + value);
         } else {
             result.inRange = false;
-            //might want to check this
-            value = Interpolator.forDouble().interpolate(
-                    maxRad - minRad, 0d, InverseInterpolator.forDouble().inverseInterpolate(maxRad - minRad, 2 * Math.PI, value));
+            // might want to check this
+            value = Interpolator.forDouble()
+                    .interpolate(
+                            maxRad - minRad,
+                            0d,
+                            InverseInterpolator.forDouble().inverseInterpolate(maxRad - minRad, 2 * Math.PI, value));
             result.angle = Rotation2d.fromRadians(minRad + value);
         }
 

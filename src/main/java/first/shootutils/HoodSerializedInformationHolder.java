@@ -1,6 +1,16 @@
 package first.shootutils;
 
+import io.avaje.jsonb.Json;
+import io.avaje.jsonb.JsonType;
+import io.avaje.jsonb.Jsonb;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Comparator;
+import java.util.List;
 import org.wpilib.math.interpolation.InterpolatingDoubleTreeMap;
+import org.wpilib.system.Filesystem;
 import org.wpilib.units.AngleUnit;
 import org.wpilib.units.AngularVelocityUnit;
 import org.wpilib.units.DistanceUnit;
@@ -10,18 +20,6 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Time;
-
-import io.avaje.jsonb.Json;
-import io.avaje.jsonb.JsonType;
-import io.avaje.jsonb.Jsonb;
-
-import org.wpilib.system.Filesystem;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * A holder for the hood angles for each distance.
@@ -87,11 +85,7 @@ public class HoodSerializedInformationHolder {
 
     @Json
     static record Entry(Double distance, Double hoodAngle, Double flywheelSpeed, Double timeOfFlight) {
-        public Entry(
-                 Double distance,
-                 Double hoodAngle,
-                 Double flywheelSpeed,
-                 Double timeOfFlight) {
+        public Entry(Double distance, Double hoodAngle, Double flywheelSpeed, Double timeOfFlight) {
             this.distance = distance;
             this.flywheelSpeed = flywheelSpeed;
             this.hoodAngle = hoodAngle;
