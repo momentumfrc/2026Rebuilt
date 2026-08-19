@@ -1,4 +1,4 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -22,22 +22,19 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.MutAngle;
-import org.wpilib.units.measure.MutAngularVelocity;
 import org.wpilib.units.measure.Voltage;
-import org.wpilib.driverstation.XboxController;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.molib.motune.TunerUtils;
-import frc.robot.molib.pid.MoTalonFxProfilePID;
-import frc.robot.molib.prefs.MoPrefsUtils;
-import frc.robot.shootutils.HoodSerializedInformationHolder;
-import frc.robot.util.SysIdUtil;
+import first.Constants;
+import first.MoPrefs;
+import first.molib.NTHelpers;
+import first.molib.encoder.MoRotationEncoder;
+import first.molib.motune.TunerUtils;
+import first.molib.pid.MoTalonFxProfilePID;
+import first.molib.prefs.MoPrefsUtils;
+import first.shootutils.HoodSerializedInformationHolder;
+import first.util.SysIdUtil;
 
 public class HoodSubsystem extends SubsystemBase {
 
@@ -51,8 +48,6 @@ public class HoodSubsystem extends SubsystemBase {
 
     private double lastHoodAngle = Double.NaN;
     private final MoRotationEncoder encoder;
-    private final MutAngle positionReference = Units.Radians.mutable(0);
-    private final MutAngularVelocity velocityReference = Units.RadiansPerSecond.mutable(0);
 
     private final VoltageOut voltageControlRequest = new VoltageOut(0);
 

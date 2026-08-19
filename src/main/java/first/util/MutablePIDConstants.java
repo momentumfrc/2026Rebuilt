@@ -1,7 +1,7 @@
-package frc.robot.util;
+package first.util;
 
 import com.pathplanner.lib.config.PIDConstants;
-import frc.robot.molib.motune.MoTuner;
+import first.molib.motune.MoTuner;
 
 public class MutablePIDConstants {
     public double kP, kI, kD, kIZone;

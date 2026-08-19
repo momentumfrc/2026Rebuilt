@@ -1,4 +1,4 @@
-package frc.robot.util;
+package first.util;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -12,8 +12,8 @@ import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.command2.sysid.SysIdRoutine;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.encoder.MoRotationEncoder;
+import first.molib.NTHelpers;
+import first.molib.encoder.MoRotationEncoder;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -44,10 +44,10 @@ public class SysIdUtil {
         boolean first = true;
         for (var mechanism : mechanisms) {
             if (first) {
-                mechanismChooser.setDefaultOption(mechanism.m_name, mechanism);
+                mechanismChooser.setDefaultOption(mechanism.name, mechanism);
                 first = false;
             } else {
-                mechanismChooser.addOption(mechanism.m_name, mechanism);
+                mechanismChooser.addOption(mechanism.name, mechanism);
             }
         }
 
@@ -62,7 +62,7 @@ public class SysIdUtil {
         timeout = table.getDoubleTopic("timeout (s)").getEntry(5);
         timeout.set(5);
 
-        table.addListener(EnumSet.of(NetworkTableEvent.Kind.kValueAll), (table, key, event) -> {
+        table.addListener(EnumSet.of(NetworkTableEvent.Kind.VALUE_ALL), (table, key, event) -> {
             routineCache.clear();
         });
 
@@ -81,7 +81,7 @@ public class SysIdUtil {
         return Commands.deferredProxy(() -> {
             var mechanism = mechanismChooser.getSelected();
             var routine = routineCache.computeIfAbsent(
-                    mechanism.m_name, (name) -> new SysIdRoutine(getSysIdConfig(), mechanism));
+                    mechanism.name, (name) -> new SysIdRoutine(getSysIdConfig(), mechanism));
             return switch (modeChooser.getSelected()) {
                 case DISABLED -> Commands.print("SysId is disabled");
                 case QUASISTATIC_FWD -> routine.quasistatic(SysIdRoutine.Direction.kForward);

@@ -1,4 +1,4 @@
-package frc.robot.util;
+package first.util;
 
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.Radians;
@@ -14,15 +14,12 @@ import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Transform2d;
 import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.kinematics.ChassisSpeeds;
 import org.wpilib.math.numbers.N2;
 import org.wpilib.math.trajectory.TrapezoidProfile.State;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Time;
 import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.DriverStation.Alliance;
-import org.wpilib.driverstation.XboxController;
 import org.wpilib.command2.button.Trigger;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;

@@ -1,9 +1,10 @@
-package frc.robot.util;
+package first.util;
 
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.math.util.Units;
+import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
-import frc.robot.util.LimelightHelpers.RawFiducial;
+import first.util.LimelightHelpers.RawFiducial;
 import java.util.Map;
 
 public class LimelightTargetingHelper {
@@ -41,13 +42,13 @@ public class LimelightTargetingHelper {
     /**
      * Setup the limelight to target the nearest visible configured apriltag for the given alliance.
      */
-    public void targetNearestTag(DriverStation.Alliance alliance) {
+    public void targetNearestTag(Alliance alliance) {
         var fiducials = LimelightHelpers.getRawFiducials(limelightName);
         if (fiducials.length == 0) {
             return;
         }
 
-        var tagSet = alliance == DriverStation.Alliance.Blue ? blueAllianceTags : redAllianceTags;
+        var tagSet = alliance == Alliance.BLUE ? blueAllianceTags : redAllianceTags;
 
         RawFiducial currFiducial = null;
         RawFiducial nearestFiducial = null;

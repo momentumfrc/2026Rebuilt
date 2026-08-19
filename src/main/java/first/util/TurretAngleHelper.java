@@ -1,10 +1,11 @@
-package frc.robot.util;
+package first.util;
 
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.interpolation.Interpolator;
+import org.wpilib.math.interpolation.InverseInterpolator;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.MutAngle;
 
 public class TurretAngleHelper {
     private static final double FLOAT_DELTA = 1e-9;
@@ -66,8 +67,9 @@ public class TurretAngleHelper {
             result.angle = Rotation2d.fromRadians(minRad + value);
         } else {
             result.inRange = false;
-            value = MathUtil.interpolate(
-                    maxRad - minRad, 0, MathUtil.inverseInterpolate(maxRad - minRad, 2 * Math.PI, value));
+            //might want to check this
+            value = Interpolator.forDouble().interpolate(
+                    maxRad - minRad, 0d, InverseInterpolator.forDouble().inverseInterpolate(maxRad - minRad, 2 * Math.PI, value));
             result.angle = Rotation2d.fromRadians(minRad + value);
         }
 

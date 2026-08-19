@@ -1,13 +1,13 @@
 // LimelightHelpers v1.13 (REQUIRES LLOS 2026.0 OR LATER)
 
-package frc.robot.util;
+package first.util;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.avaje.json.JsonDataException;
+import io.avaje.jsonb.Json;
+import io.avaje.jsonb.JsonType;
+import io.avaje.jsonb.Jsonb;
+
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * LimelightHelpers provides static methods and classes for interfacing with Limelight vision cameras in FRC.
  * This library supports all Limelight features including AprilTag tracking, Neural Networks, and standard color/retroreflective tracking.
  */
+@Json
 public class LimelightHelpers {
 
     private static final Map<String, DoubleArrayEntry> doubleArrayEntries = new ConcurrentHashMap<>();
@@ -40,19 +41,14 @@ public class LimelightHelpers {
      */
     public static class LimelightTarget_Retro {
 
-        @JsonProperty("t6c_ts")
         private double[] cameraPose_TargetSpace;
 
-        @JsonProperty("t6r_fs")
         private double[] robotPose_FieldSpace;
 
-        @JsonProperty("t6r_ts")
         private double[] robotPose_TargetSpace;
 
-        @JsonProperty("t6t_cs")
         private double[] targetPose_CameraSpace;
 
-        @JsonProperty("t6t_rs")
         private double[] targetPose_RobotSpace;
 
         public Pose3d getCameraPose_TargetSpace() {
@@ -95,28 +91,20 @@ public class LimelightHelpers {
             return toPose2D(targetPose_RobotSpace);
         }
 
-        @JsonProperty("ta")
         public double ta;
 
-        @JsonProperty("tx")
         public double tx;
 
-        @JsonProperty("ty")
         public double ty;
 
-        @JsonProperty("txp")
         public double tx_pixels;
 
-        @JsonProperty("typ")
         public double ty_pixels;
 
-        @JsonProperty("tx_nocross")
         public double tx_nocrosshair;
 
-        @JsonProperty("ty_nocross")
         public double ty_nocrosshair;
 
-        @JsonProperty("ts")
         public double ts;
 
         public LimelightTarget_Retro() {
@@ -133,25 +121,18 @@ public class LimelightHelpers {
      */
     public static class LimelightTarget_Fiducial {
 
-        @JsonProperty("fID")
         public double fiducialID;
 
-        @JsonProperty("fam")
         public String fiducialFamily;
 
-        @JsonProperty("t6c_ts")
         private double[] cameraPose_TargetSpace;
 
-        @JsonProperty("t6r_fs")
         private double[] robotPose_FieldSpace;
 
-        @JsonProperty("t6r_ts")
         private double[] robotPose_TargetSpace;
 
-        @JsonProperty("t6t_cs")
         private double[] targetPose_CameraSpace;
 
-        @JsonProperty("t6t_rs")
         private double[] targetPose_RobotSpace;
 
         public Pose3d getCameraPose_TargetSpace() {
@@ -194,28 +175,20 @@ public class LimelightHelpers {
             return toPose2D(targetPose_RobotSpace);
         }
 
-        @JsonProperty("ta")
         public double ta;
 
-        @JsonProperty("tx")
         public double tx;
 
-        @JsonProperty("ty")
         public double ty;
 
-        @JsonProperty("txp")
         public double tx_pixels;
 
-        @JsonProperty("typ")
         public double ty_pixels;
 
-        @JsonProperty("tx_nocross")
         public double tx_nocrosshair;
 
-        @JsonProperty("ty_nocross")
         public double ty_nocrosshair;
 
-        @JsonProperty("ts")
         public double ts;
 
         public LimelightTarget_Fiducial() {
@@ -235,37 +208,27 @@ public class LimelightHelpers {
         /**
          * Barcode family type (e.g. "QR", "DataMatrix", etc.)
          */
-        @JsonProperty("fam")
         public String family;
 
         /**
          * Gets the decoded data content of the barcode
          */
-        @JsonProperty("data")
         public String data;
 
-        @JsonProperty("txp")
         public double tx_pixels;
 
-        @JsonProperty("typ")
         public double ty_pixels;
 
-        @JsonProperty("tx")
         public double tx;
 
-        @JsonProperty("ty")
         public double ty;
 
-        @JsonProperty("tx_nocross")
         public double tx_nocrosshair;
 
-        @JsonProperty("ty_nocross")
         public double ty_nocrosshair;
 
-        @JsonProperty("ta")
         public double ta;
 
-        @JsonProperty("pts")
         public double[][] corners;
 
         public LimelightTarget_Barcode() {}
@@ -280,28 +243,20 @@ public class LimelightHelpers {
      */
     public static class LimelightTarget_Classifier {
 
-        @JsonProperty("class")
         public String className;
 
-        @JsonProperty("classID")
         public double classID;
 
-        @JsonProperty("conf")
         public double confidence;
 
-        @JsonProperty("zone")
         public double zone;
 
-        @JsonProperty("tx")
         public double tx;
 
-        @JsonProperty("txp")
         public double tx_pixels;
 
-        @JsonProperty("ty")
         public double ty;
 
-        @JsonProperty("typ")
         public double ty_pixels;
 
         public LimelightTarget_Classifier() {}
@@ -312,34 +267,24 @@ public class LimelightHelpers {
      */
     public static class LimelightTarget_Detector {
 
-        @JsonProperty("class")
         public String className;
 
-        @JsonProperty("classID")
         public double classID;
 
-        @JsonProperty("conf")
         public double confidence;
 
-        @JsonProperty("ta")
         public double ta;
 
-        @JsonProperty("tx")
         public double tx;
 
-        @JsonProperty("ty")
         public double ty;
 
-        @JsonProperty("txp")
         public double tx_pixels;
 
-        @JsonProperty("typ")
         public double ty_pixels;
 
-        @JsonProperty("tx_nocross")
         public double tx_nocrosshair;
 
-        @JsonProperty("ty_nocross")
         public double ty_nocrosshair;
 
         public LimelightTarget_Detector() {}
@@ -352,49 +297,35 @@ public class LimelightHelpers {
 
         public String error;
 
-        @JsonProperty("pID")
         public double pipelineID;
 
-        @JsonProperty("tl")
         public double latency_pipeline;
 
-        @JsonProperty("cl")
         public double latency_capture;
 
         public double latency_jsonParse;
 
-        @JsonProperty("ts")
         public double timestamp_LIMELIGHT_publish;
 
-        @JsonProperty("ts_rio")
         public double timestamp_RIOFPGA_capture;
 
-        @JsonProperty("v")
-        @JsonFormat(shape = Shape.NUMBER)
+        //Jsonb doesn't quite support booleans being numbers. It can happen though, and if you need me to do that I can.
         public boolean valid;
 
-        @JsonProperty("botpose")
         public double[] botpose;
 
-        @JsonProperty("botpose_wpired")
         public double[] botpose_wpired;
 
-        @JsonProperty("botpose_wpiblue")
         public double[] botpose_wpiblue;
 
-        @JsonProperty("botpose_tagcount")
         public double botpose_tagcount;
 
-        @JsonProperty("botpose_span")
         public double botpose_span;
 
-        @JsonProperty("botpose_avgdist")
         public double botpose_avgdist;
 
-        @JsonProperty("botpose_avgarea")
         public double botpose_avgarea;
 
-        @JsonProperty("t6c_rs")
         public double[] camerapose_robotspace;
 
         public Pose3d getBotPose3d() {
@@ -421,19 +352,14 @@ public class LimelightHelpers {
             return toPose2D(botpose_wpiblue);
         }
 
-        @JsonProperty("Retro")
         public LimelightTarget_Retro[] targets_Retro;
 
-        @JsonProperty("Fiducial")
         public LimelightTarget_Fiducial[] targets_Fiducials;
 
-        @JsonProperty("Classifier")
         public LimelightTarget_Classifier[] targets_Classifier;
 
-        @JsonProperty("Detector")
         public LimelightTarget_Detector[] targets_Detector;
 
-        @JsonProperty("Barcode")
         public LimelightTarget_Barcode[] targets_Barcode;
 
         public LimelightResults() {
@@ -665,7 +591,7 @@ public class LimelightHelpers {
         }
     }
 
-    private static ObjectMapper mapper;
+    private static Jsonb mapper;
 
     /**
      * Print JSON Parse time to the console in milliseconds
@@ -1762,12 +1688,13 @@ public class LimelightHelpers {
         long start = System.nanoTime();
         LimelightHelpers.LimelightResults results = new LimelightHelpers.LimelightResults();
         if (mapper == null) {
-            mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper = Jsonb.builder().failOnUnknown(false).build();
         }
 
         try {
-            results = mapper.readValue(getJSONDump(limelightName), LimelightResults.class);
-        } catch (JsonProcessingException e) {
+            JsonType<LimelightResults> resultsType = mapper.type(LimelightResults.class);
+            results = resultsType.fromJson(getJSONDump(limelightName));
+        } catch (JsonDataException e) {
             results.error = "lljson error: " + e.getMessage();
         }
 

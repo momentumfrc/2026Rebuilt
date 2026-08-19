@@ -1,25 +1,22 @@
-package frc.robot.shootutils;
+package first.shootutils;
 
 import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Twist2d;
-import org.wpilib.math.kinematics.ChassisSpeeds;
+import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.StructPublisher;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.MutAngle;
-import org.wpilib.units.measure.MutAngularVelocity;
-import org.wpilib.units.measure.MutDistance;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.RobotPositioning;
-import frc.robot.molib.NTHelpers;
-import frc.robot.subsystem.TurretSubsystem;
+import first.Constants;
+import first.MoPrefs;
+import first.RobotPositioning;
+import first.molib.NTHelpers;
+import first.subsystem.TurretSubsystem;
 
 /**
  * Logic to perform turret targeting for shoot-on-the-fly.
@@ -32,9 +29,9 @@ public final class TurretTargeting {
     private final RobotPositioning positioning;
 
     public static class TurretSetpoint {
-        private final MutAngle goalAngle = Units.Radians.mutable(0);
-        private final MutAngularVelocity goalVelocity = Units.RadiansPerSecond.mutable(0);
-        private final MutDistance targetDistance = Units.Meters.mutable(0);
+        private final Angle goalAngle = Units.Radians.of(0);
+        private final AngularVelocity goalVelocity = Units.RadiansPerSecond.of(0);
+        private final Distance targetDistance = Units.Meters.of(0);
 
         public Angle goalAngle() {
             return goalAngle;
@@ -97,7 +94,7 @@ public final class TurretTargeting {
      */
     private Pose2d getEstimatedPoseAfterPhaseDelay() {
         Pose2d robotPose = positioning.getRobotPose();
-        ChassisSpeeds robotRelativeVelocity = positioning.getRobotVelocity();
+        ChassisVelocities robotRelativeVelocity = positioning.getRobotVelocity();
 
         double phaseDelaySeconds = MoPrefs.turretPhaseDelay.get().in(Units.Seconds);
         var estimatedPose = robotPose.exp(new Twist2d(

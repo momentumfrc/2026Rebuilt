@@ -1,8 +1,5 @@
-package frc.robot.shootutils;
+package first.shootutils;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.wpilib.math.interpolation.InterpolatingDoubleTreeMap;
 import org.wpilib.units.AngleUnit;
 import org.wpilib.units.AngularVelocityUnit;
@@ -12,10 +9,12 @@ import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.MutAngle;
-import org.wpilib.units.measure.MutAngularVelocity;
-import org.wpilib.units.measure.MutTime;
 import org.wpilib.units.measure.Time;
+
+import io.avaje.jsonb.Json;
+import io.avaje.jsonb.JsonType;
+import io.avaje.jsonb.Jsonb;
+
 import org.wpilib.system.Filesystem;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,13 +42,9 @@ public class HoodSerializedInformationHolder {
     private final InterpolatingDoubleTreeMap flywheelSpeedMap = new InterpolatingDoubleTreeMap();
     private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
 
-    private MutAngle hoodAngle = HOOD_ANGLE_STORE_UNIT.mutable(0);
-    private MutAngularVelocity flywheelSpeed = FLYWHEEL_SPEED_STORE_UNIT.mutable(0);
-    private MutTime timeOfFlight = TIME_OF_FLIGHT_STORE_UNIT.mutable(0);
-
     // package-private for testing
-    @JsonCreator
-    HoodSerializedInformationHolder(@JsonProperty("entries") List<Entry> entries) {
+    @Json.Creator
+    HoodSerializedInformationHolder(List<Entry> entries) {
         this.entries = entries.stream()
                 .sorted(Comparator.comparingDouble((entry) -> entry.distance()))
                 .toList();
@@ -75,26 +70,28 @@ public class HoodSerializedInformationHolder {
     }
 
     private static HoodSerializedInformationHolder fromFile() {
-        ObjectMapper mapper = new ObjectMapper();
+        Jsonb mapper = Jsonb.builder().build();
+
+        JsonType<HoodSerializedInformationHolder> type = mapper.type(HoodSerializedInformationHolder.class);
 
         if (DATA_FILE.canRead() == false) {
             throw new IllegalStateException("Could not open data file for reading at [" + DATA_FILE.toString() + "]");
         }
 
         try (InputStream stream = new FileInputStream(DATA_FILE); ) {
-            return mapper.readValue(stream, HoodSerializedInformationHolder.class);
+            return type.fromJson(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Json
     static record Entry(Double distance, Double hoodAngle, Double flywheelSpeed, Double timeOfFlight) {
-        @JsonCreator
         public Entry(
-                @JsonProperty("distance") Double distance,
-                @JsonProperty("hoodAngle") Double hoodAngle,
-                @JsonProperty("flywheelSpeed") Double flywheelSpeed,
-                @JsonProperty("timeOfFlight") Double timeOfFlight) {
+                 Double distance,
+                 Double hoodAngle,
+                 Double flywheelSpeed,
+                 Double timeOfFlight) {
             this.distance = distance;
             this.flywheelSpeed = flywheelSpeed;
             this.hoodAngle = hoodAngle;
@@ -106,7 +103,7 @@ public class HoodSerializedInformationHolder {
      * Get the interpolated hood angle.
      */
     public Angle getHoodAngle(Distance distanceToTarget) {
-        return hoodAngle.mut_replace(hoodAngleMap.get(distanceToTarget.in(DISTANCE_STORE_UNIT)), HOOD_ANGLE_STORE_UNIT);
+        return HOOD_ANGLE_STORE_UNIT.of(hoodAngleMap.get(distanceToTarget.in(DISTANCE_STORE_UNIT)));
     }
 
     /**
@@ -121,8 +118,7 @@ public class HoodSerializedInformationHolder {
      * Get the interpolated flywheel speed.
      */
     public AngularVelocity getFlywheelSpeed(Distance distanceToTarget) {
-        return flywheelSpeed.mut_replace(
-                flywheelSpeedMap.get(distanceToTarget.in(DISTANCE_STORE_UNIT)), FLYWHEEL_SPEED_STORE_UNIT);
+        return FLYWHEEL_SPEED_STORE_UNIT.of(flywheelSpeedMap.get(distanceToTarget.abs(DISTANCE_STORE_UNIT)));
     }
 
     /**
@@ -137,8 +133,7 @@ public class HoodSerializedInformationHolder {
      * Get the interpolated time of flight.
      */
     public Time getTimeOfFlight(Distance distanceToTarget) {
-        return timeOfFlight.mut_replace(
-                timeOfFlightMap.get(distanceToTarget.in(DISTANCE_STORE_UNIT)), TIME_OF_FLIGHT_STORE_UNIT);
+        return TIME_OF_FLIGHT_STORE_UNIT.of(timeOfFlightMap.get(distanceToTarget.abs(DISTANCE_STORE_UNIT)));
     }
 
     /**

@@ -1,9 +1,10 @@
-package frc.robot.util;
+package first.util;
 
 import static org.wpilib.math.util.Units.inchesToMeters;
 
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
 
 public class OdometryTargetingHelper {
@@ -29,20 +30,20 @@ public class OdometryTargetingHelper {
     private static final Translation3d RED_ALLIANCE_SHUTTLE_LOWER =
             new Translation3d(inchesToMeters(571.89), inchesToMeters(274.47), 0);
 
-    public static Translation3d getHubTarget(DriverStation.Alliance alliance) {
-        return alliance == DriverStation.Alliance.Blue ? BLUE_ALLIANCE_TARGET : RED_ALLIANCE_TARGET;
+    public static Translation3d getHubTarget(Alliance alliance) {
+        return alliance == Alliance.BLUE ? BLUE_ALLIANCE_TARGET : RED_ALLIANCE_TARGET;
     }
 
-    public static Translation3d getShuttleTarget(DriverStation.Alliance alliance, Pose2d currPos) {
+    public static Translation3d getShuttleTarget(Alliance alliance, Pose2d currPos) {
         double currY = currPos.getY();
         if (currY > FIELD_CENTER) {
-            return alliance == DriverStation.Alliance.Blue ? BLUE_ALLIANCE_SHUTTLE_LOWER : RED_ALLIANCE_SHUTTLE_LOWER;
+            return alliance == Alliance.BLUE ? BLUE_ALLIANCE_SHUTTLE_LOWER : RED_ALLIANCE_SHUTTLE_LOWER;
         } else {
-            return alliance == DriverStation.Alliance.Blue ? BLUE_ALLIANCE_SHUTTLE_UPPER : RED_ALLIANCE_SHUTTLE_UPPER;
+            return alliance == Alliance.BLUE ? BLUE_ALLIANCE_SHUTTLE_UPPER : RED_ALLIANCE_SHUTTLE_UPPER;
         }
     }
 
-    public static Translation3d getTarget(DriverStation.Alliance alliance, Pose2d currPos, TargetType targetType) {
+    public static Translation3d getTarget(Alliance alliance, Pose2d currPos, TargetType targetType) {
         return switch (targetType) {
             case HUB -> getHubTarget(alliance);
             case SHUTTLE -> getShuttleTarget(alliance, currPos);
