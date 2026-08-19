@@ -65,5 +65,6 @@
   "files.insertFinalNewline": true,
   "editor.rulers": [120],
   "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 1000
+  "files.autoSaveDelay": 1000,
+  "chat.disableAIFeatures": true
 }
