@@ -1,7 +1,7 @@
-package frc.robot.commands;
+package first.commands;
 
-import frc.robot.MoPrefs;
-import frc.robot.subsystem.HoodSubsystem;
+import first.MoPrefs;
+import first.subsystem.HoodSubsystem;
 import org.wpilib.command2.Command;
 import org.wpilib.system.Timer;
 import org.wpilib.units.measure.Current;

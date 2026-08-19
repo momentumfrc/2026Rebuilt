@@ -1,10 +1,10 @@
-package frc.robot.commands.intake;
+package first.commands.intake;
 
-import frc.robot.MoPrefs;
-import frc.robot.commands.intake.WristCommands.Direction;
-import frc.robot.input.MoInput;
-import frc.robot.molib.NTHelpers;
-import frc.robot.subsystem.IntakeWristSubsystem;
+import first.MoPrefs;
+import first.commands.intake.WristCommands.Direction;
+import first.input.MoInput;
+import first.molib.NTHelpers;
+import first.subsystem.IntakeWristSubsystem;
 import java.util.function.Supplier;
 import org.wpilib.command2.Command;
 import org.wpilib.networktables.StringPublisher;

@@ -2,32 +2,32 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package first;
 
-import frc.robot.commands.LEDCommand;
-import frc.robot.commands.ShootCommand;
-import frc.robot.commands.ZeroHoodCommand;
-import frc.robot.commands.auto.AutoChooser;
-import frc.robot.commands.intake.RollerCommands;
-import frc.robot.commands.intake.RunIntakeWristCommand;
-import frc.robot.commands.intake.WristCommands;
-import frc.robot.commands.intake.ZeroIntakeWristCommand;
-import frc.robot.input.ControllerInput;
-import frc.robot.input.MoInput;
-import frc.robot.input.SingleControllerInput;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.Utils;
-import frc.robot.shootutils.TurretTargeting;
-import frc.robot.subsystem.DriveSubsystem;
-import frc.robot.subsystem.HoodSubsystem;
-import frc.robot.subsystem.IndexerSubsystem;
-import frc.robot.subsystem.IntakeRollerSubsystem;
-import frc.robot.subsystem.IntakeWristSubsystem;
-import frc.robot.subsystem.KickerSubsystem;
-import frc.robot.subsystem.LEDSubsystem;
-import frc.robot.subsystem.ShooterSubsystem;
-import frc.robot.subsystem.TurretSubsystem;
-import frc.robot.util.SysIdUtil;
+import first.commands.LEDCommand;
+import first.commands.ShootCommand;
+import first.commands.ZeroHoodCommand;
+import first.commands.auto.AutoChooser;
+import first.commands.intake.RollerCommands;
+import first.commands.intake.RunIntakeWristCommand;
+import first.commands.intake.WristCommands;
+import first.commands.intake.ZeroIntakeWristCommand;
+import first.input.ControllerInput;
+import first.input.MoInput;
+import first.input.SingleControllerInput;
+import first.molib.NTHelpers;
+import first.molib.Utils;
+import first.shootutils.TurretTargeting;
+import first.subsystem.DriveSubsystem;
+import first.subsystem.HoodSubsystem;
+import first.subsystem.IndexerSubsystem;
+import first.subsystem.IntakeRollerSubsystem;
+import first.subsystem.IntakeWristSubsystem;
+import first.subsystem.KickerSubsystem;
+import first.subsystem.LEDSubsystem;
+import first.subsystem.ShooterSubsystem;
+import first.subsystem.TurretSubsystem;
+import first.util.SysIdUtil;
 import java.util.Collections;
 import java.util.List;
 import org.wpilib.command2.Command;

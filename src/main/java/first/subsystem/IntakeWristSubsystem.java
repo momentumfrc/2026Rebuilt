@@ -1,17 +1,17 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.molib.MoSparkConfigurator;
-import frc.robot.molib.MoUnits;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.molib.motune.MoTuner;
-import frc.robot.molib.pid.MoSparkMaxArmProfilePID;
+import first.Constants;
+import first.MoPrefs;
+import first.molib.MoSparkConfigurator;
+import first.molib.MoUnits;
+import first.molib.NTHelpers;
+import first.molib.encoder.MoRotationEncoder;
+import first.molib.motune.MoTuner;
+import first.molib.pid.MoSparkMaxArmProfilePID;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;

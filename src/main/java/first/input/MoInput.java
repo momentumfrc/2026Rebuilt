@@ -1,4 +1,4 @@
-package frc.robot.input;
+package first.input;
 
 public interface MoInput {
     public abstract double getDriveMoveXRequest();

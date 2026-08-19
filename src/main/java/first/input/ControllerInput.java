@@ -1,6 +1,6 @@
-package frc.robot.input;
+package first.input;
 
-import frc.robot.Constants;
+import first.Constants;
 import org.wpilib.driverstation.XboxController;
 
 public final class ControllerInput implements MoInput {

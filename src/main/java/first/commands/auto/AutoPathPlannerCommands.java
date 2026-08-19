@@ -1,12 +1,12 @@
-package frc.robot.commands.auto;
+package first.commands.auto;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FlippingUtil;
-import frc.robot.RobotPositioning;
-import frc.robot.subsystem.DriveSubsystem;
+import first.RobotPositioning;
+import first.subsystem.DriveSubsystem;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.SequentialCommandGroup;

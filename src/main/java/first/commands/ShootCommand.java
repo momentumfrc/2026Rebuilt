@@ -1,13 +1,13 @@
-package frc.robot.commands;
+package first.commands;
 
-import frc.robot.MoPrefs;
-import frc.robot.molib.NTHelpers;
-import frc.robot.shootutils.TurretTargeting;
-import frc.robot.subsystem.HoodSubsystem;
-import frc.robot.subsystem.KickerSubsystem;
-import frc.robot.subsystem.ShooterSubsystem;
-import frc.robot.subsystem.TurretSubsystem;
-import frc.robot.util.OdometryTargetingHelper;
+import first.MoPrefs;
+import first.molib.NTHelpers;
+import first.shootutils.TurretTargeting;
+import first.subsystem.HoodSubsystem;
+import first.subsystem.KickerSubsystem;
+import first.subsystem.ShooterSubsystem;
+import first.subsystem.TurretSubsystem;
+import first.util.OdometryTargetingHelper;
 import org.wpilib.command2.Command;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.DriverStation.Alliance;

@@ -2,12 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package first;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.motune.MoTuner;
-import frc.robot.molib.prefs.MoPrefsImpl;
+import first.molib.NTHelpers;
+import first.molib.motune.MoTuner;
+import first.molib.prefs.MoPrefsImpl;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.CommandScheduler;
 import org.wpilib.framework.TimedRobot;

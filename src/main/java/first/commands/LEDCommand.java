@@ -1,8 +1,8 @@
-package frc.robot.commands;
+package first.commands;
 
-import frc.robot.RobotPositioning;
-import frc.robot.subsystem.LEDSubsystem;
-import frc.robot.subsystem.TurretSubsystem;
+import first.RobotPositioning;
+import first.subsystem.LEDSubsystem;
+import first.subsystem.TurretSubsystem;
 import org.wpilib.command2.Command;
 import org.wpilib.hardware.led.LEDPattern;
 import org.wpilib.units.Units;
