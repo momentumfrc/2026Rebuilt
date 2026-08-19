@@ -1,8 +1,8 @@
-package frc.robot.commands.intake;
+package first.commands.intake;
 
-import frc.robot.MoPrefs;
-import frc.robot.molib.Utils;
-import frc.robot.subsystem.IntakeWristSubsystem;
+import first.MoPrefs;
+import first.molib.Utils;
+import first.subsystem.IntakeWristSubsystem;
 import java.util.function.Supplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;

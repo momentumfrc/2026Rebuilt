@@ -1,17 +1,18 @@
-package frc.robot.input;
+package first.input;
 
-import frc.robot.Constants;
-import org.wpilib.driverstation.XboxController;
+import org.wpilib.driverstation.NiDsXboxController;
+
+import first.Constants;
 
 public final class ControllerInput implements MoInput {
-    private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
-    private final XboxController operatorController = new XboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
+    private final NiDsXboxController driveController = new NiDsXboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final NiDsXboxController operatorController = new NiDsXboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
 
-    public XboxController getDriveController() {
+    public NiDsXboxController getDriveController() {
         return driveController;
     }
 
-    public XboxController getOperatorController() {
+    public NiDsXboxController getOperatorController() {
         return operatorController;
     }
 

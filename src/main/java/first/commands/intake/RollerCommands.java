@@ -1,6 +1,6 @@
-package frc.robot.commands.intake;
+package first.commands.intake;
 
-import frc.robot.subsystem.IntakeRollerSubsystem;
+import first.subsystem.IntakeRollerSubsystem;
 import org.wpilib.command2.Command;
 
 public class RollerCommands {

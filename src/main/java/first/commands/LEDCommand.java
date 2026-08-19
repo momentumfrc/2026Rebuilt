@@ -1,8 +1,8 @@
-package frc.robot.commands;
+package first.commands;
 
-import frc.robot.RobotPositioning;
-import frc.robot.subsystem.LEDSubsystem;
-import frc.robot.subsystem.TurretSubsystem;
+import first.RobotPositioning;
+import first.subsystem.LEDSubsystem;
+import first.subsystem.TurretSubsystem;
 import org.wpilib.command2.Command;
 import org.wpilib.hardware.led.LEDPattern;
 import org.wpilib.units.Units;
@@ -14,12 +14,12 @@ public class LEDCommand extends Command {
     private final TurretSubsystem turret;
 
     private static final LEDPattern inRangePattern =
-            LEDPattern.solid(Color.kGreen).blink(Units.Seconds.of(0.1));
+            LEDPattern.solid(Color.GREEN).blink(Units.Seconds.of(0.1));
 
     private static final LEDPattern outOfRangePattern =
-            LEDPattern.solid(Color.kRed).blink(Units.Seconds.of(0.5));
+            LEDPattern.solid(Color.RED).blink(Units.Seconds.of(0.5));
 
-    private static final LEDPattern noInitialPositionPattern = LEDPattern.solid(Color.kOrange);
+    private static final LEDPattern noInitialPositionPattern = LEDPattern.solid(Color.ORANGE);
 
     public LEDCommand(LEDSubsystem leds, RobotPositioning positioning, TurretSubsystem turret) {
         this.leds = leds;

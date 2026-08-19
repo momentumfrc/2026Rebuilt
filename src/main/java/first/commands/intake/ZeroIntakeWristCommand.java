@@ -1,7 +1,7 @@
-package frc.robot.commands.intake;
+package first.commands.intake;
 
-import frc.robot.MoPrefs;
-import frc.robot.subsystem.IntakeWristSubsystem;
+import first.MoPrefs;
+import first.subsystem.IntakeWristSubsystem;
 import org.wpilib.command2.Command;
 import org.wpilib.system.Timer;
 import org.wpilib.units.measure.Voltage;
