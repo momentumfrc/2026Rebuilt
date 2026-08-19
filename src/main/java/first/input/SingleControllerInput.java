@@ -1,13 +1,13 @@
 package first.input;
 
-import org.wpilib.driverstation.NiDsXboxController;
+import org.wpilib.driverstation.XboxController;
 
 import first.Constants;
 
 public class SingleControllerInput implements MoInput {
-    private final NiDsXboxController driveController = new NiDsXboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final XboxController driveController = new XboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
 
-    public NiDsXboxController getDriveController() {
+    public XboxController getDriveController() {
         return driveController;
     }
 

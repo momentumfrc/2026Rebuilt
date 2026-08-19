@@ -1,22 +1,24 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
-import frc.robot.MoPrefs;
-import frc.robot.input.MoInput;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.prefs.MoPrefsUtils;
-import frc.robot.util.MoSwerveInputStream;
-import frc.robot.util.MutablePIDConstants;
+import first.MoPrefs;
+import first.input.MoInput;
+import first.molib.NTHelpers;
+import first.molib.prefs.MoPrefsUtils;
+import first.util.MoSwerveInputStream;
+import first.util.MutablePIDConstants;
 import java.io.File;
 import java.util.function.Supplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Rotation3d;
-import org.wpilib.math.kinematics.ChassisSpeeds;
+import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.networktables.BooleanPublisher;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.smartdashboard.SendableChooser;
@@ -83,7 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
         rotationPIDConstants.getTuner("PathPlanner Rotation PID").safeBuild();
     }
 
-    public void driveFieldOriented(ChassisSpeeds velocity) {
+    public void driveFieldOriented(ChassisVelocities velocity) {
         swerveDrive.driveFieldOriented(velocity);
     }
 
@@ -91,8 +93,8 @@ public class DriveSubsystem extends SubsystemBase {
         return runOnce(() -> {
             swerveDrive.zeroGyro();
 
-            var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
-            if (alliance == DriverStation.Alliance.Red) {
+            var alliance = MatchState.getAlliance().orElse(Alliance.BLUE);
+            if (alliance == Alliance.BLUE) {
                 swerveDrive.setGyro(new Rotation3d(Rotation2d.k180deg));
             }
             swerveDrive.setGyro(new Rotation3d(Rotation2d.k180deg));
@@ -100,13 +102,13 @@ public class DriveSubsystem extends SubsystemBase {
         });
     }
 
-    public Command driveFieldOriented(Supplier<Supplier<ChassisSpeeds>> inputSupplier) {
+    public Command driveFieldOriented(Supplier<Supplier<ChassisVelocities>> inputSupplier) {
         return run(() -> {
             swerveDrive.driveFieldOriented(inputSupplier.get().get());
         });
     }
 
-    public void driveRobotRelativeSpeeds(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
+    public void driveRobotRelativeSpeeds(ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
         swerveDrive.drive(
                 chassisSpeeds,
                 swerveDrive.kinematics.toSwerveModuleStates(chassisSpeeds),
@@ -119,14 +121,14 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        swerveDrive.drive(new ChassisSpeeds());
+        swerveDrive.drive(new ChassisVelocities());
     }
 
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
     }
 
-    private Supplier<Supplier<ChassisSpeeds>> setupDriveModes(Supplier<MoInput> inputSupplier) {
+    private Supplier<Supplier<ChassisVelocities>> setupDriveModes(Supplier<MoInput> inputSupplier) {
         var swerveInputStreamBase = MoSwerveInputStream.of(
                         swerveDrive,
                         () -> inputSupplier.get().getDriveMoveXRequest(),

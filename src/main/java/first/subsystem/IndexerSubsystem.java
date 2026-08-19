@@ -1,14 +1,15 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.molib.MoSparkConfigurator;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.encoder.MoRotationEncoder;
+import first.Constants;
+import first.MoPrefs;
+import first.molib.MoSparkConfigurator;
+import first.molib.NTHelpers;
+import first.molib.encoder.MoRotationEncoder;
 import org.wpilib.command2.SubsystemBase;
+import org.wpilib.hardware.motor.Spark;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.units.Units;
 
@@ -30,8 +31,9 @@ public class IndexerSubsystem extends SubsystemBase {
     private final DoublePublisher centeringEncoderSpeed;
 
     public IndexerSubsystem() {
-        indexerMotor = new SparkFlex(Constants.INDEXER_PORT.address(), MotorType.kBrushless);
-        centeringMotor = new SparkFlex(Constants.CENTERING_PORT.address(), MotorType.kBrushless);
+        //TODO: Edit busId!!!!!
+        indexerMotor = new SparkFlex(0, Constants.INDEXER_PORT.address(), MotorType.kBrushless);
+        centeringMotor = new SparkFlex(0, Constants.CENTERING_PORT.address(), MotorType.kBrushless);
 
         indexerConfig = MoSparkConfigurator.forSparkFlex(indexerMotor);
         centeringConfig = MoSparkConfigurator.forSparkFlex(centeringMotor);

@@ -1,5 +1,6 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -8,15 +9,15 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.molib.motune.TunerUtils;
-import frc.robot.molib.pid.MoTalonFxPID;
-import frc.robot.molib.pid.MoTalonFxPID.Type;
-import frc.robot.shootutils.HoodSerializedInformationHolder;
-import frc.robot.util.SysIdUtil;
+import first.Constants;
+import first.MoPrefs;
+import first.molib.NTHelpers;
+import first.molib.encoder.MoRotationEncoder;
+import first.molib.motune.TunerUtils;
+import first.molib.pid.MoTalonFxPID;
+import first.molib.pid.MoTalonFxPID.Type;
+import first.shootutils.HoodSerializedInformationHolder;
+import first.util.SysIdUtil;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
@@ -47,8 +48,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private final DoublePublisher calculatedFlywheelSpeedPublisher;
 
     public ShooterSubsystem() {
-        motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address());
-        motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address());
+        //TODO: Edit busID!!!
+        motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address(), CANBus.systemcore(0));
+        motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address(), CANBus.systemcore(0));
         motor1Config = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Coast)

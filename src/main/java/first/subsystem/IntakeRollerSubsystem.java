@@ -1,12 +1,12 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.molib.MoSparkConfigurator;
-import frc.robot.molib.NTHelpers;
+import first.Constants;
+import first.MoPrefs;
+import first.molib.MoSparkConfigurator;
+import first.molib.NTHelpers;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.NetworkTable;
@@ -19,7 +19,8 @@ public class IntakeRollerSubsystem extends SubsystemBase {
     private final MoSparkConfigurator intakeRollerConfig;
 
     public IntakeRollerSubsystem() {
-        intakeRoller = new SparkFlex(Constants.INTAKE_ROLLER_PORT.address(), MotorType.kBrushless);
+        //TODO: Edit busID!!!
+        intakeRoller = new SparkFlex(0, Constants.INTAKE_ROLLER_PORT.address(), MotorType.kBrushless);
         intakeRollerConfig = MoSparkConfigurator.forSparkFlex(intakeRoller);
         intakeRollerConfig.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.intakeRollerSmartCurrentLimit.get().in(Units.Amps))
@@ -48,6 +49,6 @@ public class IntakeRollerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        speedPublisher.set(intakeRoller.getEncoder().getVelocity());
+        speedPublisher.set(intakeRoller.getEncoder().getVelocity().get());
     }
 }

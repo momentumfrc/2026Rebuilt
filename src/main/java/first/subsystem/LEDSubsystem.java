@@ -1,7 +1,7 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
+import first.Constants;
+import first.MoPrefs;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.hardware.led.AddressableLED;
 import org.wpilib.hardware.led.AddressableLEDBuffer;

@@ -1,17 +1,17 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.molib.MoSparkConfigurator;
-import frc.robot.molib.MoUnits;
-import frc.robot.molib.NTHelpers;
-import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.molib.motune.MoTuner;
-import frc.robot.molib.pid.MoSparkMaxArmProfilePID;
+import first.Constants;
+import first.MoPrefs;
+import first.molib.MoSparkConfigurator;
+import first.molib.MoUnits;
+import first.molib.NTHelpers;
+import first.molib.encoder.MoRotationEncoder;
+import first.molib.motune.MoTuner;
+import first.molib.pid.MoSparkMaxArmProfilePID;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
@@ -24,7 +24,6 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularAcceleration;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Current;
-import org.wpilib.units.measure.MutCurrent;
 import org.wpilib.units.measure.Voltage;
 
 public class IntakeWristSubsystem extends SubsystemBase {
@@ -37,7 +36,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
     private final MoSparkConfigurator intakeWristConfig;
 
-    private MutCurrent intakeWristCurrent = Units.Amps.mutable(0);
+    private Current intakeWristCurrent = Units.Amps.of(0);
 
     private final DoublePublisher positionPublisher;
     private final DoublePublisher wristCurrentPublisher;
@@ -46,7 +45,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
     private final BooleanEntry hasZeroEntry;
 
     public IntakeWristSubsystem() {
-        intakeWrist = new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), MotorType.kBrushless);
+        //TODO: Edit busID!!!
+        intakeWrist = new SparkFlex(0, Constants.INTAKE_WRIST_PORT.address(), MotorType.kBrushless);
         intakeWristConfig = MoSparkConfigurator.forSparkFlex(intakeWrist);
         intakeWristConfig.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.intakeWristSmartCurrentLimit.get().in(Units.Amps))
@@ -115,7 +115,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public Current getIntakeWristCurrent() {
-        double current = intakeWrist.getOutputCurrent();
+        double current = intakeWrist.getOutputCurrent().get();
         intakeWristCurrent.mut_replace(current, Units.Amps);
         return intakeWristCurrent;
     }
@@ -158,9 +158,9 @@ public class IntakeWristSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         wristCurrentPublisher.set(getIntakeWristCurrent().in(Units.Amps));
-        positionPublisher.set(intakeWrist.getEncoder().getPosition());
+        positionPublisher.set(intakeWrist.getEncoder().getPosition().get());
 
-        wristVoltagePublisher.set(intakeWrist.getAppliedOutput() * intakeWrist.getBusVoltage());
+        wristVoltagePublisher.set(intakeWrist.getAppliedOutput().get() * intakeWrist.getBusVoltage().get());
     }
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
@@ -170,7 +170,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
         return new SysIdRoutine.Mechanism(
                 intakeWrist::setVoltage,
                 log -> log.motor("intake wrist")
-                        .voltage(Units.Volts.of(intakeWrist.getBusVoltage() * intakeWrist.getAppliedOutput()))
+                        .voltage(Units.Volts.of(intakeWrist.getBusVoltage().get() * intakeWrist.getAppliedOutput().get()))
                         .value(
                                 "position",
                                 wristEncoder.getPositionInEncoderUnits(),

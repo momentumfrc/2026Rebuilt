@@ -1,15 +1,15 @@
-package frc.robot.subsystem;
+package first.subsystem;
 
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants;
-import frc.robot.MoPrefs;
-import frc.robot.molib.MoSparkConfigurator;
-import frc.robot.molib.encoder.MoRotationEncoder;
-import frc.robot.molib.motune.TunerUtils;
-import frc.robot.molib.pid.MoSparkMaxPID;
+import first.Constants;
+import first.MoPrefs;
+import first.molib.MoSparkConfigurator;
+import first.molib.encoder.MoRotationEncoder;
+import first.molib.motune.TunerUtils;
+import first.molib.pid.MoSparkMaxPID;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
 import org.wpilib.units.AngleUnit;
@@ -27,7 +27,8 @@ public class KickerSubsystem extends SubsystemBase {
     private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> pid;
 
     public KickerSubsystem() {
-        motor = new SparkFlex(Constants.KICKER_PORT.address(), MotorType.kBrushless);
+        //TODO: Edit busId!!!!
+        motor = new SparkFlex(0, Constants.KICKER_PORT.address(), MotorType.kBrushless);
         config = MoSparkConfigurator.forSparkFlex(motor);
 
         config.accept(config -> config.smartCurrentLimit(
@@ -62,7 +63,7 @@ public class KickerSubsystem extends SubsystemBase {
         return new SysIdRoutine.Mechanism(
                 motor::setVoltage,
                 log -> log.motor("kicker")
-                        .voltage(Units.Volts.of(motor.getBusVoltage() * motor.getAppliedOutput()))
+                        .voltage(Units.Volts.of(motor.getBusVoltage().get() * motor.getAppliedOutput().get()))
                         .value(
                                 "position",
                                 encoder.getPositionInEncoderUnits(),
