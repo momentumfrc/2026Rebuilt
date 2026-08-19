@@ -14,28 +14,25 @@ import org.wpilib.framework.TimedRobot;
 import org.wpilib.system.DataLogManager;
 
 public class Robot extends TimedRobot {
-    private Command m_autonomousCommand;
+    private Command autonomousCommand;
 
-    private final RobotContainer m_robotContainer;
+    private final RobotContainer robotContainer;
 
     public Robot() {
-        m_robotContainer = new RobotContainer();
+        robotContainer = new RobotContainer();
 
         DataLogManager.start();
 
         MoPrefsImpl.cleanUpPrefs();
-    }
 
-    @Override
-    public void robotInit() {
         PathfindingCommand.warmupCommand();
     }
 
     @Override
     public void robotPeriodic() {
-        // Update latest robot position before anything else runs.
-        m_robotContainer.robotPositioning.update();
-        m_robotContainer.checkRumbles();
+        // Update latest robot position before anything else runs
+        robotContainer.robotPositioning.update();
+        robotContainer.checkRumbles();
 
         CommandScheduler.getInstance().run();
 
@@ -54,12 +51,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_robotContainer.setAutoDefaultCommnds();
+        autonomousCommand = robotContainer.getAutonomousCommand();
 
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        if (autonomousCommand != null) {
+            CommandScheduler.getInstance().schedule(autonomousCommand);
         }
     }
 
@@ -71,10 +66,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        m_robotContainer.setDefaultCommands();
-
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.cancel();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
     }
 
@@ -85,13 +78,13 @@ public class Robot extends TimedRobot {
     public void teleopExit() {}
 
     @Override
-    public void testInit() {
+    public void utilityInit() {
         CommandScheduler.getInstance().cancelAll();
     }
 
     @Override
-    public void testPeriodic() {}
+    public void utilityPeriodic() {}
 
     @Override
-    public void testExit() {}
+    public void utilityExit() {}
 }

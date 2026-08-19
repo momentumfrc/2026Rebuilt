@@ -152,7 +152,7 @@ public class HoodSubsystem extends SubsystemBase {
         lastHoodAngle = position.in(Units.Radians);
 
         // TODO
-        //setPosition(position, mutVelocityReference.mut_replace(goalVelocity, Units.RadiansPerSecond));
+        // setPosition(position, mutVelocityReference.mut_replace(goalVelocity, Units.RadiansPerSecond));
     }
 
     /**

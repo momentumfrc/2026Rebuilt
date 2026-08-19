@@ -228,8 +228,9 @@ public class RobotPositioning {
             return;
         }
 
-        turretLLTimestampPublisher.set(
-                new double[] {poseEstimate.timestampSeconds, Timer.getFPGATimestamp() - poseEstimate.timestampSeconds});
+        turretLLTimestampPublisher.set(new double[] {
+            poseEstimate.timestampSeconds, Timer.getMonotonicTimestamp() - poseEstimate.timestampSeconds
+        });
         turretLLAprilTagsPublisher.set(poseEstimate.pose);
 
         var turretLimelightTransform = getTurretLimelightToRobot(poseEstimate.timestampSeconds);
@@ -262,8 +263,7 @@ public class RobotPositioning {
         Vector<N3> visionStdDevs = null;
         if (useMT2.get() && hasInitialPosition.get()) {
             poseEstimate = getPoseEstimateMT2(
-                    Constants.STATIONARY_LIMELIGHT_NAME,
-                    Units.RadiansPerSecond.of(robotVelocity.omega));
+                    Constants.STATIONARY_LIMELIGHT_NAME, Units.RadiansPerSecond.of(robotVelocity.omega));
             visionStdDevs = MT2_VISION_STDDEVS;
         } else {
             poseEstimate = getPoseEstimateMT1(Constants.STATIONARY_LIMELIGHT_NAME);
@@ -276,8 +276,9 @@ public class RobotPositioning {
 
         addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds, visionStdDevs);
 
-        stationaryLLTimestampPublisher.set(
-                new double[] {poseEstimate.timestampSeconds, Timer.getFPGATimestamp() - poseEstimate.timestampSeconds});
+        stationaryLLTimestampPublisher.set(new double[] {
+            poseEstimate.timestampSeconds, Timer.getMonotonicTimestamp() - poseEstimate.timestampSeconds
+        });
         stationaryLLAprilTagsPublisher.set(poseEstimate.pose);
     }
 
@@ -295,8 +296,8 @@ public class RobotPositioning {
         LimelightHelpers.SetRobotOrientation(
                 Constants.TURRET_LIMELIGHT_NAME, estimatedHeadingDegrees + turretYaw.in(Units.Degrees), 0, 0, 0, 0, 0);
 
-        var timestamp = Timer.getFPGATimestamp();
-        turretYawBuffer.addSample(Timer.getFPGATimestamp(), Rotation2d.fromRadians(turretYaw.in(Units.Radians)));
+        var timestamp = Timer.getMonotonicTimestamp();
+        turretYawBuffer.addSample(Timer.getMonotonicTimestamp(), Rotation2d.fromRadians(turretYaw.in(Units.Radians)));
         turretPosPublisher.set(new double[] {turretYaw.in(Units.Degrees), timestamp});
 
         swerveDrive.updateOdometry();

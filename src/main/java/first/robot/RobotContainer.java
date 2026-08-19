@@ -34,8 +34,8 @@ import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.button.RobotModeTriggers;
 import org.wpilib.command2.button.Trigger;
-import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.GenericHID.RumbleType;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.smartdashboard.SendableChooser;
 import org.wpilib.smartdashboard.SmartDashboard;
 
@@ -257,10 +257,10 @@ public class RobotContainer {
                 .whileTrue(runIndexerWithIntakeCommand);
         reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
 
-        RobotModeTriggers.test().whileTrue(turretTestCommand);
-        RobotModeTriggers.test().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
-        RobotModeTriggers.test().whileTrue(shooterTestCommand);
-        RobotModeTriggers.test().and(zeroIntakeWristTrigger.negate()).whileTrue(testIntakeWristCommand);
+        RobotModeTriggers.utility().whileTrue(turretTestCommand);
+        RobotModeTriggers.utility().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
+        RobotModeTriggers.utility().whileTrue(shooterTestCommand);
+        RobotModeTriggers.utility().and(zeroIntakeWristTrigger.negate()).whileTrue(testIntakeWristCommand);
     }
 
     public Command getAutonomousCommand() {
@@ -285,10 +285,10 @@ public class RobotContainer {
 
     public void checkRumbles() {
         double rumble = driveSubsystem.isBoosted() ? MoPrefs.driverRumble.get() : 0;
-        controllerInput.getDriveController().setRumble(RumbleType.kBothRumble, rumble);
+        controllerInput.getDriveController().setRumble(RumbleType.LEFT_RUMBLE, rumble);
 
         double operatorRumble =
-                DriverStation.isTeleopEnabled() && turret.targetIsAligned() ? MoPrefs.operatorRumble.get() : 0;
-        controllerInput.getOperatorController().setRumble(RumbleType.kBothRumble, operatorRumble);
+                RobotState.isTeleopEnabled() && turret.targetIsAligned() ? MoPrefs.operatorRumble.get() : 0;
+        controllerInput.getOperatorController().setRumble(RumbleType.LEFT_RUMBLE, operatorRumble);
     }
 }

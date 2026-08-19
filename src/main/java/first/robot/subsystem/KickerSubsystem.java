@@ -62,7 +62,8 @@ public class KickerSubsystem extends SubsystemBase {
         return new SysIdRoutine.Mechanism(
                 motor::setVoltage,
                 log -> log.motor("kicker")
-                        .voltage(Units.Volts.of(motor.getBusVoltage().get() * motor.getAppliedOutput().get()))
+                        .voltage(Units.Volts.of(motor.getBusVoltage().get()
+                                * motor.getAppliedOutput().get()))
                         .value(
                                 "position",
                                 encoder.getPositionInEncoderUnits(),

@@ -43,7 +43,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
     private final BooleanEntry hasZeroEntry;
 
     public IntakeWristSubsystem() {
-        intakeWrist = new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), Constants.DEFAULT_CAN_BUS, MotorType.kBrushless);
+        intakeWrist =
+                new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), Constants.DEFAULT_CAN_BUS, MotorType.kBrushless);
         intakeWristConfig = MoSparkConfigurator.forSparkFlex(intakeWrist);
         intakeWristConfig.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.intakeWristSmartCurrentLimit.get().in(Units.Amps))
@@ -159,7 +160,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
         wristCurrentPublisher.set(getIntakeWristCurrent().in(Units.Amps));
         positionPublisher.set(intakeWrist.getEncoder().getPosition().get());
 
-        wristVoltagePublisher.set(intakeWrist.getAppliedOutput().get() * intakeWrist.getBusVoltage().get());
+        wristVoltagePublisher.set(intakeWrist.getAppliedOutput().get()
+                * intakeWrist.getBusVoltage().get());
     }
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
@@ -169,7 +171,8 @@ public class IntakeWristSubsystem extends SubsystemBase {
         return new SysIdRoutine.Mechanism(
                 intakeWrist::setVoltage,
                 log -> log.motor("intake wrist")
-                        .voltage(Units.Volts.of(intakeWrist.getBusVoltage().get() * intakeWrist.getAppliedOutput().get()))
+                        .voltage(Units.Volts.of(intakeWrist.getBusVoltage().get()
+                                * intakeWrist.getAppliedOutput().get()))
                         .value(
                                 "position",
                                 wristEncoder.getPositionInEncoderUnits(),

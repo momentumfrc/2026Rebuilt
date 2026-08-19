@@ -98,9 +98,10 @@ public final class TurretTargeting {
 
         double phaseDelaySeconds = MoPrefs.turretPhaseDelay.get().in(Units.Seconds);
         var estimatedPose = robotPose.plus(new Twist2d(
-                robotRelativeVelocity.vx * phaseDelaySeconds,
-                robotRelativeVelocity.vy * phaseDelaySeconds,
-                robotRelativeVelocity.omega * phaseDelaySeconds).exp());
+                        robotRelativeVelocity.vx * phaseDelaySeconds,
+                        robotRelativeVelocity.vy * phaseDelaySeconds,
+                        robotRelativeVelocity.omega * phaseDelaySeconds)
+                .exp());
 
         phaseDelayEstimatedPosePublisher.set(estimatedPose);
         return estimatedPose;

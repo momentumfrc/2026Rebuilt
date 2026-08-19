@@ -898,10 +898,9 @@ public class MoSwerveInputStream implements Supplier<ChassisVelocities> {
         if (translationHeadingOffsetEnabled.isPresent()
                 && translationHeadingOffsetEnabled.get().getAsBoolean()) {
             if (translationHeadingOffset.isPresent()) {
-                Translation2d speedsTranslation = new Translation2d(speeds.vx, speeds.vy)
-                        .rotateBy(translationHeadingOffset.get());
-                return new ChassisVelocities(
-                        speedsTranslation.getX(), speedsTranslation.getY(), speeds.omega);
+                Translation2d speedsTranslation =
+                        new Translation2d(speeds.vx, speeds.vy).rotateBy(translationHeadingOffset.get());
+                return new ChassisVelocities(speedsTranslation.getX(), speedsTranslation.getY(), speeds.omega);
             }
         }
         return speeds;
@@ -966,8 +965,7 @@ public class MoSwerveInputStream implements Supplier<ChassisVelocities> {
         if (azimuthFeedforward.isPresent()) {
             omegaRadiansPerSecond += azimuthFeedforward
                     .get()
-                    .calculateWithVelocities(
-                            swerveDrive.getFieldVelocity().omega, omegaRadiansPerSecond);
+                    .calculateWithVelocities(swerveDrive.getFieldVelocity().omega, omegaRadiansPerSecond);
         }
         return RadiansPerSecond.of(omegaRadiansPerSecond);
     }

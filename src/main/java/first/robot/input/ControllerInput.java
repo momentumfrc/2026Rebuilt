@@ -1,8 +1,7 @@
 package first.robot.input;
 
-import org.wpilib.driverstation.Gamepad;
-
 import first.robot.Constants;
+import org.wpilib.driverstation.Gamepad;
 
 public final class ControllerInput implements MoInput {
     private final Gamepad driveController = new Gamepad(Constants.DRIVE_CONTORLLER_PORT.hidport());

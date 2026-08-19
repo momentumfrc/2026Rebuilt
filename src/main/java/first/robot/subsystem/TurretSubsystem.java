@@ -30,6 +30,7 @@ import first.robot.util.TurretAngleHelper;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.driverstation.Alert;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.MatchState;
@@ -52,7 +53,6 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Time;
 import org.wpilib.units.measure.Voltage;
-import org.wpilib.driverstation.Alert;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
@@ -87,8 +87,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final MoAbsoluteEncoder absEncoder1;
     private final MoAbsoluteEncoder absEncoder2;
     private final VernierEncoder vernierEncoder;
-    private final Alert encodersDisconnectedAlert =
-            new Alert("turret absolute encoder disconnected", Alert.Level.HIGH);
+    private final Alert encodersDisconnectedAlert = new Alert("turret absolute encoder disconnected", Alert.Level.HIGH);
 
     private TurretAngleHelper angleHelper;
 

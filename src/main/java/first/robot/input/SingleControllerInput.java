@@ -1,7 +1,6 @@
 package first.robot.input;
 
 import first.robot.Constants;
-
 import org.wpilib.driverstation.Gamepad;
 
 public class SingleControllerInput implements MoInput {
