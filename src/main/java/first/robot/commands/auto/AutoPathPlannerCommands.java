@@ -1,5 +1,6 @@
 package first.robot.commands.auto;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -30,17 +31,15 @@ public class AutoPathPlannerCommands {
             return Commands.none();
         }
 
-        // TODO
-        // Command pathFollowingCommand = new FollowPathCommand(
-        //         path,
-        //         robotPositioning::getRobotPose,
-        //         robotPositioning::getRobotVelocity,
-        //         driveSubsystem::driveRobotRelativeSpeeds,
-        //         driveController,
-        //         pathPlannerConfig,
-        //         () -> MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED,
-        //         driveSubsystem);
-        Command pathFollowingCommand = null;
+        Command pathFollowingCommand = new FollowPathCommand(
+                path,
+                robotPositioning::getRobotPose,
+                robotPositioning::getRobotVelocity,
+                driveSubsystem::driveRobotRelativeSpeeds,
+                driveController,
+                pathPlannerConfig,
+                () -> MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED,
+                driveSubsystem);
 
         pathFollowingCommand = Commands.either(
                 pathFollowingCommand,

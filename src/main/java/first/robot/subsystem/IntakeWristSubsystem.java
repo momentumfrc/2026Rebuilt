@@ -113,11 +113,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
     }
 
     public Current getIntakeWristCurrent() {
-        // TODO
-        // double current = intakeWrist.getOutputCurrent();
-        // intakeWristCurrent.mut_replace(current, Units.Amps);
-        // return intakeWristCurrent;
-        return null;
+        return Units.Amps.of(intakeWrist.getOutputCurrent().get());
     }
 
     public boolean atPosition(Angle position) {
