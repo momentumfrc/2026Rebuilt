@@ -6,12 +6,13 @@ import first.robot.MoPrefs;
 import first.robot.input.MoInput;
 import first.robot.molib.NTHelpers;
 import first.robot.molib.prefs.MoPrefsUtils;
-import first.robot.util.MoSwerveInputStream;
 import first.robot.util.MutablePIDConstants;
 import java.io.File;
 import java.util.function.Supplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Rotation3d;
@@ -23,6 +24,7 @@ import org.wpilib.system.Filesystem;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Current;
 import swervelib.SwerveDrive;
+import swervelib.SwerveInputStream;
 import swervelib.SwerveModule;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -108,7 +110,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void driveRobotRelativeSpeeds(ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
         swerveDrive.drive(
                 chassisSpeeds,
-                swerveDrive.kinematics.toSwerveModuleStates(chassisSpeeds),
+                swerveDrive.kinematics.toSwerveModuleVelocities(chassisSpeeds),
                 driveFeedforwards.linearForces());
     }
 
@@ -126,7 +128,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     private Supplier<Supplier<ChassisVelocities>> setupDriveModes(Supplier<MoInput> inputSupplier) {
-        var swerveInputStreamBase = MoSwerveInputStream.of(
+        var swerveInputStreamBase = SwerveInputStream.of(
                         swerveDrive,
                         () -> inputSupplier.get().getDriveMoveXRequest(),
                         () -> inputSupplier.get().getDriveMoveYRequest())

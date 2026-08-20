@@ -25,7 +25,7 @@ public class Robot extends TimedRobot {
 
         MoPrefsImpl.cleanUpPrefs();
 
-        PathfindingCommand.warmupCommand();
+        CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
     }
 
     @Override

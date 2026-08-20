@@ -61,6 +61,7 @@ dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+    implementation project(":YAGSL-2027")
 
     systemcoreDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.systemcore)
     systemcoreDebug wpi.java.vendor.jniDebug(wpi.platforms.systemcore)
@@ -116,7 +117,7 @@ spotless {
     java {
         target fileTree('.') {
             include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
+            exclude '**/build/**', '**/build-*/**', 'YAGSL-2027/**'
         }
         toggleOffOn()
         palantirJavaFormat()

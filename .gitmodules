@@ -1,3 +1,6 @@
 [submodule "src/main/java/first/robot/molib"]
 	path = src/main/java/first/robot/molib
 	url = https://github.com/momentumfrc/molib.git
+[submodule "YAGSL-2027"]
+	path = YAGSL-2027
+	url = https://github.com/jordan-powers/YAGSL-2027.git
