@@ -7,7 +7,7 @@
   "drive": {
     "type": "krakenx60",
     "id": 5,
-    "canbus": null
+    "canbus": 0
   },
   "inverted": {
     "drive": false,
@@ -16,12 +16,12 @@
   "angle": {
     "type": "krakenx60",
     "id": 6,
-    "canbus": null
+    "canbus": 0
   },
   "encoder": {
     "type": "cancoder",
     "id": 11,
-    "canbus": null
+    "canbus": 0
   },
   "absoluteEncoderInverted": false
 }
