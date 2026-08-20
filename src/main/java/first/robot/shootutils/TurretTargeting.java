@@ -28,25 +28,7 @@ public final class TurretTargeting {
 
     private final RobotPositioning positioning;
 
-    public static class TurretSetpoint {
-        private final Angle goalAngle = Units.Radians.of(0);
-        private final AngularVelocity goalVelocity = Units.RadiansPerSecond.of(0);
-        private final Distance targetDistance = Units.Meters.of(0);
-
-        public Angle goalAngle() {
-            return goalAngle;
-        }
-
-        public AngularVelocity goalVelocity() {
-            return goalVelocity;
-        }
-
-        public Distance targetDistance() {
-            return targetDistance;
-        }
-    }
-
-    private final TurretSetpoint outputSetpoint = new TurretSetpoint();
+    public record TurretSetpoint(Angle goalAngle, AngularVelocity goalVelocity, Distance targetDistance) {}
 
     private Rotation2d lastGoalAngle = null;
     private LinearFilter turretAngleVelocityFilter = LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
@@ -194,16 +176,14 @@ public final class TurretTargeting {
                 goalAngle.minus(positioning.getRobotPose().getRotation());
         double robotRelativeGoalVelocity = goalVelocity - positioning.getFieldVelocity().omega;
 
-        // TODO
-        // outputSetpoint.goalAngle.mut_replace(robotRelativeGoalAngle.getRadians(), Units.Radians);
-        // outputSetpoint.goalVelocity.mut_replace(robotRelativeGoalVelocity, Units.RadiansPerSecond);
-        // outputSetpoint.targetDistance.mut_replace(turretToTargetDistance, Units.Meters);
-
         outputGoalAnglePublisher.set(robotRelativeGoalAngle);
         outputOmegaPublisher.set(robotRelativeGoalVelocity);
         outputDistanceToTargetPublisher.set(turretToTargetDistance);
 
-        return outputSetpoint;
+        return new TurretSetpoint(
+                Units.Radians.of(robotRelativeGoalAngle.getRadians()),
+                Units.RadiansPerSecond.of(robotRelativeGoalVelocity),
+                Units.Meters.of(turretToTargetDistance));
     }
 
     /**

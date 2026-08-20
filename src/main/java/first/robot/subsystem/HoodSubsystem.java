@@ -133,9 +133,6 @@ public class HoodSubsystem extends SubsystemBase {
         setPosition(position);
     }
 
-    // TODO
-    // private MutAngularVelocity mutVelocityReference = Units.RadiansPerSecond.mutable(0);
-
     public void goToRest() {
         setPosition(MoPrefs.hoodDeadzonePosition.get(), Units.DegreesPerSecond.zero());
         lastHoodAngle = Double.NaN;
@@ -151,8 +148,7 @@ public class HoodSubsystem extends SubsystemBase {
                 hoodAngleFilter.calculate((position.in(Units.Radians) - lastHoodAngle) / Constants.LOOP_PERIOD);
         lastHoodAngle = position.in(Units.Radians);
 
-        // TODO
-        // setPosition(position, mutVelocityReference.mut_replace(goalVelocity, Units.RadiansPerSecond));
+        setPosition(position, Units.RadiansPerSecond.of(goalVelocity));
     }
 
     /**
@@ -169,10 +165,7 @@ public class HoodSubsystem extends SubsystemBase {
         State goalState = new State(position.in(Units.Radians), goalVelocity);
         setpointState = profile.calculate(Constants.LOOP_PERIOD, setpointState, goalState);
 
-        // TODO
-        // positionReference.mut_replace(setpointState.position, Units.Radians);
-        // velocityReference.mut_replace(setpointState.velocity, Units.RadiansPerSecond);
-        // pid.setReference(positionReference, velocityReference);
+        pid.setReference(Units.Radians.of(setpointState.position), Units.RadiansPerSecond.of(setpointState.velocity));
     }
 
     public boolean isInPosition() {
@@ -218,9 +211,7 @@ public class HoodSubsystem extends SubsystemBase {
                             MoPrefs.hoodMinSoftLimit.get().in(Units.Degrees),
                             MoPrefs.hoodMaxSoftLimit.get().in(Units.Degrees),
                             MathUtil.inverseLerp(-1, 1, y));
-                    // TODO
-                    // positionReference.mut_replace(setpointDegrees, Units.Degrees);
-                    // pid.setReference(positionReference, Units.DegreesPerSecond.zero());
+                    pid.setReference(Units.Degrees.of(setpointDegrees), Units.DegreesPerSecond.zero());
                 })
                 .withName("HoodTestCommand");
     }

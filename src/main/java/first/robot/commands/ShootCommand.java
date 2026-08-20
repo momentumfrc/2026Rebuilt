@@ -45,10 +45,6 @@ public class ShootCommand extends Command {
     private final BooleanEntry doOverrideHoodSetpoint;
     private final DoubleEntry overrideHoodSetpoint;
 
-    // TODO
-    // private final MutAngle hoodOverridePosition = Units.Degrees.mutable(0);
-    // private final MutAngularVelocity flywheelOverrideSpeed = Units.RPM.mutable(0);
-
     public ShootCommand(
             OdometryTargetingHelper.TargetType targetType,
             TurretTargeting targeting,
@@ -98,11 +94,11 @@ public class ShootCommand extends Command {
     }
 
     private Angle getHoodOverridePosition() {
-        return null; // hoodOverridePosition.mut_replace(overrideHoodSetpoint.get(), Units.Degrees);
+        return Units.Degrees.of(overrideHoodSetpoint.get());
     }
 
     private AngularVelocity getFlywheelOverrideSpeed() {
-        return null; // flywheelOverrideSpeed.mut_replace(overrideFlywheelSetpoint.get(), Units.RPM);
+        return Units.RPM.of(overrideFlywheelSetpoint.get());
     }
 
     public boolean readyToShoot() {

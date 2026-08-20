@@ -96,9 +96,6 @@ public class TurretSubsystem extends SubsystemBase {
     private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private final PIDController turretRelativePid;
 
-    // TODO
-    // private final MutAngle goalAngle = Units.Rotations.mutable(0);
-    // private final MutAngularVelocity goalVelocity = Units.RPM.mutable(0);
     private Rotation2d lastOORAngle = null;
     private final LinearFilter turretOORVelocityFilter =
             LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
@@ -361,10 +358,8 @@ public class TurretSubsystem extends SubsystemBase {
 
         absoluteSetpoint = profile.calculate(Constants.LOOP_PERIOD, absoluteSetpoint, goalState);
 
-        // TODO
-        // this.goalAngle.mut_replace(absoluteSetpoint.position, Units.Degrees);
-        // this.goalVelocity.mut_replace(absoluteSetpoint.velocity, Units.DegreesPerSecond);
-        // this.turretAbsolutePid.setReference(this.goalAngle, this.goalVelocity);
+        this.turretAbsolutePid.setReference(
+                Units.Degrees.of(absoluteSetpoint.position), Units.DegreesPerSecond.of(absoluteSetpoint.velocity));
     }
 
     public boolean relativeTargetIsVisible() {
@@ -427,9 +422,8 @@ public class TurretSubsystem extends SubsystemBase {
                         var result = angleHelper.turretAngleModulusRads(goalRadians);
                         targetInRange.set(result.inRange());
 
-                        // TODO
-                        // goalAngle.mut_replace(result.angle().getRadians(), Units.Radians);
-                        // this.turretAbsolutePid.setReference(this.goalAngle, Units.RadiansPerSecond.zero());
+                        this.turretAbsolutePid.setReference(
+                                Units.Radians.of(result.angle().getRadians()), Units.RadiansPerSecond.zero());
                     }
                 })
                 .withName("TurretTestCommand");
