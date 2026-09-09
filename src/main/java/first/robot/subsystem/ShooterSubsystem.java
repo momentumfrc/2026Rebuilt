@@ -113,7 +113,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command getTestCommand(Gamepad controller) {
         return run(() -> {
-                    if (controller.getEastFaceButton()) {
+                    if (controller.getFaceRightButton()) {
                         runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
                     } else {
                         stop();

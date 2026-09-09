@@ -7,6 +7,7 @@ import first.robot.subsystem.TurretSubsystem;
 import first.robot.util.LimelightHelpers;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.wpilib.fields.Fields;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Transform2d;
@@ -24,8 +25,6 @@ import org.wpilib.system.Timer;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.vision.apriltag.AprilTagFields;
 import swervelib.SwerveDrive;
 
 public class RobotPositioning {
@@ -81,8 +80,8 @@ public class RobotPositioning {
         LimelightHelpers.setCameraPose_RobotSpace(
                 Constants.STATIONARY_LIMELIGHT_NAME, -0.328071, 0.031750, 0.295345, 0, 10, 180);
 
-        int[] allowedTagIds = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded).getTags().stream()
-                .mapToInt(tag -> tag.ID)
+        int[] allowedTagIds = Fields.FRC_2026_REBUILT_WELDED.loadField().tags.stream()
+                .mapToInt(tag -> tag.getID())
                 .filter(tag -> DISALLOWED_TAGS.contains(tag) == false)
                 .toArray();
         LimelightHelpers.SetFiducialIDFiltersOverride(Constants.TURRET_LIMELIGHT_NAME, allowedTagIds);
@@ -190,7 +189,7 @@ public class RobotPositioning {
             return null;
         }
         var robotToLimelight = TurretSubsystem.robotToTurret
-                .plus(new Transform2d(Translation2d.kZero, sample.get()))
+                .plus(new Transform2d(Translation2d.ZERO, sample.get()))
                 .plus(TurretSubsystem.turretToCamera);
 
         return robotToLimelight.inverse();

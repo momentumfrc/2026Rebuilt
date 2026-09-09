@@ -14,18 +14,18 @@ public class TurretAngleHelperTests {
 
     @Test
     public void testFullRotation() {
-        var angleHelper = new TurretAngleHelper(Rotation2d.kZero, Rotation2d.fromDegrees(360));
-        assertResult(Rotation2d.kZero, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(0)));
-        assertResult(Rotation2d.kCCW_90deg, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(90)));
+        var angleHelper = new TurretAngleHelper(Rotation2d.ZERO, Rotation2d.fromDegrees(360));
+        assertResult(Rotation2d.ZERO, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(0)));
+        assertResult(Rotation2d.CCW_90DEG, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(90)));
         assertResult(Rotation2d.k180deg, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(180)));
-        assertResult(Rotation2d.kCW_90deg, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(270)));
+        assertResult(Rotation2d.CW_90DEG, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(270)));
 
         assertResult(Rotation2d.fromDegrees(360), true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(360)));
         assertResult(Rotation2d.fromDegrees(1), true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(361)));
-        assertResult(Rotation2d.kCCW_90deg, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(450)));
-        assertResult(Rotation2d.kZero, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(720)));
-        assertResult(Rotation2d.kCW_90deg, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(-90)));
-        assertResult(Rotation2d.kZero, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(-360)));
+        assertResult(Rotation2d.CCW_90DEG, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(450)));
+        assertResult(Rotation2d.ZERO, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(720)));
+        assertResult(Rotation2d.CW_90DEG, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(-90)));
+        assertResult(Rotation2d.ZERO, true, angleHelper.turretAngleModulus(Rotation2d.fromDegrees(-360)));
     }
 
     @Test

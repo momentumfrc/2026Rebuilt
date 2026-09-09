@@ -30,7 +30,6 @@ import first.robot.util.TurretAngleHelper;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.driverstation.Alert;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.MatchState;
@@ -45,7 +44,7 @@ import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.BooleanPublisher;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.IntegerPublisher;
-import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.tunable.Selectable;
 import org.wpilib.units.AngleUnit;
 import org.wpilib.units.AngularVelocityUnit;
 import org.wpilib.units.Units;
@@ -53,6 +52,7 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Time;
 import org.wpilib.units.measure.Voltage;
+import org.wpilib.util.Alert;
 
 public class TurretSubsystem extends SubsystemBase {
     private static final int MAIN_GEAR_TOOTH_COUNT = 85;
@@ -62,15 +62,15 @@ public class TurretSubsystem extends SubsystemBase {
     private static final int TRAPEZOID_STATE_RESET_CUTOFF = 30;
 
     public static final Transform2d robotToTurret =
-            new Transform2d(new Translation2d(-0.144780, -0.031750), Rotation2d.kZero);
-    public static final Transform2d turretToCamera = new Transform2d(new Translation2d(0.181301, 0), Rotation2d.kZero);
+            new Transform2d(new Translation2d(-0.144780, -0.031750), Rotation2d.ZERO);
+    public static final Transform2d turretToCamera = new Transform2d(new Translation2d(0.181301, 0), Rotation2d.ZERO);
 
     private enum TurretAlignMode {
         ODOMETRY,
         LL_CROSSHAIRS
     }
 
-    private final SendableChooser<TurretAlignMode> alignModeChooser = NTHelpers.enumToChooser(TurretAlignMode.class);
+    private final Selectable<TurretAlignMode> alignModeChooser = NTHelpers.enumToChooser(TurretAlignMode.class);
 
     private final TalonFX turretMotor;
     private final TalonFXConfiguration turretMotorConfig;
@@ -87,7 +87,8 @@ public class TurretSubsystem extends SubsystemBase {
     private final MoAbsoluteEncoder absEncoder1;
     private final MoAbsoluteEncoder absEncoder2;
     private final VernierEncoder vernierEncoder;
-    private final Alert encodersDisconnectedAlert = new Alert("turret absolute encoder disconnected", Alert.Level.HIGH);
+    private final Alert encodersDisconnectedAlert =
+            new Alert("turretEncoderDisconnected", "turret absolute encoder disconnected", Alert.Level.HIGH);
 
     private TurretAngleHelper angleHelper;
 

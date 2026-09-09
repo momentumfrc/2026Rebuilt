@@ -168,7 +168,8 @@ public final class TurretTargeting {
     private TurretSetpoint targetPosition(Translation2d target, Pose2d turretPose) {
         targetPublisher.set(target);
 
-        Rotation2d goalAngle = target.minus(turretPose.getTranslation()).getAngle();
+        Rotation2d goalAngle =
+                target.minus(turretPose.getTranslation()).getAngle().get();
         double goalVelocity = calculateGoalVelocity(goalAngle);
         double turretToTargetDistance = target.getDistance(turretPose.getTranslation());
 

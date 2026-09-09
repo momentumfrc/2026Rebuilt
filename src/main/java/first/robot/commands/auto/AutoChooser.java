@@ -33,7 +33,7 @@ import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.DoubleEntry;
-import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.tunable.Selectable;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Time;
 
@@ -79,8 +79,8 @@ public class AutoChooser {
 
     private final BooleanEntry enableAutoSwitch;
 
-    private SendableChooser<AutoChoices> autoChoicesChooser = NTHelpers.enumToChooser(AutoChoices.class);
-    private SendableChooser<ShootAutoRoutines> autoRoutinesChooser = NTHelpers.enumToChooser(ShootAutoRoutines.class);
+    private Selectable<AutoChoices> autoChoicesChooser = NTHelpers.enumToChooser(AutoChoices.class);
+    private Selectable<ShootAutoRoutines> autoRoutinesChooser = NTHelpers.enumToChooser(ShootAutoRoutines.class);
     private BooleanEntry assumeRobotPose;
 
     private DoubleEntry backupDistance;
@@ -177,7 +177,8 @@ public class AutoChooser {
         var targetTrans = new Translation2d(newX, robotPose.getY());
 
         Rotation2d directionOfTravel =
-                targetTrans.minus(robotPose.getTranslation()).getAngle();
+                targetTrans.minus(robotPose.getTranslation()).getAngle().get();
+        ;
         var waypoints = PathPlannerPath.waypointsFromPoses(
                 new Pose2d(robotPose.getTranslation(), directionOfTravel), new Pose2d(targetTrans, directionOfTravel));
 

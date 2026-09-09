@@ -15,7 +15,6 @@ import first.robot.commands.intake.ZeroIntakeWristCommand;
 import first.robot.input.ControllerInput;
 import first.robot.input.MoInput;
 import first.robot.input.SingleControllerInput;
-import first.robot.molib.NTHelpers;
 import first.robot.molib.Utils;
 import first.robot.shootutils.TurretTargeting;
 import first.robot.subsystem.DriveSubsystem;
@@ -36,8 +35,10 @@ import org.wpilib.command2.button.RobotModeTriggers;
 import org.wpilib.command2.button.Trigger;
 import org.wpilib.driverstation.GenericHID.RumbleType;
 import org.wpilib.driverstation.RobotState;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.telemetry.TelemetryTable;
+import org.wpilib.tunable.Selectable;
+import org.wpilib.tunable.Tunables;
 
 public class RobotContainer {
     // **** SUBSYSTEMS ****
@@ -61,7 +62,7 @@ public class RobotContainer {
     private final ControllerInput controllerInput = new ControllerInput();
     private final SingleControllerInput singleControllerInput = new SingleControllerInput();
 
-    private final SendableChooser<MoInput> inputChooser = new SendableChooser<>();
+    private final Selectable<MoInput> inputChooser = new Selectable<>();
 
     private final SysIdUtil sysId = new SysIdUtil(List.of(
             intakeWristSubsystem.getSysIdMechanism(),
@@ -132,6 +133,8 @@ public class RobotContainer {
     private Trigger lockTrigger;
     private Trigger boostTrigger;
 
+    private TelemetryTable subsystemsTable = Telemetry.getTable("subsystems");
+
     private AutoChooser autochooser = new AutoChooser(
             robotPositioning,
             driveSubsystem,
@@ -147,7 +150,6 @@ public class RobotContainer {
         addInputChooserToDashboard();
         configureBindings();
         setDefaultCommands();
-        addSubsystemsToDashboard();
     }
 
     public void setAutoDefaultCommnds() {
@@ -172,22 +174,21 @@ public class RobotContainer {
     }
 
     private void addSubsystemsToDashboard() {
-        var table = NTHelpers.getTable("subsystems");
-        NTHelpers.publishSendable(table, driveSubsystem);
-        NTHelpers.publishSendable(table, turret);
-        NTHelpers.publishSendable(table, indexer);
-        NTHelpers.publishSendable(table, kicker);
-        NTHelpers.publishSendable(table, shooter);
-        NTHelpers.publishSendable(table, hood);
-        NTHelpers.publishSendable(table, intakeRollerSubsystem);
-        NTHelpers.publishSendable(table, intakeWristSubsystem);
-        NTHelpers.publishSendable(table, leds);
+        subsystemsTable.log("driveSubsystem", driveSubsystem);
+        subsystemsTable.log("turret", turret);
+        subsystemsTable.log("indexer", indexer);
+        subsystemsTable.log("kicker", kicker);
+        subsystemsTable.log("shooter", shooter);
+        subsystemsTable.log("hood", hood);
+        subsystemsTable.log("intakeRollerSubsystem", intakeRollerSubsystem);
+        subsystemsTable.log("intakeWristSubsystem", intakeWristSubsystem);
+        subsystemsTable.log("leds", leds);
     }
 
     private void addInputChooserToDashboard() {
-        inputChooser.setDefaultOption("Driver + Operator", controllerInput);
-        inputChooser.addOption("Single Driver", singleControllerInput);
-        SmartDashboard.putData("Controller Input Chooser", inputChooser);
+        inputChooser.addDefault("Driver + Operator", controllerInput);
+        inputChooser.add("Single Driver", singleControllerInput);
+        Tunables.publish("Controller Input Chooser", inputChooser);
     }
 
     private void configureBindings() {
@@ -290,5 +291,9 @@ public class RobotContainer {
         double operatorRumble =
                 RobotState.isTeleopEnabled() && turret.targetIsAligned() ? MoPrefs.operatorRumble.get() : 0;
         controllerInput.getOperatorController().setRumble(RumbleType.LEFT_RUMBLE, operatorRumble);
+    }
+
+    public void telemetry() {
+        addSubsystemsToDashboard();
     }
 }

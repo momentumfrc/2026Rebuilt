@@ -52,27 +52,27 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getClearShooter() {
-        return driveController.getEastFaceButton();
+        return driveController.getFaceRightButton();
     }
 
     @Override
     public boolean getExtendIntake() {
-        return driveController.getLeftTriggerAxis() > 0;
+        return driveController.getLeftTrigger() > 0;
     }
 
     @Override
     public boolean getRetractIntake() {
-        return driveController.getRightTriggerAxis() > 0;
+        return driveController.getRightTrigger() > 0;
     }
 
     @Override
     public boolean getShootRequest() {
-        return driveController.getSouthFaceButton();
+        return driveController.getFaceDownButton();
     }
 
     @Override
     public boolean getReverseIndexerRequest() {
-        return driveController.getNorthFaceButton();
+        return driveController.getFaceUpButton();
     }
 
     // use operator controller if you need this
@@ -83,7 +83,7 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getLockRequest() {
-        return driveController.getWestFaceButton();
+        return driveController.getFaceLeftButton();
     }
 
     @Override

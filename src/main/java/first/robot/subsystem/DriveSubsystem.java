@@ -19,8 +19,8 @@ import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.networktables.BooleanPublisher;
 import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.smartdashboard.SendableChooser;
 import org.wpilib.system.Filesystem;
+import org.wpilib.tunable.Selectable;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Current;
 import swervelib.SwerveDrive;
@@ -44,7 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private boolean boostCurrentLimits = false;
 
-    private final SendableChooser<DriveMode> driveModeChooser =
+    private final Selectable<DriveMode> driveModeChooser =
             NTHelpers.enumToChooser(DriveMode.class, DriveMode.VELOCITY_HEADING);
 
     private final DoublePublisher omegaSpeed;
