@@ -10,41 +10,20 @@ import org.wpilib.units.measure.Angle;
 public class TurretAngleHelper {
     private static final double FLOAT_DELTA = 1e-9;
 
-    private final Rotation2d minAngle;
-    private final Rotation2d maxAngle;
+    private final Angle minAngle;
+    private final Angle maxAngle;
 
-    public static class Result {
-        private Rotation2d angle;
-        private boolean inRange;
+    public record Result(Angle angle, boolean inRange) {}
 
-        public Rotation2d angle() {
-            return angle;
-        }
-
-        public boolean inRange() {
-            return inRange;
-        }
-    }
-
-    private Result result = new Result();
-
-    public TurretAngleHelper(Rotation2d minAngle, Rotation2d maxAngle) {
-        if (maxAngle.getRadians() <= minAngle.getRadians()) {
+    public TurretAngleHelper(Angle minAngle, Angle maxAngle) {
+        if (maxAngle.baseUnitMagnitude() <= minAngle.baseUnitMagnitude()) {
             throw new IllegalArgumentException("max angle must be greater than min angle");
         }
-        if (maxAngle.minus(minAngle).getRadians() >= 2 * Math.PI) {
+        if (maxAngle.minus(minAngle).in(Units.Radians) > 2 * Math.PI) {
             throw new IllegalArgumentException("this class only supports range < 360°");
         }
-
         this.minAngle = minAngle;
         this.maxAngle = maxAngle;
-    }
-
-    /**
-     * Limits values to within [minAngle, maxAngle]. Returns null if a value is out of range.
-     */
-    public Result turretAngleModulus(Rotation2d angle) {
-        return turretAngleModulusRads(angle.getRadians());
     }
 
     public Result turretAngleModulus(Angle angle) {
@@ -52,8 +31,8 @@ public class TurretAngleHelper {
     }
 
     public Result turretAngleModulusRads(double rads) {
-        double minRad = minAngle.getRadians();
-        double maxRad = maxAngle.getRadians();
+        double minRad = minAngle.in(Units.Radians);
+        double maxRad = maxAngle.in(Units.Radians);
 
         double value = MathUtil.inputModulus(rads - minRad, 0, 2 * Math.PI);
         if (value == 2 * Math.PI) {
@@ -61,19 +40,15 @@ public class TurretAngleHelper {
         }
 
         if (value <= maxRad - minRad) {
-            result.inRange = true;
-            result.angle = Rotation2d.fromRadians(minRad + value);
+            return new Result(Units.Radians.of(minRad + value), true);
         } else {
-            result.inRange = false;
             // might want to check this
             value = Interpolator.forDouble()
                     .interpolate(
                             maxRad - minRad,
                             0d,
                             InverseInterpolator.forDouble().inverseInterpolate(maxRad - minRad, 2 * Math.PI, value));
-            result.angle = Rotation2d.fromRadians(minRad + value);
+            return new Result(Units.Radians.of(minRad + value), false);
         }
-
-        return result;
     }
 }

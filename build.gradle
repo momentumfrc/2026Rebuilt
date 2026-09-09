@@ -48,6 +48,10 @@ deploy {
     }
 }
 
+test {
+    testLogging.exceptionFormat = 'full'
+}
+
 def deployArtifact = deploy.targets.systemcore.artifacts.wpilibJava
 
 // Set to true to use debug for simulation including JNI

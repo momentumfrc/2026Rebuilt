@@ -97,7 +97,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final MoTalonFxProfilePID<AngleUnit, AngularVelocityUnit> turretAbsolutePid;
     private final PIDController turretRelativePid;
 
-    private Rotation2d lastOORAngle = null;
+    private Angle lastOORAngle = null;
     private final LinearFilter turretOORVelocityFilter =
             LinearFilter.movingAverage((int) (0.1 / Constants.LOOP_PERIOD));
 
@@ -191,9 +191,7 @@ public class TurretSubsystem extends SubsystemBase {
                 MoPrefs.turretMinSoftLimit,
                 MoPrefs.turretMaxSoftLimit,
                 (min, max) -> {
-                    angleHelper = new TurretAngleHelper(
-                            Rotation2d.fromRadians(min.in(Units.Radians)),
-                            Rotation2d.fromRadians(max.in(Units.Radians)));
+                    angleHelper = new TurretAngleHelper((Angle) min, (Angle) max);
                 },
                 true);
 
@@ -312,13 +310,13 @@ public class TurretSubsystem extends SubsystemBase {
         alignAbsolute(setpoint.goalAngle(), setpoint.goalVelocity());
     }
 
-    private double calculateOutOfRangeVelocity(Rotation2d angle) {
+    private double calculateOutOfRangeVelocity(Angle angle) {
         if (lastOORAngle == null) {
             turretOORVelocityFilter.reset();
             lastOORAngle = angle;
         }
         double velocity =
-                turretOORVelocityFilter.calculate(angle.minus(lastOORAngle).getDegrees() / Constants.LOOP_PERIOD);
+                turretOORVelocityFilter.calculate(angle.minus(lastOORAngle).in(Units.Degrees) / Constants.LOOP_PERIOD);
         lastOORAngle = angle;
         return velocity;
     }
@@ -344,10 +342,10 @@ public class TurretSubsystem extends SubsystemBase {
 
         State goalState;
         if (result.inRange()) {
-            goalState = new State(result.angle().getDegrees(), goalVelocity.in(Units.DegreesPerSecond));
+            goalState = new State(result.angle().in(Units.Degrees), goalVelocity.in(Units.DegreesPerSecond));
             lastOORAngle = null;
         } else {
-            goalState = new State(result.angle().getDegrees(), calculateOutOfRangeVelocity(result.angle()));
+            goalState = new State(result.angle().in(Units.Degrees), calculateOutOfRangeVelocity(result.angle()));
         }
 
         if (Math.abs(absoluteSetpoint.position - turretEncoder.getPosition().in(Units.Degrees))
@@ -424,7 +422,7 @@ public class TurretSubsystem extends SubsystemBase {
                         targetInRange.set(result.inRange());
 
                         this.turretAbsolutePid.setReference(
-                                Units.Radians.of(result.angle().getRadians()), Units.RadiansPerSecond.zero());
+                                result.angle(), Units.RadiansPerSecond.zero());
                     }
                 })
                 .withName("TurretTestCommand");
