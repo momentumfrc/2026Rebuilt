@@ -46,6 +46,10 @@ deploy {
     }
 }
 
+test {
+    testLogging.exceptionFormat = 'full'
+}
+
 def deployArtifact = deploy.targets.systemcore.artifacts.wpilibJava
 
 // Set to true to use debug for all targets including JNI, which will drastically impact
