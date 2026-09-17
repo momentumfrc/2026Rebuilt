@@ -27,7 +27,7 @@ public class KickerSubsystem extends SubsystemBase {
     private final MoSparkMaxPID<AngleUnit, AngularVelocityUnit> pid;
 
     public KickerSubsystem() {
-        motor = new SparkFlex(Constants.KICKER_PORT.address(), Constants.DEFAULT_CAN_BUS, MotorType.kBrushless);
+        motor = new SparkFlex(Constants.DEFAULT_CAN_BUS, Constants.KICKER_PORT.address(), MotorType.kBrushless);
         config = MoSparkConfigurator.forSparkFlex(motor);
 
         config.accept(config -> config.smartCurrentLimit(

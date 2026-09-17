@@ -1,16 +1,18 @@
 package frc.robot.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.wpilib.units.Units.Degrees;
 
 import first.robot.util.TurretAngleHelper;
 import org.junit.jupiter.api.Test;
 import org.wpilib.units.measure.Angle;
 
-import static org.wpilib.units.Units.Degrees;
-
 public class TurretAngleHelperTests {
     private void assertResult(Angle angle, boolean inRange, TurretAngleHelper.Result result) {
-        assertEquals(angle, result.angle(), angle.in(Degrees) + " != " + result.angle().in(Degrees));
+        assertEquals(
+                angle,
+                result.angle(),
+                angle.in(Degrees) + " != " + result.angle().in(Degrees));
         assertEquals(inRange, result.inRange());
     }
 

@@ -4,7 +4,6 @@
 
 package first.robot;
 
-import first.robot.commands.LEDCommand;
 import first.robot.commands.ShootCommand;
 import first.robot.commands.ZeroHoodCommand;
 import first.robot.commands.auto.AutoChooser;
@@ -24,7 +23,6 @@ import first.robot.subsystem.IndexerSubsystem;
 import first.robot.subsystem.IntakeRollerSubsystem;
 import first.robot.subsystem.IntakeWristSubsystem;
 import first.robot.subsystem.KickerSubsystem;
-import first.robot.subsystem.LEDSubsystem;
 import first.robot.subsystem.ShooterSubsystem;
 import first.robot.subsystem.TurretSubsystem;
 import first.robot.util.SysIdUtil;
@@ -49,7 +47,7 @@ public class RobotContainer {
     private final HoodSubsystem hood = new HoodSubsystem();
     private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
     private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
-    private final LEDSubsystem leds = new LEDSubsystem();
+    // private final LEDSubsystem leds = new LEDSubsystem();
 
     // **** UTILITIES ****
     public final RobotPositioning robotPositioning = new RobotPositioning(
@@ -109,7 +107,7 @@ public class RobotContainer {
     private final Command testIntakeWristCommand =
             intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
 
-    private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
+    // private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
 
     // **** TRIGGERS ****
     private Trigger resetFieldOrientedFwd;
@@ -166,9 +164,10 @@ public class RobotContainer {
         kicker.setDefaultCommand(idleKickerCommand);
         shooter.setDefaultCommand(idleShooterCommand);
         turret.setDefaultCommand(passiveTargetingCommand);
+        //turret.setDefaultCommand(idleTurretCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
-        leds.setDefaultCommand(ledCommand);
+        // leds.setDefaultCommand(ledCommand);
     }
 
     private void addSubsystemsToDashboard() {
@@ -181,7 +180,7 @@ public class RobotContainer {
         NTHelpers.publishSendable(table, hood);
         NTHelpers.publishSendable(table, intakeRollerSubsystem);
         NTHelpers.publishSendable(table, intakeWristSubsystem);
-        NTHelpers.publishSendable(table, leds);
+        // NTHelpers.publishSendable(table, leds);
     }
 
     private void addInputChooserToDashboard() {

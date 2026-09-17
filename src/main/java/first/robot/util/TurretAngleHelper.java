@@ -1,6 +1,5 @@
 package first.robot.util;
 
-import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.interpolation.Interpolator;
 import org.wpilib.math.interpolation.InverseInterpolator;
 import org.wpilib.math.util.MathUtil;

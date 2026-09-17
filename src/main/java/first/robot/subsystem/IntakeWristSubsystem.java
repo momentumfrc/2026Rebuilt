@@ -44,7 +44,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
 
     public IntakeWristSubsystem() {
         intakeWrist =
-                new SparkFlex(Constants.INTAKE_WRIST_PORT.address(), Constants.DEFAULT_CAN_BUS, MotorType.kBrushless);
+                new SparkFlex(Constants.DEFAULT_CAN_BUS, Constants.INTAKE_WRIST_PORT.address(), MotorType.kBrushless);
         intakeWristConfig = MoSparkConfigurator.forSparkFlex(intakeWrist);
         intakeWristConfig.accept(config -> config.smartCurrentLimit(
                         (int) MoPrefs.intakeWristSmartCurrentLimit.get().in(Units.Amps))

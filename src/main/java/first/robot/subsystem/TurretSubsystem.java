@@ -198,6 +198,8 @@ public class TurretSubsystem extends SubsystemBase {
 
         this.absEncoder1 = MoAbsoluteEncoder.forDio(Constants.TURRET_ABSOLUTE_ENCODER_1.dioPort());
         this.absEncoder2 = MoAbsoluteEncoder.forDio(Constants.TURRET_ABSOLUTE_ENCODER_2.dioPort());
+        this.absEncoder1.getMoEncoder().getEncoder().setInverted(true);
+        this.absEncoder2.getMoEncoder().getEncoder().setInverted(true);
         this.vernierEncoder = new VernierEncoder(
                 absEncoder1,
                 absEncoder2,
@@ -420,8 +422,7 @@ public class TurretSubsystem extends SubsystemBase {
                         var result = angleHelper.turretAngleModulusRads(goalRadians);
                         targetInRange.set(result.inRange());
 
-                        this.turretAbsolutePid.setReference(
-                                result.angle(), Units.RadiansPerSecond.zero());
+                        this.turretAbsolutePid.setReference(result.angle(), Units.RadiansPerSecond.zero());
                     }
                 })
                 .withName("TurretTestCommand");
