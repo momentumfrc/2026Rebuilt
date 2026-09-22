@@ -21,7 +21,7 @@ import org.wpilib.command2.SubsystemBase;
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.DoubleEntry;
-import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.tunable.Selectable;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Time;
 
@@ -45,7 +45,7 @@ public class AutoChooser {
 
     private final BooleanEntry enableAutoSwitch;
 
-    private SendableChooser<ShootAutoRoutines> autoRoutinesChooser = NTHelpers.enumToChooser(ShootAutoRoutines.class);
+    private Selectable<ShootAutoRoutines> autoRoutinesChooser = NTHelpers.enumToChooser(ShootAutoRoutines.class);
     private BooleanEntry assumeRobotPose;
 
     private DoubleEntry backupDistance;

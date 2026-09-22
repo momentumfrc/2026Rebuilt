@@ -4,7 +4,6 @@
 
 package first.robot;
 
-import first.robot.molib.NTHelpers;
 import first.robot.molib.motune.MoTuner;
 import first.robot.molib.prefs.MoPrefsImpl;
 import org.wpilib.command2.Command;
@@ -34,7 +33,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
         MoTuner.pollAllStateValues();
-        NTHelpers.updateSendables();
+        robotContainer.telemetry();
     }
 
     @Override

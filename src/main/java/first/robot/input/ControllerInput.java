@@ -32,7 +32,7 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getDriveBoostRequest() {
-        return driveController.getSouthFaceButton();
+        return driveController.getFaceDownButton();
     }
 
     @Override
@@ -52,12 +52,12 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getRunIntake() {
-        return operatorController.getRightBumperButton() || driveController.getRightTriggerAxis() > 0.8;
+        return operatorController.getRightBumperButton() || driveController.getRightTrigger() > 0.8;
     }
 
     @Override
     public boolean getRunIntakeReverse() {
-        return operatorController.getRightTriggerAxis() > 0.8;
+        return operatorController.getRightTrigger() > 0.8;
     }
 
     @Override
@@ -67,7 +67,7 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getClearShooter() {
-        return operatorController.getEastFaceButton();
+        return operatorController.getFaceRightButton();
     }
 
     @Override
@@ -82,17 +82,17 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getShootRequest() {
-        return operatorController.getSouthFaceButton();
+        return operatorController.getFaceDownButton();
     }
 
     @Override
     public boolean getShuttleRequest() {
-        return operatorController.getNorthFaceButton();
+        return operatorController.getFaceUpButton();
     }
 
     @Override
     public boolean getReverseIndexerRequest() {
-        return operatorController.getWestFaceButton();
+        return operatorController.getFaceLeftButton();
     }
 
     @Override
@@ -102,6 +102,6 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getLockRequest() {
-        return driveController.getWestFaceButton();
+        return driveController.getFaceLeftButton();
     }
 }

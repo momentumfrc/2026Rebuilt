@@ -64,7 +64,7 @@ public class HoodSubsystem extends SubsystemBase {
     private final DoublePublisher calculatedHoodPositionPublisher;
 
     public HoodSubsystem() {
-        motor = new TalonFX(Constants.HOOD_PORT.address(), CANBus.systemcore(Constants.DEFAULT_CAN_BUS));
+        motor = new TalonFX(Constants.HOOD_PORT.address(), new CANBus(Constants.DEFAULT_CAN_BUS));
         motorConfig = new TalonFXConfiguration();
         encoder = MoRotationEncoder.forTalonFx(motor, Units.Revolutions, motorConfig);
 

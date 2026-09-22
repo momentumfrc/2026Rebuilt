@@ -9,15 +9,15 @@ import first.robot.subsystem.ShooterSubsystem;
 import first.robot.subsystem.TurretSubsystem;
 import first.robot.util.OdometryTargetingHelper;
 import org.wpilib.command2.Command;
-import org.wpilib.driverstation.Alert;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.MatchState;
 import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.DoubleEntry;
-import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.tunable.Selectable;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.util.Alert;
 
 public class ShootCommand extends Command {
     private final KickerSubsystem kicker;
@@ -29,7 +29,7 @@ public class ShootCommand extends Command {
 
     private final OdometryTargetingHelper.TargetType targetType;
 
-    private final Alert targetOutOfRange = new Alert("Target out of turret range", Alert.Level.LOW);
+    private final Alert targetOutOfRange = new Alert("targetOutOfRange", "Target out of turret range", Alert.Level.LOW);
 
     private enum TargetingMode {
         ON_THE_MOVE,
@@ -37,7 +37,7 @@ public class ShootCommand extends Command {
         FALLBACK
     };
 
-    private final SendableChooser<TargetingMode> modeChooser =
+    private final Selectable<TargetingMode> modeChooser =
             NTHelpers.enumToChooser(TargetingMode.class, TargetingMode.ON_THE_MOVE);
 
     private final BooleanEntry doOverrideFlywheelSetpoint;

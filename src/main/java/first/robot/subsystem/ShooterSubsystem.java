@@ -48,8 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final DoublePublisher calculatedFlywheelSpeedPublisher;
 
     public ShooterSubsystem() {
-        motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address(), CANBus.systemcore(Constants.DEFAULT_CAN_BUS));
-        motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address(), CANBus.systemcore(Constants.DEFAULT_CAN_BUS));
+        motor1 = new TalonFX(Constants.SHOOTER_1_ADDRESS.address(), new CANBus(Constants.DEFAULT_CAN_BUS));
+        motor2 = new TalonFX(Constants.SHOOTER_2_ADDRESS.address(), new CANBus(Constants.DEFAULT_CAN_BUS));
         motor1Config = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Coast)
@@ -113,7 +113,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command getTestCommand(Gamepad controller) {
         return run(() -> {
-                    if (controller.getEastFaceButton()) {
+                    if (controller.getFaceRightButton()) {
                         runAtSpeed(Units.RPM.of(flywheelTestSetpointEntry.get()));
                     } else {
                         stop();

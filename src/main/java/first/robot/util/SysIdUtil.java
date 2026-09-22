@@ -15,7 +15,7 @@ import org.wpilib.command2.sysid.SysIdRoutine;
 import org.wpilib.networktables.DoubleEntry;
 import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableEvent;
-import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.tunable.Selectable;
 import org.wpilib.units.AngularAccelerationUnit;
 import org.wpilib.units.Units;
 
@@ -28,8 +28,8 @@ public class SysIdUtil {
         DYNAMIC_REV
     };
 
-    private final SendableChooser<SysIdMode> modeChooser = NTHelpers.enumToChooser(SysIdMode.class, SysIdMode.DISABLED);
-    private final SendableChooser<SysIdRoutine.Mechanism> mechanismChooser = new SendableChooser<>();
+    private final Selectable<SysIdMode> modeChooser = NTHelpers.enumToChooser(SysIdMode.class, SysIdMode.DISABLED);
+    private final Selectable<SysIdRoutine.Mechanism> mechanismChooser = new Selectable<>();
 
     private final NetworkTable table;
     private final DoubleEntry rampRate;
@@ -44,10 +44,10 @@ public class SysIdUtil {
         boolean first = true;
         for (var mechanism : mechanisms) {
             if (first) {
-                mechanismChooser.setDefaultOption(mechanism.name, mechanism);
+                mechanismChooser.addDefault(mechanism.name, mechanism);
                 first = false;
             } else {
-                mechanismChooser.addOption(mechanism.name, mechanism);
+                mechanismChooser.add(mechanism.name, mechanism);
             }
         }
 
@@ -84,10 +84,10 @@ public class SysIdUtil {
                     mechanism.name, (name) -> new SysIdRoutine(getSysIdConfig(), mechanism));
             return switch (modeChooser.getSelected()) {
                 case DISABLED -> Commands.print("SysId is disabled");
-                case QUASISTATIC_FWD -> routine.quasistatic(SysIdRoutine.Direction.kForward);
-                case QUASISTATIC_REV -> routine.quasistatic(SysIdRoutine.Direction.kReverse);
-                case DYNAMIC_FWD -> routine.dynamic(SysIdRoutine.Direction.kForward);
-                case DYNAMIC_REV -> routine.dynamic(SysIdRoutine.Direction.kReverse);
+                case QUASISTATIC_FWD -> routine.quasistatic(SysIdRoutine.Direction.FORWARD);
+                case QUASISTATIC_REV -> routine.quasistatic(SysIdRoutine.Direction.REVERSE);
+                case DYNAMIC_FWD -> routine.dynamic(SysIdRoutine.Direction.FORWARD);
+                case DYNAMIC_REV -> routine.dynamic(SysIdRoutine.Direction.REVERSE);
             };
         });
     }
