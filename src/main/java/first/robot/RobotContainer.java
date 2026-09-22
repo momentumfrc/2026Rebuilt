@@ -164,7 +164,7 @@ public class RobotContainer {
         kicker.setDefaultCommand(idleKickerCommand);
         shooter.setDefaultCommand(idleShooterCommand);
         turret.setDefaultCommand(passiveTargetingCommand);
-        //turret.setDefaultCommand(idleTurretCommand);
+        // turret.setDefaultCommand(idleTurretCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
         // leds.setDefaultCommand(ledCommand);

@@ -41,22 +41,15 @@ public class HoodSerializedInformationHolder {
     private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
 
     // package-private for testing
-    @Json.Creator
     HoodSerializedInformationHolder(List<Entry> entries) {
         this.entries = entries.stream()
                 .sorted(Comparator.comparingDouble((entry) -> entry.distance()))
                 .toList();
 
         for (var entry : this.entries) {
-            if (entry.hoodAngle() != null) {
-                hoodAngleMap.put(entry.distance(), entry.hoodAngle());
-            }
-            if (entry.flywheelSpeed() != null) {
-                flywheelSpeedMap.put(entry.distance(), entry.flywheelSpeed());
-            }
-            if (entry.timeOfFlight() != null) {
-                timeOfFlightMap.put(entry.distance(), entry.timeOfFlight());
-            }
+            hoodAngleMap.put(entry.distance(), entry.hoodAngle());
+            flywheelSpeedMap.put(entry.distance(), entry.flywheelSpeed());
+            timeOfFlightMap.put(entry.distance(), entry.timeOfFlight());
         }
     }
 
@@ -70,28 +63,25 @@ public class HoodSerializedInformationHolder {
     private static HoodSerializedInformationHolder fromFile() {
         Jsonb mapper = Jsonb.builder().build();
 
-        JsonType<HoodSerializedInformationHolder> type = mapper.type(HoodSerializedInformationHolder.class);
+        JsonType<Root> type = mapper.type(Root.class);
 
         if (DATA_FILE.canRead() == false) {
             throw new IllegalStateException("Could not open data file for reading at [" + DATA_FILE.toString() + "]");
         }
 
         try (InputStream stream = new FileInputStream(DATA_FILE); ) {
-            return type.fromJson(stream);
+            var root = type.fromJson(stream);
+            return new HoodSerializedInformationHolder(root.entries());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Json
-    static record Entry(Double distance, Double hoodAngle, Double flywheelSpeed, Double timeOfFlight) {
-        public Entry(Double distance, Double hoodAngle, Double flywheelSpeed, Double timeOfFlight) {
-            this.distance = distance;
-            this.flywheelSpeed = flywheelSpeed;
-            this.hoodAngle = hoodAngle;
-            this.timeOfFlight = timeOfFlight;
-        }
-    }
+    record Entry(double distance, double hoodAngle, double flywheelSpeed, double timeOfFlight) {}
+
+    @Json
+    record Root(List<Entry> entries) {}
 
     /**
      * Get the interpolated hood angle.
