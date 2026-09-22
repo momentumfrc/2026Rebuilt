@@ -4,7 +4,6 @@
 
 package first.robot;
 
-import com.pathplanner.lib.commands.PathfindingCommand;
 import first.robot.molib.NTHelpers;
 import first.robot.molib.motune.MoTuner;
 import first.robot.molib.prefs.MoPrefsImpl;
@@ -24,8 +23,6 @@ public class Robot extends TimedRobot {
         DataLogManager.start();
 
         MoPrefsImpl.cleanUpPrefs();
-
-        CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
     }
 
     @Override
