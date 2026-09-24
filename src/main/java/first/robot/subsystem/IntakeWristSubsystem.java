@@ -154,7 +154,7 @@ public class IntakeWristSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         wristCurrentPublisher.set(getIntakeWristCurrent().in(Units.Amps));
-        positionPublisher.set(intakeWrist.getEncoder().getPosition().get());
+        positionPublisher.set(wristEncoder.getPositionInEncoderUnits());
 
         wristVoltagePublisher.set(intakeWrist.getAppliedOutput().get()
                 * intakeWrist.getBusVoltage().get());

@@ -29,7 +29,8 @@ public class ShootCommand extends Command {
 
     private final OdometryTargetingHelper.TargetType targetType;
 
-    private final Alert targetOutOfRange = new Alert("targetOutOfRange", "Target out of turret range", Alert.Level.LOW);
+    private static final Alert targetOutOfRange =
+            new Alert("targetOutOfRange", "Target out of turret range", Alert.Level.LOW);
 
     private enum TargetingMode {
         ON_THE_MOVE,

@@ -12,6 +12,7 @@ import first.robot.molib.motune.TunerUtils;
 import first.robot.molib.pid.MoSparkMaxPID;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.AngleUnit;
 import org.wpilib.units.AngularVelocityUnit;
 import org.wpilib.units.Units;
@@ -56,6 +57,11 @@ public class KickerSubsystem extends SubsystemBase {
 
     public void stop() {
         pid.setVelocityReference(Units.RevolutionsPerSecond.zero());
+    }
+
+    @Override
+    public void periodic() {
+        Telemetry.log("Kicker Speed (RPM)", encoder.getVelocity().in(Units.RPM));
     }
 
     public SysIdRoutine.Mechanism getSysIdMechanism() {
