@@ -11,6 +11,8 @@ import org.wpilib.command2.CommandScheduler;
 import org.wpilib.framework.TimedRobot;
 import org.wpilib.system.DataLogManager;
 
+import com.ctre.phoenix6.SignalLogger;
+
 public class Robot extends TimedRobot {
     private Command autonomousCommand;
 
@@ -20,6 +22,7 @@ public class Robot extends TimedRobot {
         robotContainer = new RobotContainer();
 
         DataLogManager.start();
+        SignalLogger.enableAutoLogging(false);
 
         MoPrefsImpl.cleanUpPrefs();
     }
