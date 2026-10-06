@@ -60,7 +60,7 @@ public class AutoPathPlannerCommands {
 
             if (assumeRobotPosition) {
                 Pose2d startPose = path.getStartingHolonomicPose()
-                        .orElseGet(() -> new Pose2d(path.getPoint(0).position, Rotation2d.kZero));
+                        .orElseGet(() -> new Pose2d(path.getPoint(0).position, Rotation2d.ZERO));
 
                 return new SequentialCommandGroup(
                         Commands.runOnce(() -> {

@@ -114,7 +114,6 @@ public class AutoChooser {
         var autoTable = NTHelpers.getTable("Auto");
         enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", true);
 
-        NTHelpers.publishSendable(autoTable, "Which Auto?", autoChoicesChooser);
         NTHelpers.publishSendable(autoTable, "Which Routine?", autoRoutinesChooser);
         assumeRobotPose = NTHelpers.getBooleanEntry(autoTable, "Assume Robot Position?", false);
 
@@ -176,7 +175,7 @@ public class AutoChooser {
         var targetTrans = new Translation2d(newX, robotPose.getY());
 
         Rotation2d directionOfTravel =
-                targetTrans.minus(robotPose.getTranslation()).getAngle();
+                targetTrans.minus(robotPose.getTranslation()).getAngle().get();
         var waypoints = PathPlannerPath.waypointsFromPoses(
                 new Pose2d(robotPose.getTranslation(), directionOfTravel), new Pose2d(targetTrans, directionOfTravel));
 
@@ -349,10 +348,7 @@ public class AutoChooser {
         if (!enableAutoSwitch.get()) {
             return Commands.print("Auto Disabled");
         }
-        var auto =
-                switch (autoChoicesChooser.getSelected()) {
-                    case SHOOT -> getAutoRoutine();
-                };
+        var auto = getAutoRoutine();
         for (var subsystem : proxiedSubsystems) {
             if (auto.getRequirements().contains(subsystem)) {
                 DriverStationErrors.reportWarning(
