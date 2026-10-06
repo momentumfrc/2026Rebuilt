@@ -1,5 +1,6 @@
 package first.robot.util;
 
+import com.pathplanner.lib.config.PIDConstants;
 import first.robot.molib.motune.MoTuner;
 
 public class MutablePIDConstants {
@@ -19,5 +20,9 @@ public class MutablePIDConstants {
                 .iZone(i -> {
                     this.kIZone = i;
                 });
+    }
+
+    public PIDConstants toImmutable() {
+        return new PIDConstants(kP, kI, kD, kIZone);
     }
 }
