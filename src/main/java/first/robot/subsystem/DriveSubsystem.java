@@ -1,5 +1,7 @@
 package first.robot.subsystem;
 
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import first.robot.MoPrefs;
 import first.robot.input.MoInput;
 import first.robot.molib.NTHelpers;
@@ -103,6 +105,18 @@ public class DriveSubsystem extends SubsystemBase {
         return run(() -> {
             swerveDrive.driveFieldOriented(inputSupplier.get().get());
         });
+    }
+
+    public void driveRobotRelativeSpeeds(ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
+        swerveDrive.drive(
+                chassisSpeeds,
+                swerveDrive.kinematics.toSwerveModuleVelocities(chassisSpeeds),
+                driveFeedforwards.linearForces());
+    }
+
+    public PPHolonomicDriveController driveController() {
+        return new PPHolonomicDriveController(
+                translationPIDConstants.toImmutable(), rotationPIDConstants.toImmutable());
     }
 
     public void stop() {
