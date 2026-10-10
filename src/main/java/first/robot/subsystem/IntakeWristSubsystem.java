@@ -108,6 +108,10 @@ public class IntakeWristSubsystem extends SubsystemBase {
         wristPid.setPositionReference(position);
     }
 
+    public void resetTrapezoid() {
+        wristPid.resetTrapezoid();
+    }
+
     public void stopWristMotor() {
         intakeWrist.setVoltage(0);
     }

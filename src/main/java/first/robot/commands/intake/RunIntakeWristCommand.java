@@ -58,6 +58,7 @@ public class RunIntakeWristCommand extends Command {
             currState = WristState.MOVING;
             currDirection = requestedDirection;
             moveTimer.restart();
+            wrist.resetTrapezoid();
         }
 
         if (currState == WristState.MOVING) {
