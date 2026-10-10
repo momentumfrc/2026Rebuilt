@@ -55,7 +55,7 @@ public class HoodSerializedInformationHolder {
 
     public static HoodSerializedInformationHolder getInstance() {
         if (instance == null) {
-            instance = fromFile();
+            instance = fromHardCoded();
         }
         return instance;
     }
@@ -75,6 +75,15 @@ public class HoodSerializedInformationHolder {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static HoodSerializedInformationHolder fromHardCoded() {
+        return new HoodSerializedInformationHolder(List.of(
+            new Entry(1.066, 2, 3000, 1.29),
+            new Entry(2.3, 17, 2750, 1.0),
+            new Entry(4.394, 18, 3600, 1.42),
+            new Entry(5.233, 27, 3600, 4)
+        ));
     }
 
     @Json

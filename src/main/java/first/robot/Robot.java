@@ -4,6 +4,7 @@
 
 package first.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import first.robot.molib.motune.MoTuner;
 import first.robot.molib.prefs.MoPrefsImpl;
@@ -11,8 +12,6 @@ import org.wpilib.command2.Command;
 import org.wpilib.command2.CommandScheduler;
 import org.wpilib.framework.TimedRobot;
 import org.wpilib.system.DataLogManager;
-
-import com.ctre.phoenix6.SignalLogger;
 
 public class Robot extends TimedRobot {
     private Command autonomousCommand;
