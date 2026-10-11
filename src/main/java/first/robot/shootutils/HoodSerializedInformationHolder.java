@@ -21,6 +21,8 @@ import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Time;
 
+import first.robot.MoPrefs;
+
 /**
  * A holder for the hood angles for each distance.
  */
@@ -111,7 +113,7 @@ public class HoodSerializedInformationHolder {
      * Get the interpolated flywheel speed.
      */
     public AngularVelocity getFlywheelSpeed(Distance distanceToTarget) {
-        return FLYWHEEL_SPEED_STORE_UNIT.of(flywheelSpeedMap.get(distanceToTarget.abs(DISTANCE_STORE_UNIT)));
+        return FLYWHEEL_SPEED_STORE_UNIT.of(flywheelSpeedMap.get(distanceToTarget.abs(DISTANCE_STORE_UNIT)) * MoPrefs.flywheelSpeedFudgeFactor.get().in(Units.Value));
     }
 
     /**

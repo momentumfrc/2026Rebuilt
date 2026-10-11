@@ -179,6 +179,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngularVelocityUnitPref flywheelClearSpeed = rpmPref("Flywheel Clear Speed", Units.RPM.of(300));
     public static final TimeUnitPref shooterClearTime = secondsPref("Shooter Clear Time", Units.Seconds.of(0.25));
 
+    public static final UnitPref<DimensionlessUnit> flywheelSpeedFudgeFactor = percentPref("Flywheel Fudge Factor", Units.Percent.of(100));
+
     // **** LEDS ****
     public static final DimensionlessUnitPref ledBrightness = percentPref("LED Brightness", Units.Percent.of(40));
 
