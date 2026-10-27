@@ -1,5 +1,6 @@
 package first.robot.shootutils;
 
+import first.robot.MoPrefs;
 import io.avaje.jsonb.Json;
 import io.avaje.jsonb.JsonType;
 import io.avaje.jsonb.Jsonb;
@@ -20,8 +21,6 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Time;
-
-import first.robot.MoPrefs;
 
 /**
  * A holder for the hood angles for each distance.
@@ -81,11 +80,10 @@ public class HoodSerializedInformationHolder {
 
     private static HoodSerializedInformationHolder fromHardCoded() {
         return new HoodSerializedInformationHolder(List.of(
-            new Entry(1.066, 2, 3000, 1.29),
-            new Entry(2.3, 17, 2750, 1.0),
-            new Entry(4.394, 18, 3600, 1.42),
-            new Entry(5.233, 27, 3600, 4)
-        ));
+                new Entry(1.066, 2, 3000, 1.29),
+                new Entry(2.3, 17, 2750, 1.0),
+                new Entry(4.394, 18, 3600, 1.42),
+                new Entry(5.233, 27, 3600, 4)));
     }
 
     @Json
@@ -113,7 +111,8 @@ public class HoodSerializedInformationHolder {
      * Get the interpolated flywheel speed.
      */
     public AngularVelocity getFlywheelSpeed(Distance distanceToTarget) {
-        return FLYWHEEL_SPEED_STORE_UNIT.of(flywheelSpeedMap.get(distanceToTarget.abs(DISTANCE_STORE_UNIT)) * MoPrefs.flywheelSpeedFudgeFactor.get().in(Units.Value));
+        return FLYWHEEL_SPEED_STORE_UNIT.of(flywheelSpeedMap.get(distanceToTarget.abs(DISTANCE_STORE_UNIT))
+                * MoPrefs.flywheelSpeedFudgeFactor.get().in(Units.Value));
     }
 
     /**

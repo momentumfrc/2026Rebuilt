@@ -100,4 +100,9 @@ public class SingleControllerInput implements MoInput {
     public boolean getDriveBoostRequest() {
         return false;
     }
+
+    @Override
+    public double getShotBlockerRequest() {
+        return 0; // IDK what's available
+    }
 }

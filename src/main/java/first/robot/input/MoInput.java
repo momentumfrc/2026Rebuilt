@@ -36,4 +36,6 @@ public interface MoInput {
     public abstract boolean getRunSysId();
 
     public abstract boolean getLockRequest();
+
+    public abstract double getShotBlockerRequest();
 }

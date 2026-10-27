@@ -24,6 +24,8 @@ public class Constants {
     public static final CANAddress SHOOTER_1_ADDRESS = new CANAddress(21);
     public static final CANAddress SHOOTER_2_ADDRESS = new CANAddress(22);
 
+    public static final CANAddress SHOT_BLOCKER_ADDRESS = new CANAddress(0); // TODO: real value
+
     public static final CANPort DEFAULT_CAN_BUS = CANPort.CAN_S0;
 
     // Intake Ports
