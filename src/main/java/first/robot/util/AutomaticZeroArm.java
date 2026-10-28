@@ -46,7 +46,7 @@ public class AutomaticZeroArm {
 
         MoPrefs.shotBlockerMaxHeight.subscribe(
                 max -> {
-                    sparkMaxConfig.softLimit.forwardSoftLimit((float) max.in(this.encoder.getInternalEncoderUnits()));
+                    sparkMaxConfig.softLimit.forwardSoftLimit((float) max.in(this.encoder.getInternalEncoderUnits()) * this.encoder.getEncoderScale());
                     sparkMaxConfig.softLimit.reverseSoftLimit(0);
                 },
                 true);
