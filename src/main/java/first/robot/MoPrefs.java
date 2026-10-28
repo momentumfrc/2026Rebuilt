@@ -197,8 +197,6 @@ public class MoPrefs extends MoPrefsBase {
             secondsPref("shotBlocker Zero Time", Units.Seconds.of(0.25));
     public static final UnitPref<CurrentUnit> shotBlockerZeroCurrentCutoff =
             ampsPref("shotBlocker Zero Current", Units.Amps.of(15));
-    public static final AngularVelocityUnitPref shotBlockerMotorSpeed =
-            rotationsPerSecPref("shotBlocker Motor Speed", Units.RotationsPerSecond.of(75));
     public static final DistanceUnitPref shotBlockerZeroPosition =
             centimetersPref("shotBlocker Zero Pos.", Units.Centimeters.of(-1));
 
