@@ -1,9 +1,9 @@
 package first.robot.util;
 
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import first.robot.MoPrefs;
 import first.robot.molib.NTHelpers;
 import first.robot.molib.encoder.MoDistanceEncoder;
@@ -19,23 +19,23 @@ public class AutomaticZeroArm {
     /* A single side climber */
     private static final Current CLIMBER_CURRENT_LIMIT = Units.Amps.of(25);
 
-    public final SparkMax winch;
+    public final SparkFlex winch;
     private final MoDistanceEncoder encoder;
 
     private final BooleanEntry hasZero;
 
-    private final SparkMaxConfig sparkMaxConfig;
+    private final SparkFlexConfig sparkMaxConfig;
 
     private final DoublePublisher positionPublisher;
     private final DoublePublisher currentPublisher;
 
-    public AutomaticZeroArm(String name, SparkMax winch, boolean inverted) {
+    public AutomaticZeroArm(String name, SparkFlex winch, boolean inverted) {
         this.winch = winch;
 
         this.encoder = MoDistanceEncoder.forSparkRelative(winch, Units.Centimeters);
 
         MoPrefs.shotBlockerEncoderScale.subscribe(this.encoder::setConversionFactor, true);
-        sparkMaxConfig = new SparkMaxConfig();
+        sparkMaxConfig = new SparkFlexConfig();
         sparkMaxConfig.smartCurrentLimit((int) CLIMBER_CURRENT_LIMIT.in(Units.Amps));
         sparkMaxConfig.idleMode(IdleMode.kBrake);
 
