@@ -24,6 +24,8 @@ public class ShotBlockerCommand extends Command {
         double shotBlockerRequest = input.getShotBlockerRequest();
 
         shotBlocker.arm.runWinch(shotBlockerRequest);
+
+        shotBlocker.arm.publish();
     }
 
     @Override
