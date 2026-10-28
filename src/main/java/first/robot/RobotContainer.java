@@ -138,6 +138,8 @@ public class RobotContainer {
     private Trigger lockTrigger;
     private Trigger boostTrigger;
 
+    private Trigger zeroShotBlockerTrigger;
+
     private TelemetryTable subsystemsTable = Telemetry.getTable("subsystems");
 
     private AutoChooser autochooser = new AutoChooser(
@@ -224,6 +226,8 @@ public class RobotContainer {
 
         reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
 
+        zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.hasZero());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -257,6 +261,7 @@ public class RobotContainer {
 
         zeroHoodTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroHoodCommand);
         zeroIntakeWristTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroIntakeWristCommand);
+        zeroShotBlockerTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroShotBlockerCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 
