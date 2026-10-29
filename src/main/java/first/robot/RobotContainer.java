@@ -61,7 +61,7 @@ public class RobotContainer {
     public void setAutoDefaultCommnds() {
         driveSubsystem.setDefaultCommand(driveSubsystem.run(driveSubsystem::stop));
         shotBlockerSubsystem.setDefaultCommand(
-                Commands.either(Commands.none(), zeroShotBlockerCommand, () -> shotBlockerSubsystem.zeroed()));
+                Commands.either(Commands.none(), zeroShotBlockerCommand, () -> shotBlockerSubsystem.hasZero()));
     }
 
     public void setDefaultCommands() {
@@ -86,7 +86,7 @@ public class RobotContainer {
 
         boostTrigger = new Trigger(() -> getInput().getDriveBoostRequest());
 
-        zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.zeroed() == false);
+        zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.hasZero() == false);
 
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());

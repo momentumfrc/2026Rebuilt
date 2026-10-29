@@ -33,6 +33,8 @@ public class MoPrefs extends MoPrefsBase {
     public static final Pref<Double> driverRumble = unitlessDoublePref("Driver Rumble", 0.4);
 
     // **** SHOT BLOCKER ****
+    public static final UnitPref<CurrentUnit> shotBlockerCurrentLimit =
+            ampsPref("Shot Blocker Current Limit", Units.Amps.of(40));
     public static final Pref<Double> shotBlockerMaxHeight = unitlessDoublePref("Shot Blocker Max Height", 2000);
     public static final UnitPref<VoltageUnit> shotBlockerZeroPower =
             voltsPref("shotBlocker Zero Power", Units.Volts.of(-0.03));

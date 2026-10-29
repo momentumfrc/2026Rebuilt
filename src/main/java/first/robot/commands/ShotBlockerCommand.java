@@ -25,7 +25,7 @@ public class ShotBlockerCommand extends Command {
 
         double shotBlockerRequest = input.getShotBlockerRequest();
 
-        shotBlocker.arm.runWinch((Voltage) MoPrefs.shotBlockerMaxVoltage
+        shotBlocker.runWinch((Voltage) MoPrefs.shotBlockerMaxVoltage
                 .get()
                 .times(shotBlockerRequest)); // there must be a better way to do this but it's fine
     }
