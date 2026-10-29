@@ -27,4 +27,9 @@ public class ShotBlockerSubsystem extends SubsystemBase {
     public boolean zeroed() {
         return arm.hasZero();
     }
+
+    @Override
+    public void periodic() {
+        arm.publish();
+    }
 }

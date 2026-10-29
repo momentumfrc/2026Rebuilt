@@ -1,6 +1,7 @@
 package first.robot.util;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -8,13 +9,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import first.robot.MoPrefs;
 import first.robot.molib.NTHelpers;
-import first.robot.molib.encoder.MoDistanceEncoder;
 import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.NetworkTable;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Current;
-import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Voltage;
 
 public class AutomaticZeroArm {
@@ -23,7 +22,7 @@ public class AutomaticZeroArm {
     private static final Current CLIMBER_CURRENT_LIMIT = Units.Amps.of(25);
 
     public final SparkFlex winch;
-    private final MoDistanceEncoder encoder;
+    private final RelativeEncoder encoder;
 
     private final BooleanEntry hasZero;
 
@@ -35,9 +34,8 @@ public class AutomaticZeroArm {
     public AutomaticZeroArm(String name, SparkFlex winch, boolean inverted) {
         this.winch = winch;
 
-        this.encoder = MoDistanceEncoder.forSparkRelative(winch, Units.Centimeters);
+        this.encoder = winch.getEncoder();
 
-        MoPrefs.shotBlockerEncoderScale.subscribe(this.encoder::setConversionFactor, true);
         sparkMaxConfig = new SparkFlexConfig();
         sparkMaxConfig.smartCurrentLimit((int) CLIMBER_CURRENT_LIMIT.in(Units.Amps));
         sparkMaxConfig.idleMode(IdleMode.kBrake);
@@ -49,17 +47,16 @@ public class AutomaticZeroArm {
 
         MoPrefs.shotBlockerMaxHeight.subscribe(
                 max -> {
-                    sparkMaxConfig.softLimit.forwardSoftLimit((float) max.in(this.encoder.getInternalEncoderUnits())
-                            * this.encoder.getConversionFactor());
+                    sparkMaxConfig.softLimit.forwardSoftLimit(max);
                     sparkMaxConfig.softLimit.reverseSoftLimit(0);
-                    winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+                    winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
                 },
                 true);
 
         sparkMaxConfig.softLimit.forwardSoftLimitEnabled(true);
         sparkMaxConfig.softLimit.reverseSoftLimitEnabled(true);
 
-        winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        winch.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
         NetworkTable table = NTHelpers.getTable("shot-blocker");
 
@@ -77,7 +74,7 @@ public class AutomaticZeroArm {
         hasZero.set(false);
     }
 
-    public void setZero(Distance pos) {
+    public void setZero(double pos) {
         hasZero.set(true);
         this.encoder.setPosition(pos);
     }
@@ -88,7 +85,7 @@ public class AutomaticZeroArm {
 
     public void enableWinchSoftLimitReverse(boolean enable) {
         sparkMaxConfig.softLimit.reverseSoftLimitEnabled(enable);
-        winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     public void stop() {
@@ -96,7 +93,7 @@ public class AutomaticZeroArm {
     }
 
     public void publish() {
-        positionPublisher.set(encoder.getPositionInEncoderUnits());
+        positionPublisher.set(encoder.getPosition().get());
         currentPublisher.set(winch.getOutputCurrent().get());
     }
 }

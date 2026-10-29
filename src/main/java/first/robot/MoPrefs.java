@@ -5,7 +5,6 @@ import first.robot.molib.prefs.AngleUnitPref;
 import first.robot.molib.prefs.AngularAccelerationUnitPref;
 import first.robot.molib.prefs.AngularVelocityUnitPref;
 import first.robot.molib.prefs.DimensionlessUnitPref;
-import first.robot.molib.prefs.DistanceUnitPref;
 import first.robot.molib.prefs.LinearVelocityUnitPref;
 import first.robot.molib.prefs.MoPrefsBase;
 import first.robot.molib.prefs.Pref;
@@ -14,8 +13,6 @@ import first.robot.molib.prefs.UnitPref;
 import org.wpilib.units.AngleUnit;
 import org.wpilib.units.CurrentUnit;
 import org.wpilib.units.DimensionlessUnit;
-import org.wpilib.units.DistanceUnit;
-import org.wpilib.units.Measure;
 import org.wpilib.units.PerUnit;
 import org.wpilib.units.Units;
 import org.wpilib.units.VoltageUnit;
@@ -186,20 +183,14 @@ public class MoPrefs extends MoPrefsBase {
             percentPref("Flywheel Fudge Factor", Units.Percent.of(100));
 
     // **** SHOT BLOCKER ****
-    public static final UnitPref<PerUnit<DimensionlessUnit, DistanceUnit>> shotBlockerEncoderScale =
-            encoderTicksPerCentimeterPref(
-                    "Shot Blocker Encoder Scale", (Measure<PerUnit<DimensionlessUnit, DistanceUnit>>)
-                            MoUnits.EncoderTicksPerCentimeter.of(0)); // anyone have a better solution?
-    public static final DistanceUnitPref shotBlockerMaxHeight =
-            centimetersPref("Shot Blocker Max Height", Units.Centimeter.of(2000)); // TODO: what is this
+    public static final Pref<Double> shotBlockerMaxHeight = unitlessDoublePref("Shot Blocker Max Height", 2000);
     public static final UnitPref<VoltageUnit> shotBlockerZeroPower =
             voltsPref("shotBlocker Zero Power", Units.Volts.of(-0.03));
     public static final TimeUnitPref shotBlockerZeroTimeCutoff =
             secondsPref("shotBlocker Zero Time", Units.Seconds.of(0.25));
     public static final UnitPref<CurrentUnit> shotBlockerZeroCurrentCutoff =
             ampsPref("shotBlocker Zero Current", Units.Amps.of(15));
-    public static final DistanceUnitPref shotBlockerZeroPosition =
-            centimetersPref("shotBlocker Zero Pos.", Units.Centimeters.of(-1));
+    public static final Pref<Double> shotBlockerZeroPosition = unitlessDoublePref("shotBlocker Zero Pos.", -1);
     public static final UnitPref<VoltageUnit> shotBlockerMaxVoltage =
             voltsPref("Shot Blocker Max Voltage", Units.Volt.of(-1));
 

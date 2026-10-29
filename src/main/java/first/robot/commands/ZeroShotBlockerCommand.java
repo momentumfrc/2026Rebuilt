@@ -8,6 +8,7 @@ import first.robot.util.AutomaticZeroArm;
 import org.wpilib.command2.Command;
 import org.wpilib.system.Timer;
 import org.wpilib.units.Units;
+import org.wpilib.units.measure.Voltage;
 
 public class ZeroShotBlockerCommand extends Command {
     private final ShotBlockerSubsystem climb;
@@ -44,8 +45,7 @@ public class ZeroShotBlockerCommand extends Command {
             currentTimer.restart();
         }
 
-        climber.runWinch(Units.Volt.of(-Math.abs(
-                MoPrefs.shotBlockerZeroPower.get().in(Units.Volt)))); // originally intakeZeroPwr, I have no idea why
+        climber.runWinch((Voltage) MoPrefs.shotBlockerZeroPower.get()); // originally intakeZeroPwr, I have no idea why
     }
 
     @Override

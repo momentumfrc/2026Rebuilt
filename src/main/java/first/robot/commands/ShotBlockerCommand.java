@@ -5,7 +5,7 @@ import first.robot.input.MoInput;
 import first.robot.subsystem.ShotBlockerSubsystem;
 import java.util.function.Supplier;
 import org.wpilib.command2.Command;
-import org.wpilib.units.Units;
+import org.wpilib.units.measure.Voltage;
 
 public class ShotBlockerCommand extends Command {
 
@@ -25,12 +25,9 @@ public class ShotBlockerCommand extends Command {
 
         double shotBlockerRequest = input.getShotBlockerRequest();
 
-        shotBlocker.arm.runWinch(Units.Volt.of(MoPrefs.shotBlockerMaxVoltage
+        shotBlocker.arm.runWinch((Voltage) MoPrefs.shotBlockerMaxVoltage
                 .get()
-                .times(shotBlockerRequest)
-                .in(Units.Volt))); // there must be a better way to do this but it's fine
-
-        shotBlocker.arm.publish();
+                .times(shotBlockerRequest)); // there must be a better way to do this but it's fine
     }
 
     @Override
