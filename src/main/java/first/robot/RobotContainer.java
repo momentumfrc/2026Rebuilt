@@ -5,7 +5,9 @@
 package first.robot;
 
 import first.robot.commands.ShootCommand;
+import first.robot.commands.ShotBlockerCommand;
 import first.robot.commands.ZeroHoodCommand;
+import first.robot.commands.ZeroShotBlockerCommand;
 import first.robot.commands.auto.AutoChooser;
 import first.robot.commands.intake.RollerCommands;
 import first.robot.commands.intake.RunIntakeWristCommand;
@@ -23,6 +25,7 @@ import first.robot.subsystem.IntakeRollerSubsystem;
 import first.robot.subsystem.IntakeWristSubsystem;
 import first.robot.subsystem.KickerSubsystem;
 import first.robot.subsystem.ShooterSubsystem;
+import first.robot.subsystem.ShotBlockerSubsystem;
 import first.robot.subsystem.TurretSubsystem;
 import first.robot.util.SysIdUtil;
 import java.util.Collections;
@@ -48,6 +51,7 @@ public class RobotContainer {
     private final HoodSubsystem hood = new HoodSubsystem();
     private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
     private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
+    private final ShotBlockerSubsystem shotBlockerSubsystem = new ShotBlockerSubsystem();
     // private final LEDSubsystem leds = new LEDSubsystem();
 
     // **** UTILITIES ****
@@ -108,6 +112,9 @@ public class RobotContainer {
     private final Command testIntakeWristCommand =
             intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
 
+    private final Command zeroShotBlockerCommand = new ZeroShotBlockerCommand(shotBlockerSubsystem);
+    private final Command shotBlockerDefaultCommand = new ShotBlockerCommand(shotBlockerSubsystem, this::getInput);
+
     // private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
 
     // **** TRIGGERS ****
@@ -130,6 +137,8 @@ public class RobotContainer {
 
     private Trigger lockTrigger;
     private Trigger boostTrigger;
+
+    private Trigger zeroShotBlockerTrigger;
 
     private TelemetryTable subsystemsTable = Telemetry.getTable("subsystems");
 
@@ -157,6 +166,8 @@ public class RobotContainer {
                         new ZeroIntakeWristCommand(intakeWristSubsystem),
                         intakeWristSubsystem::hasZero)
                 .andThen(WristCommands.idleWristCommand(intakeWristSubsystem)));
+        shotBlockerSubsystem.setDefaultCommand(
+                Commands.either(Commands.none(), zeroShotBlockerCommand, () -> shotBlockerSubsystem.zeroed()));
     }
 
     public void setDefaultCommands() {
@@ -169,6 +180,7 @@ public class RobotContainer {
         // turret.setDefaultCommand(idleTurretCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
+        shotBlockerSubsystem.setDefaultCommand(shotBlockerDefaultCommand);
         // leds.setDefaultCommand(ledCommand);
     }
 
@@ -181,6 +193,7 @@ public class RobotContainer {
         subsystemsTable.log("hood", hood);
         subsystemsTable.log("intakeRollerSubsystem", intakeRollerSubsystem);
         subsystemsTable.log("intakeWristSubsystem", intakeWristSubsystem);
+        subsystemsTable.log("shotBlockerSubsystem", shotBlockerSubsystem);
         // subsystemsTable.log("leds", leds);
     }
 
@@ -212,6 +225,8 @@ public class RobotContainer {
         boostTrigger = new Trigger(() -> getInput().getDriveBoostRequest());
 
         reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
+
+        zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.zeroed() == false);
 
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
@@ -246,6 +261,7 @@ public class RobotContainer {
 
         zeroHoodTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroHoodCommand);
         zeroIntakeWristTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroIntakeWristCommand);
+        zeroShotBlockerTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroShotBlockerCommand);
 
         runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
 

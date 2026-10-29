@@ -1,0 +1,35 @@
+package first.robot.subsystem;
+
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import first.robot.Constants;
+import first.robot.util.AutomaticZeroArm;
+import org.wpilib.command2.SubsystemBase;
+
+public class ShotBlockerSubsystem extends SubsystemBase {
+
+    public final AutomaticZeroArm arm;
+
+    private final SparkFlex motor;
+
+    public ShotBlockerSubsystem() {
+
+        motor = new SparkFlex(
+                Constants.DEFAULT_CAN_BUS, Constants.SHOT_BLOCKER_ADDRESS.address(), MotorType.kBrushless);
+
+        arm = new AutomaticZeroArm(getName(), motor, false);
+    }
+
+    public void stop() {
+        arm.stop();
+    }
+
+    public boolean zeroed() {
+        return arm.hasZero();
+    }
+
+    @Override
+    public void periodic() {
+        arm.publish();
+    }
+}

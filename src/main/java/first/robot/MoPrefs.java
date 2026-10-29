@@ -179,7 +179,20 @@ public class MoPrefs extends MoPrefsBase {
     public static final AngularVelocityUnitPref flywheelClearSpeed = rpmPref("Flywheel Clear Speed", Units.RPM.of(300));
     public static final TimeUnitPref shooterClearTime = secondsPref("Shooter Clear Time", Units.Seconds.of(0.25));
 
-    public static final UnitPref<DimensionlessUnit> flywheelSpeedFudgeFactor = percentPref("Flywheel Fudge Factor", Units.Percent.of(100));
+    public static final UnitPref<DimensionlessUnit> flywheelSpeedFudgeFactor =
+            percentPref("Flywheel Fudge Factor", Units.Percent.of(100));
+
+    // **** SHOT BLOCKER ****
+    public static final Pref<Double> shotBlockerMaxHeight = unitlessDoublePref("Shot Blocker Max Height", 2000);
+    public static final UnitPref<VoltageUnit> shotBlockerZeroPower =
+            voltsPref("shotBlocker Zero Power", Units.Volts.of(-0.03));
+    public static final TimeUnitPref shotBlockerZeroTimeCutoff =
+            secondsPref("shotBlocker Zero Time", Units.Seconds.of(0.25));
+    public static final UnitPref<CurrentUnit> shotBlockerZeroCurrentCutoff =
+            ampsPref("shotBlocker Zero Current", Units.Amps.of(15));
+    public static final Pref<Double> shotBlockerZeroPosition = unitlessDoublePref("shotBlocker Zero Pos.", -1);
+    public static final UnitPref<VoltageUnit> shotBlockerMaxVoltage =
+            voltsPref("Shot Blocker Max Voltage", Units.Volt.of(-1));
 
     // **** LEDS ****
     public static final DimensionlessUnitPref ledBrightness = percentPref("LED Brightness", Units.Percent.of(40));

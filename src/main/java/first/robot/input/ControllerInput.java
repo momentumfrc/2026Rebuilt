@@ -104,4 +104,9 @@ public final class ControllerInput implements MoInput {
     public boolean getLockRequest() {
         return driveController.getFaceLeftButton();
     }
+
+    @Override
+    public double getShotBlockerRequest() {
+        return 0; // IDK
+    }
 }
