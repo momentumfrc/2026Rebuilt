@@ -1,5 +1,7 @@
 package first.robot.util;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -13,6 +15,7 @@ import org.wpilib.networktables.NetworkTable;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.Voltage;
 
 public class AutomaticZeroArm {
 
@@ -46,13 +49,17 @@ public class AutomaticZeroArm {
 
         MoPrefs.shotBlockerMaxHeight.subscribe(
                 max -> {
-                    sparkMaxConfig.softLimit.forwardSoftLimit((float) max.in(this.encoder.getInternalEncoderUnits()) * this.encoder.getEncoderScale());
+                    sparkMaxConfig.softLimit.forwardSoftLimit((float) max.in(this.encoder.getInternalEncoderUnits())
+                            * this.encoder.getConversionFactor());
                     sparkMaxConfig.softLimit.reverseSoftLimit(0);
+                    winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
                 },
                 true);
 
         sparkMaxConfig.softLimit.forwardSoftLimitEnabled(true);
         sparkMaxConfig.softLimit.reverseSoftLimitEnabled(true);
+
+        winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         NetworkTable table = NTHelpers.getTable("shot-blocker");
 
@@ -75,12 +82,13 @@ public class AutomaticZeroArm {
         this.encoder.setPosition(pos);
     }
 
-    public void runWinch(double power) {
+    public void runWinch(Voltage power) {
         this.winch.setVoltage(power);
     }
 
     public void enableWinchSoftLimitReverse(boolean enable) {
         sparkMaxConfig.softLimit.reverseSoftLimitEnabled(enable);
+        winch.configure(sparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void stop() {

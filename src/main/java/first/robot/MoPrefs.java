@@ -192,13 +192,16 @@ public class MoPrefs extends MoPrefsBase {
                             MoUnits.EncoderTicksPerCentimeter.of(0)); // anyone have a better solution?
     public static final DistanceUnitPref shotBlockerMaxHeight =
             centimetersPref("Shot Blocker Max Height", Units.Centimeter.of(2000)); // TODO: what is this
-    public static final Pref<Double> shotBlockerZeroPower = unitlessDoublePref("shotBlocker Zero Power", -0.03);
+    public static final UnitPref<VoltageUnit> shotBlockerZeroPower =
+            voltsPref("shotBlocker Zero Power", Units.Volts.of(-0.03));
     public static final TimeUnitPref shotBlockerZeroTimeCutoff =
             secondsPref("shotBlocker Zero Time", Units.Seconds.of(0.25));
     public static final UnitPref<CurrentUnit> shotBlockerZeroCurrentCutoff =
             ampsPref("shotBlocker Zero Current", Units.Amps.of(15));
     public static final DistanceUnitPref shotBlockerZeroPosition =
             centimetersPref("shotBlocker Zero Pos.", Units.Centimeters.of(-1));
+    public static final UnitPref<VoltageUnit> shotBlockerMaxVoltage =
+            voltsPref("Shot Blocker Max Voltage", Units.Volt.of(-1));
 
     // **** LEDS ****
     public static final DimensionlessUnitPref ledBrightness = percentPref("LED Brightness", Units.Percent.of(40));

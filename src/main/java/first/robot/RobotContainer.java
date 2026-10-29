@@ -226,7 +226,7 @@ public class RobotContainer {
 
         reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
 
-        zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.hasZero());
+        zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.zeroed() == false);
 
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());

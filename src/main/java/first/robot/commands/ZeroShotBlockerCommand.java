@@ -1,5 +1,7 @@
 package first.robot.commands;
 
+import static org.wpilib.units.Units.Volts;
+
 import first.robot.MoPrefs;
 import first.robot.subsystem.ShotBlockerSubsystem;
 import first.robot.util.AutomaticZeroArm;
@@ -28,7 +30,7 @@ public class ZeroShotBlockerCommand extends Command {
 
     private static void zeroSide(double power, AutomaticZeroArm climber, Timer currentTimer) {
         if (climber.hasZero()) {
-            climber.runWinch(0);
+            climber.runWinch(Volts.of(0));
 
             return;
         }
@@ -42,12 +44,13 @@ public class ZeroShotBlockerCommand extends Command {
             currentTimer.restart();
         }
 
-        climber.runWinch(-Math.abs(MoPrefs.shotBlockerZeroPower.get())); // originally intakeZeroPwr, I have no idea why
+        climber.runWinch(Units.Volt.of(-Math.abs(
+                MoPrefs.shotBlockerZeroPower.get().in(Units.Volt)))); // originally intakeZeroPwr, I have no idea why
     }
 
     @Override
     public void execute() {
-        zeroSide(MoPrefs.shotBlockerZeroPower.get(), climb.arm, currentTimer);
+        zeroSide(MoPrefs.shotBlockerZeroPower.get().in(Units.Volt), climb.arm, currentTimer);
     }
 
     @Override
