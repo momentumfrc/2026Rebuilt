@@ -168,6 +168,7 @@ public class RobotContainer {
                 .andThen(WristCommands.idleWristCommand(intakeWristSubsystem)));
         shotBlockerSubsystem.setDefaultCommand(
                 Commands.either(Commands.none(), zeroShotBlockerCommand, () -> shotBlockerSubsystem.zeroed()));
+        turret.setDefaultCommand(idleTurretCommand);
     }
 
     public void setDefaultCommands() {
@@ -176,7 +177,7 @@ public class RobotContainer {
         indexer.setDefaultCommand(idleIndexerCommand);
         kicker.setDefaultCommand(idleKickerCommand);
         shooter.setDefaultCommand(idleShooterCommand);
-        turret.setDefaultCommand(passiveTargetingCommand);
+        turret.setDefaultCommand(idleTurretCommand);
         // turret.setDefaultCommand(idleTurretCommand);
         intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
         intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
