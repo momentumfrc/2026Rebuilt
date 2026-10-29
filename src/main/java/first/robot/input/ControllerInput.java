@@ -107,6 +107,8 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public double getShotBlockerRequest() {
-        return 0; // IDK
+        return driveController.getLeftTrigger();
     }
 }
+
+//systemcore pw: PASSWORD1

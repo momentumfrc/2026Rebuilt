@@ -57,7 +57,8 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getExtendIntake() {
-        return driveController.getLeftTrigger() > 0;
+        return false;
+        //driveController.getLeftTrigger() > 0;
     }
 
     @Override
@@ -103,6 +104,6 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public double getShotBlockerRequest() {
-        return 0; // IDK what's available
+        return (driveController.getLeftBumperButton()) ?  1 : 0;
     }
 }

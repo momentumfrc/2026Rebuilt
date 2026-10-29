@@ -19,7 +19,7 @@ import org.wpilib.units.measure.Voltage;
 public class AutomaticZeroArm {
 
     /* A single side climber */
-    private static final Current CLIMBER_CURRENT_LIMIT = Units.Amps.of(25);
+    private static final Current CLIMBER_CURRENT_LIMIT = Units.Amps.of(60);
 
     public final SparkFlex winch;
     private final RelativeEncoder encoder;
