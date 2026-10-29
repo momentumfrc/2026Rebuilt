@@ -3,17 +3,10 @@ package first.robot;
 import static org.wpilib.units.Units.DegreesPerSecond;
 
 import first.robot.molib.NTHelpers;
-import first.robot.subsystem.TurretSubsystem;
 import first.robot.util.LimelightHelpers;
 import java.util.Set;
-import java.util.function.Supplier;
 import org.wpilib.fields.Fields;
 import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Transform2d;
-import org.wpilib.math.geometry.Transform3d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.interpolation.TimeInterpolatableBuffer;
 import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.linalg.Vector;
@@ -23,19 +16,15 @@ import org.wpilib.networktables.DoubleArrayPublisher;
 import org.wpilib.networktables.StructPublisher;
 import org.wpilib.system.Timer;
 import org.wpilib.units.Units;
-import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import swervelib.SwerveDrive;
 
 public class RobotPositioning {
     private static final double STATIONARY_CUTOFF = 1e-2;
-    private static final double TURRET_ANGLE_BUFFER_TIME = 2.0; // seconds
 
     private static final Set<Integer> DISALLOWED_TAGS = Set.of(1, 12, 22, 23);
 
     private final SwerveDrive swerveDrive;
-    private final Supplier<Angle> turretYawSupplier;
-    private final Supplier<AngularVelocity> turretYawRateSupplier;
 
     private final BooleanEntry useMT2;
     private final BooleanEntry useTurretLimelight;
@@ -43,29 +32,19 @@ public class RobotPositioning {
 
     private final BooleanEntry hasInitialPosition;
 
-    private final TimeInterpolatableBuffer<Rotation2d> turretYawBuffer =
-            TimeInterpolatableBuffer.createBuffer(TURRET_ANGLE_BUFFER_TIME);
-
     // TODO - maybe we can be smarter about this?
     // https://github.com/Mechanical-Advantage/RobotCode2026Public/blob/a875de4792279070e4fcfe990adba8719ec91d5b/src/main/java/org/littletonrobotics/frc2026/subsystems/vision/Vision.java#L210
     private static final Vector<N3> MT1_VISION_STDDEVS = VecBuilder.fill(0.7, 0.7, 9999999);
     private static final Vector<N3> MT2_VISION_STDDEVS = VecBuilder.fill(0.5, 0.5, 9999999);
 
     private final StructPublisher<Pose2d> robotPosePublisher;
-    private final StructPublisher<Pose2d> turretLLAprilTagsPublisher;
     private final StructPublisher<Pose2d> turretLLCalculatedPositionPublisher;
     private final DoubleArrayPublisher turretLLTimestampPublisher;
     private final StructPublisher<Pose2d> stationaryLLAprilTagsPublisher;
     private final DoubleArrayPublisher stationaryLLTimestampPublisher;
-    private final DoubleArrayPublisher turretPosPublisher;
 
-    public RobotPositioning(
-            SwerveDrive swerveDrive,
-            Supplier<Angle> turretYawSupplier,
-            Supplier<AngularVelocity> turretYawRateSupplier) {
+    public RobotPositioning(SwerveDrive swerveDrive) {
         this.swerveDrive = swerveDrive;
-        this.turretYawSupplier = turretYawSupplier;
-        this.turretYawRateSupplier = turretYawRateSupplier;
 
         var table = NTHelpers.getTable("odometry");
         useMT2 = NTHelpers.getBooleanEntry(table, "Use MT2", true);
@@ -73,10 +52,8 @@ public class RobotPositioning {
         useStationaryLimelight = NTHelpers.getBooleanEntry(table, "Use stationary limelight", true);
         hasInitialPosition = NTHelpers.getBooleanEntry(table, "Has initial position", false);
 
-        // Disable limelight to robot transform on turret camera; we will do this ourselves with a more accurate turret
-        // pose estimation
-        LimelightHelpers.setCameraPose_RobotSpace(Constants.TURRET_LIMELIGHT_NAME, 0, 0, 0.541193, 0, 15, 0);
-
+        LimelightHelpers.setCameraPose_RobotSpace(
+                Constants.TURRET_LIMELIGHT_NAME, 0.0345140, 0.002023, 0.541193, 0, 15, 9.2);
         LimelightHelpers.setCameraPose_RobotSpace(
                 Constants.STATIONARY_LIMELIGHT_NAME, -0.328071, 0.031750, 0.295345, 0, 10, 180);
 
@@ -88,8 +65,6 @@ public class RobotPositioning {
         LimelightHelpers.SetFiducialIDFiltersOverride(Constants.STATIONARY_LIMELIGHT_NAME, allowedTagIds);
 
         robotPosePublisher = table.getStructTopic("robot pose", Pose2d.struct).publish();
-        turretLLAprilTagsPublisher =
-                table.getStructTopic("turret limelight tags", Pose2d.struct).publish();
         turretLLTimestampPublisher =
                 table.getDoubleArrayTopic("turret limelight pose timestamp").publish();
         turretLLCalculatedPositionPublisher = table.getStructTopic(
@@ -99,8 +74,6 @@ public class RobotPositioning {
                 table.getStructTopic("stationary limelight tags", Pose2d.struct).publish();
         stationaryLLTimestampPublisher =
                 table.getDoubleArrayTopic("stationary limelight pose timestamp").publish();
-        turretPosPublisher =
-                table.getDoubleArrayTopic("turret position measurements").publish();
 
         swerveDrive.stopOdometryThread();
     }
@@ -168,33 +141,6 @@ public class RobotPositioning {
         return mt2;
     }
 
-    /**
-     * Gets a {@link Transform3d} to convert a Pose3d from the limelight's position to the robot's position.
-     * <p>
-     * This is why we need to do the turret pose transformation ourselves.
-     * The turret pose will be constantly changing as it tracks the target, and we need to make sure to apply the
-     * reverse transformation for the turret's pose at the instant when the vision measurement was captured.
-     * Otherwise we'd apply the wrong reverse transformation and end up with an incorrect robot position.
-     * If we just asked the limelight do the transformation, there'd be a delay between when the turret pose was
-     * calculated and uploaded to when the vision measurement was captured.
-     * By performing the calculation ourselves, we can interpolate between measured turret poses to find the
-     * exact turret pose at the exact time the vision measurement was captured.
-     * <p>
-     * Adapted from
-     * https://www.chiefdelphi.com/t/frc-6328-mechanical-advantage-2026-build-thread/509595/272#p-3831134-getting-dizzy-3
-     */
-    private Transform2d getTurretLimelightToRobot(double timestampSeconds) {
-        var sample = turretYawBuffer.getSample(timestampSeconds);
-        if (sample.isEmpty()) {
-            return null;
-        }
-        var robotToLimelight = TurretSubsystem.robotToTurret
-                .plus(new Transform2d(Translation2d.ZERO, sample.get()))
-                .plus(TurretSubsystem.turretToCamera);
-
-        return robotToLimelight.inverse();
-    }
-
     public void resetOdometry(Pose2d robotPose) {
         swerveDrive.resetOdometry(robotPose);
         hasInitialPosition.set(true);
@@ -215,33 +161,27 @@ public class RobotPositioning {
 
         LimelightHelpers.PoseEstimate poseEstimate = null;
         Vector<N3> visionStdDevs = null;
+        var robotVelocity = swerveDrive.getRobotVelocity();
 
-        // Can't use MT2 for the turret limelight, because the MT2 algorithm assumes it has an accurate, up-to-date
-        // measure of the limelight's rotation. However, the whole point of doing limelight-to-robot transform
-        // calculation on the RIO is that it's impossible to keep the limelight's set pose up-to-date since the turret
-        // moves so frequently and so fast.
-        poseEstimate = getPoseEstimateMT1(Constants.TURRET_LIMELIGHT_NAME);
-        visionStdDevs = MT1_VISION_STDDEVS;
+        if (useMT2.get() && hasInitialPosition.get()) {
+            poseEstimate =
+                    getPoseEstimateMT2(Constants.TURRET_LIMELIGHT_NAME, Units.RadiansPerSecond.of(robotVelocity.omega));
+            visionStdDevs = MT2_VISION_STDDEVS;
+        } else {
+            poseEstimate = getPoseEstimateMT1(Constants.TURRET_LIMELIGHT_NAME);
+            visionStdDevs = MT1_VISION_STDDEVS;
+        }
 
         if (poseEstimate == null) {
             return;
         }
 
+        addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds, visionStdDevs);
+
         turretLLTimestampPublisher.set(new double[] {
             poseEstimate.timestampSeconds, Timer.getMonotonicTimestamp() - poseEstimate.timestampSeconds
         });
-        turretLLAprilTagsPublisher.set(poseEstimate.pose);
-
-        var turretLimelightTransform = getTurretLimelightToRobot(poseEstimate.timestampSeconds);
-        if (turretLimelightTransform == null) {
-            return;
-        }
-
-        var robotPose = poseEstimate.pose.transformBy(turretLimelightTransform);
-
-        addVisionMeasurement(robotPose, poseEstimate.timestampSeconds, visionStdDevs);
-
-        turretLLCalculatedPositionPublisher.set(robotPose);
+        turretLLCalculatedPositionPublisher.set(poseEstimate.pose);
     }
 
     private void addStationaryVisionMeasurements() {
@@ -287,21 +227,13 @@ public class RobotPositioning {
     }
 
     public void update() {
-        var turretYaw = turretYawSupplier.get();
-
         double estimatedHeadingDegrees = swerveDrive.getOdometryHeading().getDegrees();
         LimelightHelpers.SetRobotOrientation(
                 Constants.STATIONARY_LIMELIGHT_NAME, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.SetRobotOrientation(
-                Constants.TURRET_LIMELIGHT_NAME, estimatedHeadingDegrees + turretYaw.in(Units.Degrees), 0, 0, 0, 0, 0);
-
-        var timestamp = Timer.getMonotonicTimestamp();
-        turretYawBuffer.addSample(Timer.getMonotonicTimestamp(), Rotation2d.fromRadians(turretYaw.in(Units.Radians)));
-        turretPosPublisher.set(new double[] {turretYaw.in(Units.Degrees), timestamp});
+        LimelightHelpers.SetRobotOrientation(Constants.TURRET_LIMELIGHT_NAME, estimatedHeadingDegrees, 0, 0, 0, 0, 0);
 
         swerveDrive.updateOdometry();
         addVisionMeasurements();
-
         robotPosePublisher.set(getRobotPose());
     }
 }

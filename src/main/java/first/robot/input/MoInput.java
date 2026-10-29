@@ -15,27 +15,5 @@ public interface MoInput {
 
     public abstract boolean getReZeroGyro();
 
-    public abstract boolean getRunIntake();
-
-    public abstract boolean getRunIntakeReverse();
-
-    public abstract boolean getClearShooter();
-
-    public abstract boolean getAgitate();
-
-    public abstract boolean getExtendIntake();
-
-    public abstract boolean getRetractIntake();
-
-    public abstract boolean getShootRequest();
-
-    public abstract boolean getShuttleRequest();
-
-    public abstract boolean getReverseIndexerRequest();
-
-    public abstract boolean getRunSysId();
-
-    public abstract boolean getLockRequest();
-
     public abstract double getShotBlockerRequest();
 }

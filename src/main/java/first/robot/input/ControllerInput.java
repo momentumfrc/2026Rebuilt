@@ -51,64 +51,7 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
-    public boolean getRunIntake() {
-        return operatorController.getRightBumperButton() || driveController.getRightTrigger() > 0.8;
-    }
-
-    @Override
-    public boolean getRunIntakeReverse() {
-        return operatorController.getRightTrigger() > 0.8;
-    }
-
-    @Override
-    public boolean getAgitate() {
-        return operatorController.getLeftBumperButton();
-    }
-
-    @Override
-    public boolean getClearShooter() {
-        return operatorController.getFaceRightButton();
-    }
-
-    @Override
-    public boolean getExtendIntake() {
-        return driveController.getLeftBumperButton();
-    }
-
-    @Override
-    public boolean getRetractIntake() {
-        return driveController.getRightBumperButton();
-    }
-
-    @Override
-    public boolean getShootRequest() {
-        return operatorController.getFaceDownButton();
-    }
-
-    @Override
-    public boolean getShuttleRequest() {
-        return operatorController.getFaceUpButton();
-    }
-
-    @Override
-    public boolean getReverseIndexerRequest() {
-        return operatorController.getFaceLeftButton();
-    }
-
-    @Override
-    public boolean getRunSysId() {
-        return driveController.getStartButton();
-    }
-
-    @Override
-    public boolean getLockRequest() {
-        return driveController.getFaceLeftButton();
-    }
-
-    @Override
     public double getShotBlockerRequest() {
-        return driveController.getLeftTrigger();
+        return (-1 * driveController.getRightTrigger()) + driveController.getLeftTrigger();
     }
 }
-
-//systemcore pw: PASSWORD1

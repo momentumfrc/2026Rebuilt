@@ -4,38 +4,19 @@
 
 package first.robot;
 
-import first.robot.commands.ShootCommand;
 import first.robot.commands.ShotBlockerCommand;
-import first.robot.commands.ZeroHoodCommand;
 import first.robot.commands.ZeroShotBlockerCommand;
 import first.robot.commands.auto.AutoChooser;
-import first.robot.commands.intake.RollerCommands;
-import first.robot.commands.intake.RunIntakeWristCommand;
-import first.robot.commands.intake.WristCommands;
-import first.robot.commands.intake.ZeroIntakeWristCommand;
 import first.robot.input.ControllerInput;
 import first.robot.input.MoInput;
 import first.robot.input.SingleControllerInput;
-import first.robot.molib.Utils;
-import first.robot.shootutils.TurretTargeting;
 import first.robot.subsystem.DriveSubsystem;
-import first.robot.subsystem.HoodSubsystem;
-import first.robot.subsystem.IndexerSubsystem;
-import first.robot.subsystem.IntakeRollerSubsystem;
-import first.robot.subsystem.IntakeWristSubsystem;
-import first.robot.subsystem.KickerSubsystem;
-import first.robot.subsystem.ShooterSubsystem;
 import first.robot.subsystem.ShotBlockerSubsystem;
-import first.robot.subsystem.TurretSubsystem;
-import first.robot.util.SysIdUtil;
-import java.util.Collections;
-import java.util.List;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.button.RobotModeTriggers;
 import org.wpilib.command2.button.Trigger;
 import org.wpilib.driverstation.GenericHID.RumbleType;
-import org.wpilib.driverstation.RobotState;
 import org.wpilib.telemetry.Telemetry;
 import org.wpilib.telemetry.TelemetryTable;
 import org.wpilib.tunable.Selectable;
@@ -44,114 +25,32 @@ import org.wpilib.tunable.Tunables;
 public class RobotContainer {
     // **** SUBSYSTEMS ****
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private final TurretSubsystem turret = new TurretSubsystem();
-    private final IndexerSubsystem indexer = new IndexerSubsystem();
-    private final KickerSubsystem kicker = new KickerSubsystem();
-    private final ShooterSubsystem shooter = new ShooterSubsystem();
-    private final HoodSubsystem hood = new HoodSubsystem();
-    private final IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
-    private final IntakeWristSubsystem intakeWristSubsystem = new IntakeWristSubsystem();
     private final ShotBlockerSubsystem shotBlockerSubsystem = new ShotBlockerSubsystem();
-    // private final LEDSubsystem leds = new LEDSubsystem();
 
     // **** UTILITIES ****
-    public final RobotPositioning robotPositioning = new RobotPositioning(
-            driveSubsystem.getSwerveDrive(), () -> getTurretSubsystem().getTurretYaw(), () -> getTurretSubsystem()
-                    .getTurretYawRate());
-
-    private final TurretTargeting turretTargetingHelper = new TurretTargeting(robotPositioning);
+    public final RobotPositioning robotPositioning = new RobotPositioning(driveSubsystem.getSwerveDrive());
 
     private final ControllerInput controllerInput = new ControllerInput();
     private final SingleControllerInput singleControllerInput = new SingleControllerInput();
 
     private final Selectable<MoInput> inputChooser = new Selectable<>();
 
-    private final SysIdUtil sysId = new SysIdUtil(List.of(
-            intakeWristSubsystem.getSysIdMechanism(),
-            kicker.getSysIdMechanism(),
-            turret.getSysIdMechanism(),
-            shooter.getSysIdMechanism(),
-            hood.getSysIdMechanism()));
-
     // **** COMMANDS ****
     private final Command driveCommand = driveSubsystem.getTeleopDriveCommand(this::getInput);
-
-    private final ShootCommand shootCommand =
-            ShootCommand.getHubShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
-    private final ShootCommand shuttleCommand =
-            ShootCommand.getShuttleShootCommand(turretTargetingHelper, kicker, turret, shooter, hood);
-
-    private final Command shooterTestCommand = shooter.getTestCommand(controllerInput.getOperatorController());
-
-    private final Command idleIndexerCommand = indexer.run(indexer::stop).withName("IdleIndexerCommand");
-    private final Command idleKickerCommand = kicker.run(kicker::stop).withName("IdleKickerCommand");
-    private final Command idleShooterCommand = shooter.run(shooter::stop).withName("IdleShooterCommand");
-    private final Command idleHoodCommand = hood.run(hood::goToRest).withName("IdleHoodCommand");
-    private final Command zeroHoodCommand = new ZeroHoodCommand(hood);
-    private final Command hoodTestCommand = hood.testCommand(controllerInput.getOperatorController());
-
-    private final Command runIndexerToShootCommand = indexer.run(indexer::run).withName("RunIndexerToShootCommand");
-    private final Command runIndexerToShuttleCommand = indexer.run(indexer::run).withName("RunIndexerToShuttleCommand");
-    private final Command runIndexerWithIntakeCommand =
-            indexer.run(indexer::runIndexerNoCentering).withName("RunIndexerWithIntakeCommand");
-    private final Command runIndexerReverseCommand =
-            indexer.run(indexer::runReverse).withName("RunIndexerReverseCommand");
-
-    private final Command passiveTargetingCommand = turret.passiveTargetingCommand(turretTargetingHelper);
-    private final Command idleTurretCommand = turret.run(turret::stop);
-    private final Command turretTestCommand = turret.testCommand(controllerInput.getOperatorController());
-
-    private final Command runKickerCommand = kicker.run(kicker::run);
-
-    private final Command runRollerCommand = RollerCommands.runIntakeRollerCommand(intakeRollerSubsystem);
-    private final Command runRollerReverseCommand = RollerCommands.runIntakeRollerReverseCommand(intakeRollerSubsystem);
-    private final Command agitateIntakeWristCommand = WristCommands.agitateWristCommand(intakeWristSubsystem);
-    private final Command intakeRollerDefaultCommand = RollerCommands.idleIntakeRollerCommand(intakeRollerSubsystem);
-    private final Command intakeWristDefaultCommand = new RunIntakeWristCommand(intakeWristSubsystem, this::getInput);
-    private final Command zeroIntakeWristCommand = new ZeroIntakeWristCommand(intakeWristSubsystem);
-    private final Command testIntakeWristCommand =
-            intakeWristSubsystem.testCommand(controllerInput.getOperatorController());
 
     private final Command zeroShotBlockerCommand = new ZeroShotBlockerCommand(shotBlockerSubsystem);
     private final Command shotBlockerDefaultCommand = new ShotBlockerCommand(shotBlockerSubsystem, this::getInput);
 
-    // private final Command ledCommand = new LEDCommand(leds, robotPositioning, turret);
-
     // **** TRIGGERS ****
     private Trigger resetFieldOrientedFwd;
 
-    private Trigger runIntakeTrigger;
-    private Trigger runIntakeReverseTrigger;
-    private Trigger agitateIntakeTrigger;
-
-    private Trigger reverseIndexerTrigger;
-
-    private Trigger clearShooterTrigger;
-    private Trigger shootTrigger;
-    private Trigger shuttleTrigger;
-
-    private Trigger zeroHoodTrigger;
-    private Trigger zeroIntakeWristTrigger;
-
-    private Trigger runSysIdTrigger;
-
-    private Trigger lockTrigger;
     private Trigger boostTrigger;
 
     private Trigger zeroShotBlockerTrigger;
 
     private TelemetryTable subsystemsTable = Telemetry.getTable("subsystems");
 
-    private AutoChooser autochooser = new AutoChooser(
-            robotPositioning,
-            driveSubsystem,
-            turret,
-            indexer,
-            kicker,
-            shooter,
-            hood,
-            intakeRollerSubsystem,
-            intakeWristSubsystem);
+    private AutoChooser autochooser = new AutoChooser(robotPositioning, driveSubsystem);
 
     public RobotContainer() {
         addInputChooserToDashboard();
@@ -161,41 +60,18 @@ public class RobotContainer {
 
     public void setAutoDefaultCommnds() {
         driveSubsystem.setDefaultCommand(driveSubsystem.run(driveSubsystem::stop));
-        intakeWristSubsystem.setDefaultCommand(Commands.either(
-                        Commands.none(),
-                        new ZeroIntakeWristCommand(intakeWristSubsystem),
-                        intakeWristSubsystem::hasZero)
-                .andThen(WristCommands.idleWristCommand(intakeWristSubsystem)));
         shotBlockerSubsystem.setDefaultCommand(
                 Commands.either(Commands.none(), zeroShotBlockerCommand, () -> shotBlockerSubsystem.zeroed()));
-        turret.setDefaultCommand(idleTurretCommand);
     }
 
     public void setDefaultCommands() {
         driveSubsystem.setDefaultCommand(driveCommand);
-        hood.setDefaultCommand(idleHoodCommand);
-        indexer.setDefaultCommand(idleIndexerCommand);
-        kicker.setDefaultCommand(idleKickerCommand);
-        shooter.setDefaultCommand(idleShooterCommand);
-        turret.setDefaultCommand(idleTurretCommand);
-        // turret.setDefaultCommand(idleTurretCommand);
-        intakeRollerSubsystem.setDefaultCommand(intakeRollerDefaultCommand);
-        intakeWristSubsystem.setDefaultCommand(intakeWristDefaultCommand);
         shotBlockerSubsystem.setDefaultCommand(shotBlockerDefaultCommand);
-        // leds.setDefaultCommand(ledCommand);
     }
 
     private void addSubsystemsToDashboard() {
         subsystemsTable.log("driveSubsystem", driveSubsystem);
-        subsystemsTable.log("turret", turret);
-        subsystemsTable.log("indexer", indexer);
-        subsystemsTable.log("kicker", kicker);
-        subsystemsTable.log("shooter", shooter);
-        subsystemsTable.log("hood", hood);
-        subsystemsTable.log("intakeRollerSubsystem", intakeRollerSubsystem);
-        subsystemsTable.log("intakeWristSubsystem", intakeWristSubsystem);
         subsystemsTable.log("shotBlockerSubsystem", shotBlockerSubsystem);
-        // subsystemsTable.log("leds", leds);
     }
 
     private void addInputChooserToDashboard() {
@@ -208,76 +84,17 @@ public class RobotContainer {
         // Drive Triggers
         resetFieldOrientedFwd = new Trigger(() -> getInput().getReZeroGyro());
 
-        // Intake Triggers
-        runIntakeTrigger = new Trigger(() -> getInput().getRunIntake());
-        runIntakeReverseTrigger = new Trigger(() -> getInput().getRunIntakeReverse());
-        agitateIntakeTrigger = new Trigger(() -> getInput().getAgitate());
-
-        clearShooterTrigger = new Trigger(() -> getInput().getClearShooter());
-        shootTrigger = new Trigger(() -> getInput().getShootRequest());
-        shuttleTrigger = new Trigger(() -> getInput().getShuttleRequest());
-
-        zeroHoodTrigger = new Trigger(() -> hood.hasZero() == false);
-        zeroIntakeWristTrigger = new Trigger(() -> intakeWristSubsystem.hasZero() == false);
-
-        runSysIdTrigger = new Trigger(() -> getInput().getRunSysId());
-
-        lockTrigger = new Trigger(() -> getInput().getLockRequest());
         boostTrigger = new Trigger(() -> getInput().getDriveBoostRequest());
-
-        reverseIndexerTrigger = new Trigger(() -> getInput().getReverseIndexerRequest());
 
         zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.zeroed() == false);
 
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
-        // Intake Trigger Bindings
-        runIntakeTrigger.whileTrue(runRollerCommand);
-        runIntakeReverseTrigger.and(runIntakeTrigger.negate()).whileTrue(runRollerReverseCommand);
-        agitateIntakeTrigger.whileTrue(agitateIntakeWristCommand);
-
-        shootTrigger.whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
-                .andThen(shootCommand));
-        shootTrigger
-                .and(reverseIndexerTrigger.negate())
-                .whileTrue(Commands.defer(() -> Commands.waitUntil(shootCommand::readyToShoot), Collections.emptySet())
-                        .andThen(runIndexerToShootCommand));
-
-        shuttleTrigger
-                .and(shootTrigger.negate())
-                .whileTrue(Utils.withTimeoutPref(clearKickerShooterCommand(), MoPrefs.shooterClearTime::get)
-                        .andThen(shuttleCommand));
-        shuttleTrigger
-                .and(shootTrigger.negate())
-                .and(reverseIndexerTrigger.negate())
-                .whileTrue(
-                        Commands.defer(() -> Commands.waitUntil(shuttleCommand::readyToShoot), Collections.emptySet())
-                                .andThen(runIndexerToShuttleCommand));
-
         boostTrigger.onTrue(
                 Commands.runOnce(driveSubsystem::toggleBoostCurrentLimits).ignoringDisable(true));
 
-        clearShooterTrigger.and(shootTrigger.negate()).whileTrue(clearKickerShooterCommand());
-
-        zeroHoodTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroHoodCommand);
-        zeroIntakeWristTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroIntakeWristCommand);
         zeroShotBlockerTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroShotBlockerCommand);
-
-        runSysIdTrigger.whileTrue(sysId.getSysIdCommand());
-
-        lockTrigger.whileTrue(driveSubsystem.lockPose());
-
-        runIntakeTrigger
-                .and(reverseIndexerTrigger.negate())
-                .and(shootTrigger.negate())
-                .whileTrue(runIndexerWithIntakeCommand);
-        reverseIndexerTrigger.whileTrue(runIndexerReverseCommand);
-
-        RobotModeTriggers.utility().whileTrue(turretTestCommand);
-        RobotModeTriggers.utility().and(zeroHoodTrigger.negate()).whileTrue(hoodTestCommand);
-        RobotModeTriggers.utility().whileTrue(shooterTestCommand);
-        RobotModeTriggers.utility().and(zeroIntakeWristTrigger.negate()).whileTrue(testIntakeWristCommand);
     }
 
     public Command getAutonomousCommand() {
@@ -288,25 +105,9 @@ public class RobotContainer {
         return inputChooser.getSelected();
     }
 
-    private TurretSubsystem getTurretSubsystem() {
-        return turret;
-    }
-
-    private Command clearKickerShooterCommand() {
-        return Commands.parallel(
-                shooter.run(() ->
-                        shooter.runAtSpeed(MoPrefs.flywheelClearSpeed.get().unaryMinus())),
-                kicker.run(
-                        () -> kicker.runAtSpeed(MoPrefs.kickerClearSpeed.get().unaryMinus())));
-    }
-
     public void checkRumbles() {
         double rumble = driveSubsystem.isBoosted() ? MoPrefs.driverRumble.get() : 0;
         controllerInput.getDriveController().setRumble(RumbleType.LEFT_RUMBLE, rumble);
-
-        double operatorRumble =
-                RobotState.isTeleopEnabled() && turret.targetIsAligned() ? MoPrefs.operatorRumble.get() : 0;
-        controllerInput.getOperatorController().setRumble(RumbleType.LEFT_RUMBLE, operatorRumble);
     }
 
     public void telemetry() {

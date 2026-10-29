@@ -41,69 +41,12 @@ public class SingleControllerInput implements MoInput {
     }
 
     @Override
-    public boolean getRunIntake() {
-        return driveController.getRightBumperButton();
-    }
-
-    @Override
-    public boolean getAgitate() {
-        return driveController.getLeftBumperButton();
-    }
-
-    @Override
-    public boolean getClearShooter() {
-        return driveController.getFaceRightButton();
-    }
-
-    @Override
-    public boolean getExtendIntake() {
-        return false;
-        //driveController.getLeftTrigger() > 0;
-    }
-
-    @Override
-    public boolean getRetractIntake() {
-        return driveController.getRightTrigger() > 0;
-    }
-
-    @Override
-    public boolean getShootRequest() {
-        return driveController.getFaceDownButton();
-    }
-
-    @Override
-    public boolean getReverseIndexerRequest() {
-        return driveController.getFaceUpButton();
-    }
-
-    // use operator controller if you need this
-    @Override
-    public boolean getRunSysId() {
-        return false;
-    }
-
-    @Override
-    public boolean getLockRequest() {
-        return driveController.getFaceLeftButton();
-    }
-
-    @Override
-    public boolean getShuttleRequest() {
-        return false;
-    }
-
-    @Override
-    public boolean getRunIntakeReverse() {
-        return false;
-    }
-
-    @Override
     public boolean getDriveBoostRequest() {
         return false;
     }
 
     @Override
     public double getShotBlockerRequest() {
-        return (driveController.getLeftBumperButton()) ?  1 : 0;
+        return (driveController.getLeftBumperButton()) ? 1 : 0;
     }
 }

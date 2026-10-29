@@ -136,9 +136,6 @@ public class DriveSubsystem extends SubsystemBase {
                 .cubeTranslationControllerAxis(() -> MoPrefs.inputTranslationCubed.get())
                 .cubeRotationControllerAxis(() -> MoPrefs.inputRotationCubed.get());
 
-        swerveInputStreamBase.scaleTranslation(
-                () -> inputSupplier.get().getRunIntake() ? MoPrefs.driveIntakingSlowSpeed.get() : 1);
-
         var driveAngularVelocity = swerveInputStreamBase
                 .copy()
                 .withControllerRotationAxis(() -> inputSupplier.get().getDriveTurnRequest());
