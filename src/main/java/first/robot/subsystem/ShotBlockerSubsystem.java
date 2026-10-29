@@ -99,6 +99,10 @@ public class ShotBlockerSubsystem extends SubsystemBase {
         return Units.RPM.of(winchEncoder.getVelocity().get());
     }
 
+    public double getCurrentHeight() {
+        return winchEncoder.getPosition().get();
+    }
+
     @Override
     public void periodic() {
         positionPublisher.set(winchEncoder.getPosition().get());

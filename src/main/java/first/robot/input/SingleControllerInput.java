@@ -46,7 +46,7 @@ public class SingleControllerInput implements MoInput {
     }
 
     @Override
-    public double getShotBlockerRequest() {
-        return (driveController.getLeftBumperButton()) ? 1 : 0;
+    public boolean getRetractShotBlocker() {
+        return driveController.getLeftBumperButton();
     }
 }

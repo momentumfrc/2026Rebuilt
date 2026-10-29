@@ -15,5 +15,5 @@ public interface MoInput {
 
     public abstract boolean getReZeroGyro();
 
-    public abstract double getShotBlockerRequest();
+    public abstract boolean getRetractShotBlocker();
 }
