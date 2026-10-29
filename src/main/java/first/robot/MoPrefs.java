@@ -37,12 +37,14 @@ public class MoPrefs extends MoPrefsBase {
             ampsPref("Shot Blocker Current Limit", Units.Amps.of(40));
     public static final Pref<Double> shotBlockerMaxHeight = unitlessDoublePref("Shot Blocker Max Height", 2000);
     public static final UnitPref<VoltageUnit> shotBlockerZeroPower =
-            voltsPref("shotBlocker Zero Power", Units.Volts.of(-0.03));
+            voltsPref("shotBlocker Zero Power", Units.Volts.of(-6));
+    public static final TimeUnitPref shotBlockerSpinupTime =
+            secondsPref("shotBlocker Spinup Time", Units.Seconds.of(0.5));
     public static final TimeUnitPref shotBlockerZeroTimeCutoff =
             secondsPref("shotBlocker Zero Time", Units.Seconds.of(0.25));
-    public static final UnitPref<CurrentUnit> shotBlockerZeroCurrentCutoff =
-            ampsPref("shotBlocker Zero Current", Units.Amps.of(15));
-    public static final Pref<Double> shotBlockerZeroPosition = unitlessDoublePref("shotBlocker Zero Pos.", -1);
+    public static final AngularVelocityUnitPref shotBlockerStallThreshold =
+            rpmPref("shotBlocker Stall Threshold", Units.RPM.of(2));
+    public static final Pref<Double> shotBlockerZeroPosition = unitlessDoublePref("shotBlocker Zero Pos.", -0.25);
     public static final UnitPref<VoltageUnit> shotBlockerMaxVoltage =
             voltsPref("Shot Blocker Max Voltage", Units.Volt.of(-1));
 }

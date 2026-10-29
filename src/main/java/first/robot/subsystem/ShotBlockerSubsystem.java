@@ -15,6 +15,7 @@ import org.wpilib.networktables.BooleanEntry;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.NetworkTable;
 import org.wpilib.units.Units;
+import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
 
@@ -28,6 +29,7 @@ public class ShotBlockerSubsystem extends SubsystemBase {
     private final SparkFlexConfig config;
 
     private final DoublePublisher positionPublisher;
+    private final DoublePublisher velocityPublisher;
     private final DoublePublisher currentPublisher;
 
     public ShotBlockerSubsystem() {
@@ -59,6 +61,7 @@ public class ShotBlockerSubsystem extends SubsystemBase {
         hasZero = NTHelpers.getBooleanEntry(table, "Has zero?", false);
 
         positionPublisher = table.getDoubleTopic("SB Position").publish();
+        velocityPublisher = table.getDoubleTopic("SB Velocity (RPM)").publish();
         currentPublisher = table.getDoubleTopic("SB Current (A)").publish();
     }
 
@@ -92,9 +95,14 @@ public class ShotBlockerSubsystem extends SubsystemBase {
         return Units.Amps.of(winch.getOutputCurrent().get());
     }
 
+    public AngularVelocity getWinchMotorVelocity() {
+        return Units.RPM.of(winchEncoder.getVelocity().get());
+    }
+
     @Override
     public void periodic() {
         positionPublisher.set(winchEncoder.getPosition().get());
+        velocityPublisher.set(winchEncoder.getVelocity().get());
         currentPublisher.set(winch.getOutputCurrent().get());
     }
 }
