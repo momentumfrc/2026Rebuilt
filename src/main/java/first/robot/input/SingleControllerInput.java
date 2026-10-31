@@ -1,12 +1,12 @@
 package first.robot.input;
 
 import first.robot.Constants;
-import org.wpilib.driverstation.Gamepad;
+import org.wpilib.driverstation.NiDsXboxController;
 
 public class SingleControllerInput implements MoInput {
-    private final Gamepad driveController = new Gamepad(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final NiDsXboxController driveController = new NiDsXboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
 
-    public Gamepad getDriveController() {
+    public NiDsXboxController getDriveController() {
         return driveController;
     }
 
@@ -47,6 +47,6 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getRetractShotBlocker() {
-        return driveController.getLeftBumperButton();
+        return driveController.getLeftTriggerAxis() > 0.5;
     }
 }

@@ -1,17 +1,17 @@
 package first.robot.input;
 
 import first.robot.Constants;
-import org.wpilib.driverstation.Gamepad;
+import org.wpilib.driverstation.NiDsXboxController;
 
 public final class ControllerInput implements MoInput {
-    private final Gamepad driveController = new Gamepad(Constants.DRIVE_CONTORLLER_PORT.hidport());
-    private final Gamepad operatorController = new Gamepad(Constants.OPERATOR_CONTROLLER_PORT.hidport());
+    private final NiDsXboxController driveController = new NiDsXboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final NiDsXboxController operatorController = new NiDsXboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
 
-    public Gamepad getDriveController() {
+    public NiDsXboxController getDriveController() {
         return driveController;
     }
 
-    public Gamepad getOperatorController() {
+    public NiDsXboxController getOperatorController() {
         return operatorController;
     }
 
@@ -32,7 +32,7 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getDriveBoostRequest() {
-        return driveController.getFaceDownButton();
+        return driveController.getAButton();
     }
 
     @Override
@@ -52,6 +52,6 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getRetractShotBlocker() {
-        return driveController.getLeftTrigger() > 0.5;
+        return driveController.getLeftTriggerAxis() > 0.5;
     }
 }
