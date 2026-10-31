@@ -4,8 +4,10 @@ import first.robot.Constants;
 import org.wpilib.driverstation.NiDsXboxController;
 
 public final class ControllerInput implements MoInput {
-    private final NiDsXboxController driveController = new NiDsXboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
-    private final NiDsXboxController operatorController = new NiDsXboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
+    private final NiDsXboxController driveController =
+            new NiDsXboxController(Constants.DRIVE_CONTORLLER_PORT.hidport());
+    private final NiDsXboxController operatorController =
+            new NiDsXboxController(Constants.OPERATOR_CONTROLLER_PORT.hidport());
 
     public NiDsXboxController getDriveController() {
         return driveController;
