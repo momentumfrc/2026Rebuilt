@@ -54,6 +54,6 @@ public final class ControllerInput implements MoInput {
 
     @Override
     public boolean getRetractShotBlocker() {
-        return driveController.getLeftTriggerAxis() > 0.5;
+        return driveController.getLeftTriggerAxis() > 0.5 || driveController.getRightTriggerAxis() > 0.5;
     }
 }
