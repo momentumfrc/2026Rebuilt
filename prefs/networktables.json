@@ -80,19 +80,19 @@
   {
     "name": "\/Preferences\/shotBlocker Zero Power (V)",
     "type": "double",
-    "value": -4,
+    "value": -5,
     "properties": {"persistent": true}
   },
   {
     "name": "\/Preferences\/shotBlocker Spinup Time (s)",
     "type": "double",
-    "value": 0.1,
+    "value": 0.15,
     "properties": {"persistent": true}
   },
   {
     "name": "\/Preferences\/shotBlocker Zero Time (s)",
     "type": "double",
-    "value": 0.25,
+    "value": 0.2,
     "properties": {"persistent": true}
   },
   {
@@ -110,13 +110,13 @@
   {
     "name": "\/Preferences\/shotBlocker Forward Power (V)",
     "type": "double",
-    "value": 2,
+    "value": 3.5,
     "properties": {"persistent": true}
   },
   {
     "name": "\/Preferences\/shotBlocker Reverse Power (V)",
     "type": "double",
-    "value": -2,
+    "value": -3.5,
     "properties": {"persistent": true}
   },
   {
