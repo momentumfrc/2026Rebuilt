@@ -1083,18 +1083,16 @@
           },
           {
             "title": "SB Current (A)",
-            "x": 768.0,
-            "y": 384.0,
-            "width": 768.0,
-            "height": 384.0,
-            "type": "Graph",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
             "properties": {
               "topic": "/shot-blocker/SB Current (A)",
               "period": 0.033,
               "data_type": "double",
-              "time_displayed": 5.0,
-              "color": 4278238420,
-              "line_width": 2.0
+              "show_submit_button": false
             }
           },
           {
@@ -1114,17 +1112,15 @@
           {
             "title": "SB Velocity (RPM)",
             "x": 0.0,
-            "y": 384.0,
-            "width": 768.0,
-            "height": 384.0,
-            "type": "Graph",
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
             "properties": {
               "topic": "/shot-blocker/SB Velocity (RPM)",
               "period": 0.033,
               "data_type": "double",
-              "time_displayed": 5.0,
-              "color": 4278238420,
-              "line_width": 2.0
+              "show_submit_button": false
             }
           },
           {
