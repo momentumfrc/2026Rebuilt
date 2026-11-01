@@ -18,7 +18,9 @@ public class AutoChooser {
             Units.RotationsPerSecondPerSecond.of(2));
 
     private enum ShootAutoRoutines {
-        TEST_PATH
+        TEST_PATH,
+        LEFT_DISRUPT,
+        RIGHT_DISRUPT
     } // edit with more choices once auto routines are defined
 
     private final RobotPositioning robotPositioning;
@@ -45,6 +47,12 @@ public class AutoChooser {
             case TEST_PATH ->
                 AutoPathPlannerCommands.getFollowPathCommand(
                         driveSubsystem, robotPositioning, "TEST", assumeRobotPose.get());
+            case LEFT_DISRUPT ->
+                AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Left Start Disrupt", assumeRobotPose.get());
+            case RIGHT_DISRUPT ->
+                AutoPathPlannerCommands.getFollowPathCommand(
+                        driveSubsystem, robotPositioning, "Right Start Disrupt", assumeRobotPose.get());
         };
     }
 
