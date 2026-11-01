@@ -36,7 +36,7 @@ public class AutoChooser {
         this.driveSubsystem = driveSubsystem;
 
         var autoTable = NTHelpers.getTable("Auto");
-        enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", true);
+        enableAutoSwitch = NTHelpers.getBooleanEntry(autoTable, "Run Auto?", false);
 
         NTHelpers.publishSendable(autoTable, "Which Routine?", autoRoutinesChooser);
         assumeRobotPose = NTHelpers.getBooleanEntry(autoTable, "Assume Robot Position?", false);
