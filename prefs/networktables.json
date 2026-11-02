@@ -116,13 +116,13 @@
   {
     "name": "\/Preferences\/shotBlocker Reverse Power (V)",
     "type": "double",
-    "value": -3.5,
+    "value": -4,
     "properties": {"persistent": true}
   },
   {
     "name": "\/Preferences\/shotBlocker Hold Power (V)",
     "type": "double",
-    "value": -0.1,
+    "value": -0.15,
     "properties": {"persistent": true}
   },
   {
@@ -158,7 +158,7 @@
   {
     "name": "\/momentum-tuners\/PathPlanner Rotation PID\/kP",
     "type": "double",
-    "value": 8.0,
+    "value": 8,
     "properties": {"persistent": true}
   },
   {

@@ -43,11 +43,18 @@ public class SingleControllerInput implements MoInput {
 
     @Override
     public boolean getDriveBoostRequest() {
-        return false;
+        return driveController.getAButton();
     }
 
     @Override
-    public boolean getExtendShotBlocker() {
+    public boolean getDriveLock() {
+        return driveController.getXButton();
+    }
+
+
+    @Override
+    public boolean getMoveShotBlocker() {
         return driveController.getLeftTriggerAxis() > 0.5 || driveController.getRightTriggerAxis() > 0.5;
     }
+
 }

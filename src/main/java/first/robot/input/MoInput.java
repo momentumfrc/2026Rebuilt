@@ -9,11 +9,13 @@ public interface MoInput {
 
     public abstract boolean getDriveBoostRequest();
 
+    public abstract boolean getDriveLock();
+
     public abstract double getDriveHeadingXRequest();
 
     public abstract double getDriveHeadingYRequest();
 
     public abstract boolean getReZeroGyro();
 
-    public abstract boolean getExtendShotBlocker();
+    public abstract boolean getMoveShotBlocker();
 }

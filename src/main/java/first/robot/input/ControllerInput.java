@@ -38,6 +38,11 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
+    public boolean getDriveLock() {
+        return driveController.getXButton();
+    }
+
+    @Override
     public double getDriveHeadingXRequest() {
         return driveController.getRightY();
     }
@@ -53,7 +58,7 @@ public final class ControllerInput implements MoInput {
     }
 
     @Override
-    public boolean getExtendShotBlocker() {
+    public boolean getMoveShotBlocker() {
         return driveController.getLeftTriggerAxis() > 0.5
                 || driveController.getRightTriggerAxis() > 0.5
                 || operatorController.getLeftTriggerAxis() > 0.5

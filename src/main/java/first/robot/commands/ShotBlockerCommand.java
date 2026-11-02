@@ -44,7 +44,7 @@ public class ShotBlockerCommand extends Command {
 
     @Override
     public void execute() {
-        var requestedPosition = inputSupplier.get().getExtendShotBlocker() ? Position.UP : Position.DOWN;
+        var requestedPosition = inputSupplier.get().getMoveShotBlocker() ? Position.DOWN : Position.UP;
         if (requestedPosition != position) {
             state = State.MOVING;
             position = requestedPosition;

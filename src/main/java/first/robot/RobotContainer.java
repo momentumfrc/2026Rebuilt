@@ -48,6 +48,8 @@ public class RobotContainer {
 
     private Trigger zeroShotBlockerTrigger;
 
+    private Trigger lockTrigger;
+
     private TelemetryTable subsystemsTable = Telemetry.getTable("subsystems");
 
     private AutoChooser autochooser = new AutoChooser(robotPositioning, driveSubsystem);
@@ -88,6 +90,8 @@ public class RobotContainer {
 
         zeroShotBlockerTrigger = new Trigger(() -> shotBlockerSubsystem.hasZero() == false);
 
+        lockTrigger = new Trigger(() -> getInput().getDriveLock());
+
         // Drive Trigger Bindings
         resetFieldOrientedFwd.onTrue(driveSubsystem.resetFieldOrientedFwd());
 
@@ -95,6 +99,8 @@ public class RobotContainer {
                 Commands.runOnce(driveSubsystem::toggleBoostCurrentLimits).ignoringDisable(true));
 
         zeroShotBlockerTrigger.and(RobotModeTriggers.teleop()).onTrue(zeroShotBlockerCommand);
+
+        lockTrigger.whileTrue(driveSubsystem.lockPose());
     }
 
     public Command getAutonomousCommand() {
